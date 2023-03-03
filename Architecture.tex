@@ -262,7 +262,38 @@ propagation and \(y_i\) is the true observation to compare it to.
 \hypertarget{gradient-descent}{%
 \subsection{Gradient Descent}\label{gradient-descent}}
 
-Leads into Backpropagation.
+The efficiency of a neural network is measured and corrected with each
+iteration based on reducing a cost function. This is the same s finding
+a local minimum of a function. In a simple case below, given the
+function \(f(x) = x^3 + 10x^2\), a loal minimum is found by
+differentiating the function.
+
+\includegraphics{ANN_files/unnamed-chunk-3-1.pdf}
+
+This is simple when \(x \in \mathbb{R}\), even for
+\(x \in \mathbb{R^2}\), but gets more and more complicated as
+dimensionality increases to \(x \in \mathbb{R^n}\). This calls for
+another means for finding function extrema (particularly minima).
+\textbf{Gradient Descent} is the process by which an extrema is found by
+means of iterative computation for high-dimensional functions, making it
+intrinsically useful for neural networks to learn.
+
+Gradient Descent
+
+\begin{itemize}
+\tightlist
+\item
+  Computes the gradient \$\nabla f(x\_n) =
+  \left[ \frac{\partial f}{\partial x_1} , \frac{\partial f}{\partial x_2} , ... , \frac{\partial f}{\partial x_n} \right] \$
+\item
+  can be thought of as stepping down off a mountain
+
+  \begin{itemize}
+  \tightlist
+  \item
+    each step is that which reduces height the most
+  \end{itemize}
+\end{itemize}
 
 Also describe Stochastic Gradient Descent to save computation
 
