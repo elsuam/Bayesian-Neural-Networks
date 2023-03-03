@@ -7,7 +7,7 @@ Start with the overall structure of a very simple neural network.
 
 \begin{wrapfigure}{r}{0.3\textwidth}
     \centering
-    \includegraphics[width=.4\textwidth]{ANN_files/NN_int.png}
+    \includegraphics[width=.4\textwidth]{Figures/NN_int.png}
     \caption*{\footnotesize{A neural network with three layers}}
 \end{wrapfigure}
 
@@ -145,6 +145,8 @@ C = \frac{1}{n} \sum_{i=1}^N (a^{(L)}_i - y_i)
 \] Where \(a^{(L)}_i\) is the outcome of a single iteration of forward
 propagation and \(y_i\) is the true observation to compare it to.
 
+%---Gradient Descent--
+
 \hypertarget{gradient-descent}{%
 \subsection{Gradient Descent}\label{gradient-descent}}
 
@@ -172,8 +174,12 @@ Gradient Descent
 \begin{itemize}
 \tightlist
 \item
-  Computes the gradient \$\nabla f(x\_n) =
-  \left[ \frac{\partial f}{\partial x_1} , \frac{\partial f}{\partial x_2} , ... , \frac{\partial f}{\partial x_n} \right] \$
+  Computes the gradient 
+$  
+  \nabla f(x\_n) =
+  \left[ \frac{\partial f}{\partial x_1} , \frac{\partial f}{\partial x_2} , ... , \frac{\partial f}{\partial x_n} \right]
+$
+  
 \item
   can be thought of as stepping down off a mountain
 
@@ -186,9 +192,8 @@ Gradient Descent
 
 Also describe Stochastic Gradient Descent to save computation
 
-    \includegraphics[width = .5\textwidth]{Figures/grad_desc-50.pdf}
-    \includegraphics[width = .5\textwidth]{Figures/grad_desc-51.pdf}
-
+    \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
+    \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
 
 %---BACKPROPAGATION---
 
