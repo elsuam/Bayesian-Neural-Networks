@@ -3,8 +3,14 @@
 \hypertarget{foundations}{%
 \subsection{Foundations}\label{foundations}}
 
-Start with the overall structure of a very simple neural network.\\
-- Include an illustration.\\
+Start with the overall structure of a very simple neural network.
+
+\begin{wrapfigure}{r}{0.3\textwidth}
+    \centering
+    \includegraphics[width=.4\textwidth]{ANN_files/NN_int.png}
+    \caption*{\footnotesize{A neural network with three layers}}
+\end{wrapfigure}
+
 How pixel values are assessed in the case of image classification.\\
 Similar assessment for other types of data.
 
@@ -81,19 +87,10 @@ Y =
 
 This is represented by the \emph{step function}.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{step }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x)\{}
-  \FunctionTok{ifelse}\NormalTok{ (x }\SpecialCharTok{\textless{}=} \DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{) }
-\NormalTok{\}}
-
-\NormalTok{f }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{8}\NormalTok{,}\DecValTok{8}\NormalTok{, }\AttributeTok{length=}\DecValTok{1000}\NormalTok{)}
-
-\FunctionTok{plot}\NormalTok{(f,}\FunctionTok{step}\NormalTok{(f), }\AttributeTok{type =} \StringTok{\textquotesingle{}s\textquotesingle{}}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{8}\NormalTok{, }\AttributeTok{main=}\StringTok{"Step Function"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{" "}\NormalTok{, }\AttributeTok{ylab =} \StringTok{" "}\NormalTok{, }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\AttributeTok{col =} \StringTok{"turquoise"}\NormalTok{, }\AttributeTok{frame.plot =}\NormalTok{ T)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{ANN_files/unnamed-chunk-1-1.pdf}
+\begin{figure}
+    \centering
+    \includegraphics[width = .4\textwidth]{ANN_files/unnamed-chunk-1-1.pdf}
+\end{figure}
 
 The problem with the perceptron is that a small change in weight can
 cause the outcome to change dramatically, since the output is binary.
@@ -119,7 +116,12 @@ Sigmoid neuron
 \] For each \(i\) weight \(w_i\), bias \(b_i\), and input \(x_i\).
 
 Which is represented by the \emph{Sigmoid Function}
-\includegraphics{ANN_files/unnamed-chunk-2-1.pdf}
+
+\begin{figure}
+    \centering
+    \includegraphics[width = .7\textwidth]{ANN_files/unnamed-chunk-2-1.pdf}
+\end{figure}
+
 
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
