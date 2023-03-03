@@ -11,41 +11,23 @@
 
 Artificial neural networks composed of one or more layers in between the input data and the output results.  In is common for a N-layered network to be recognized as such by the number of N layers that have tunable weights.  As shown in the figure to the right, a network that has an input layer, one hidden layer, and an output has two layers of tunable weights (\emph{input} and \emph{hidden}) is a two-layer network.  A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or *neuron*) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
 
-\hypertarget{foundations}{%
-\subsection{Foundations}\label{foundations}}
 
-
-
-How pixel values are assessed in the case of image classification.\\
-Similar assessment for other types of data.
-
-Then, dive into the individual neuron description.
-
-The Multi-Layer Perceptron
+The Multi-Layer Perceptron (add these into this subsection)
 
 \begin{itemize}
 \tightlist
 \item
   Actually composed of sigmoid neurons
-\item
-  Input (data), hidden layer(s), output
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Hidden layers do:
-  \end{itemize}
 \item
-  Image data: each pixel is an input value
+Hidden layers do:
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Can get extremely large
-  \end{itemize}
 \item
-  Other data: each observation is an input value -also can get extremely
-  large
+Image data can get extremely large
+
+\item
+  Other data: each observation is an input value -also can get extremely large
+  
 \item
   One hidden layer is sufficient to make accurate predictions from
   training data. More hidden layers increase the depth of the network,
@@ -54,6 +36,9 @@ The Multi-Layer Perceptron
   \cite{Goodfellow-et-al-2016} \emph{(Re-address this claim down the
   road)}
 \end{itemize}
+
+\hypertarget{foundations}{%
+\subsection{Foundations}\label{foundations}}
 
 The Perceptron
 
@@ -95,6 +80,8 @@ This is represented by the \emph{step function}.
 \begin{figure}[H]
     \centering
     \includegraphics[width = .7\textwidth]{Figures/step-function-1.pdf}
+    \vspace{-40pt}
+ %   \caption{caption}
 \end{figure}
 
 The problem with the perceptron is that a small change in weight can
@@ -125,32 +112,39 @@ Which is represented by the \emph{Sigmoid Function}
 \begin{figure}[H]
     \centering
     \includegraphics[width = .7\textwidth]{Figures/sigmoid-function-1.pdf}
+   \vspace{-40pt}
+%    \caption{caption}
 \end{figure}
 
-%---ACTIVATION FUNCTIONS---
+%---------ACTIVATION FUNCTIONS---------
 
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
 
 (Write about other activation functions and discuss their differences.)
 
-\includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-1.pdf}
-\includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-2.pdf}
+\begin{figure}[H]
+    \includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-1.pdf}
+    \includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-2.pdf}
+    \vspace{-40pt}
+ %   \caption{caption}
+\end{figure}
+
+%------Cost Functions---------
 
 \hypertarget{cost-functions}{%
 \subsection{Cost Functions}\label{cost-functions}}
 
-(Change this completely to utilize the correct loss function)
+(Add several common cost functions to the mix and describe their differences)
 
-uses the Mean Squared Error loss function to compare true values with
-predicted output
+Mean Squared Error loss function
 
 \[
 C = \frac{1}{n} \sum_{i=1}^N (a^{(L)}_i - y_i)
 \] Where \(a^{(L)}_i\) is the outcome of a single iteration of forward
 propagation and \(y_i\) is the true observation to compare it to.
 
-%---Gradient Descent--
+%---------Gradient Descent---------
 
 \hypertarget{gradient-descent}{%
 \subsection{Gradient Descent}\label{gradient-descent}}
@@ -161,14 +155,14 @@ a local minimum of a function. In a simple case below, given the
 function \(f(x) = x^3 + 10x^2\), a local minimum is found by
 differentiating the function.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width = .7\textwidth]{Figures/grad_desc_2D-1.pdf}
 \end{figure}
 
 This is simple when \(x \in \mathbb{R}\), even for
-\(x \in \mathbb{R^2}\), but gets more  and more complicated as
-dimensionality increases to \(x \in \mathbb{R^n}\). This calls for
+\(x \in \mathbb{R}^2\), but gets more  and more complicated as
+dimensionality increases to \(x \in \mathbb{R}^n\). This calls for
 another means for finding function extrema (particularly minima).
 \textbf{Gradient Descent} is the process by which an extrema is found by
 means of iterative computation for high-dimensional functions, making it
@@ -197,8 +191,10 @@ $
 
 Also describe Stochastic Gradient Descent to save computation
 
+\begin{figure}[H]
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
     \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
+\end{figure}
 
 %---BACKPROPAGATION---
 
