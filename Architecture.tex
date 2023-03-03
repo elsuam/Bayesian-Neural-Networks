@@ -1,15 +1,20 @@
 
+%---ARCHITECTURE---
+
+\begin{wrapfigure}{r}{0.3\textwidth}
+  \vspace{-30pt}
+    \centering
+    \includegraphics[width=.4\textwidth]{Figures/NN_int.png}
+    \caption{\footnotesize{A two-layer neural network}}
+  \vspace{-50pt}
+\end{wrapfigure}
+
+Artificial neural networks composed of one or more layers in between the input data and the output results.  In is common for a N-layered network to be recognized as such by the number of N layers that have tunable weights.  As shown in the figure to the right, a network that has an input layer, one hidden layer, and an output has two layers of tunable weights (\emph{input} and \emph{hidden}) is a two-layer network.  A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or *neuron*) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
 
 \hypertarget{foundations}{%
 \subsection{Foundations}\label{foundations}}
 
-Start with the overall structure of a very simple neural network.
 
-\begin{wrapfigure}{r}{0.3\textwidth}
-    \centering
-    \includegraphics[width=.4\textwidth]{Figures/NN_int.png}
-    \caption*{\footnotesize{A neural network with three layers}}
-\end{wrapfigure}
 
 How pixel values are assessed in the case of image classification.\\
 Similar assessment for other types of data.
@@ -87,9 +92,9 @@ Y =
 
 This is represented by the \emph{step function}.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width = .4\textwidth]{Figures/step-function-1.pdf}
+    \includegraphics[width = .7\textwidth]{Figures/step-function-1.pdf}
 \end{figure}
 
 The problem with the perceptron is that a small change in weight can
@@ -117,7 +122,7 @@ Sigmoid neuron
 
 Which is represented by the \emph{Sigmoid Function}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width = .7\textwidth]{Figures/sigmoid-function-1.pdf}
 \end{figure}
@@ -162,7 +167,7 @@ differentiating the function.
 \end{figure}
 
 This is simple when \(x \in \mathbb{R}\), even for
-\(x \in \mathbb{R^2}\), but gets more and more complicated as
+\(x \in \mathbb{R^2}\), but gets more  and more complicated as
 dimensionality increases to \(x \in \mathbb{R^n}\). This calls for
 another means for finding function extrema (particularly minima).
 \textbf{Gradient Descent} is the process by which an extrema is found by
@@ -176,7 +181,7 @@ Gradient Descent
 \item
   Computes the gradient 
 $  
-  \nabla f(x\_n) =
+  \nabla f(x_n) =
   \left[ \frac{\partial f}{\partial x_1} , \frac{\partial f}{\partial x_2} , ... , \frac{\partial f}{\partial x_n} \right]
 $
   
