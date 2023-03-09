@@ -2,14 +2,21 @@
 %---ARCHITECTURE---
 
 \begin{wrapfigure}{r}{0.3\textwidth}
-  \vspace{-30pt}
+  \vspace{-50pt}
     \centering
     \includegraphics[width=.4\textwidth]{Figures/NN_int.png}
-    \caption{\footnotesize{A two-layer neural network}}
-  \vspace{-50pt}
+    \caption{\footnotesize{A two-layer neural network with the \emph{input} as the first layer and the \emph{hidden} layer as the second.  The final layer displayed is simply the output result}}
+  \label{NNet}
+  \vspace{-20pt}
 \end{wrapfigure}
 
-Artificial neural networks composed of one or more layers in between the input data and the output results.  In is common for a N-layered network to be recognized as such by the number of N layers that have tunable weights.  As shown in the figure to the right, a network that has an input layer, one hidden layer, and an output has two layers of tunable weights (\emph{input} and \emph{hidden}) is a two-layer network.  A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or *neuron*) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
+Artificial neural networks are composed of one or more layers in between the input data and the output results.  It is common for a $L$-layered network to be recognized as such by the number of $L$ layers that have tunable parameters; although some literature describes an alternate means of describing layer sizes \cite{bishop1995} (i.e. by counting the output layer rather than the input).  For this thesis, we will only use the tunable weights criterion so not to confuse what the $l^{th}$ layer is referring to, as described in Figure \ref{NNet}.  A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or \textit{neuron}) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
+
+(previous claim may need to be modified and merged with the following)
+(following needs a citation)
+However, linearity can be achieved through the usage of a linear activation function.  In such cases, a linear neural network model is found to be more adaptive to data curvature, without the necessity for splines or higher order polynomials.
+
+Indeed, a neural network devoid of any activation function simplifies to a linear regression model. \ref{sharma2017activation} \textit{(OLS reference)}
 
 
 The Multi-Layer Perceptron (add these into this subsection)
@@ -116,6 +123,16 @@ Which is represented by the \emph{Sigmoid Function}
 %    \caption{caption}
 \end{figure}
 
+\textbf{A note on linearity}
+
+\textit{(OLS reference)}
+
+Make note of the comparison between linear regression and neural networks without activation funtions (i.e. Show that $w_i \cdot x_i + b_i$ is the same as performing linear regression for a network with one layer, and expand to multiple layers with no activation)
+
+Also, make the comparison to logistic regression for classification tasks
+
+Lead into the next section, outlining reasons for the call to non-linear activation functions (as described in \cite{sharma2017activation})
+
 %---------ACTIVATION FUNCTIONS---------
 
 \hypertarget{activation-functions}{%
@@ -137,12 +154,31 @@ Which is represented by the \emph{Sigmoid Function}
 
 (Add several common cost functions to the mix and describe their differences)
 
-Mean Squared Error loss function
+(cost functions for regression tasks, cost functions for classification tasks)
+
+\textbf{Mean Squared Error} loss function (regression)
 
 \[
-C = \frac{1}{n} \sum_{i=1}^N (a^{(L)}_i - y_i)
+C = \frac{1}{N} \sum_{i=1}^N (a^{(L)}_i - y_i)
 \] Where \(a^{(L)}_i\) is the outcome of a single iteration of forward
 propagation and \(y_i\) is the true observation to compare it to.
+
+\textbf{Binary Cross-Entropy} function (classification)
+
+$$
+- \frac{1}{N} \sum_{i=1}^N y_i log (a^{(L)}) + (1-y_i) log(1-a^{(L)})
+$$
+
+aka log-loss
+
+\textbf{Categorical Cross-Entropy} (or Sparse Categorical Cross-Entropy, depending on what is used in the next section)
+
+$$
+Equation here
+$$
+
+output labels are one-hot encoded  (
+[1,0,0] , [0,1,0] , [0,0,1] )
 
 %---------Gradient Descent---------
 
@@ -189,7 +225,7 @@ $
   \end{itemize}
 \end{itemize}
 
-Also describe Stochastic Gradient Descent to save computation
+
 
 \begin{figure}[H]
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
@@ -256,20 +292,21 @@ Because our network only has an input and hidden layer, this
 ``previous'' layer is the input layer, and the ``activation of earlier
 layers'' is our input x-value.
 
+%---partial derivatives with respect to WEIGHT---
+
 \hypertarget{partial-derivatives-with-respect-to-weight}{%
 \paragraph{Partial derivatives with respect to
 weight}\label{partial-derivatives-with-respect-to-weight}}
 
 The amount we must adjust the weight in the \emph{hidden} layer is
-represented by: \$\$ \begin{eqnarray}
-\frac{\partial{C}}{\partial{w_i^{(2)}}}    &=&  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
+represented by:
+\begin{align*}
+\frac{\partial{C}}{\partial{w_i^{(2)}}}    &=  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
-     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\
-     
- &=& a_i^{(1)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
-\end{eqnarray} \$\$
+     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\ 
+ &= a_i^{(1)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \end{align*}
 
-Where \(a_n^{(1)}\) is the activation for each observation in the first
+where \(a_n^{(1)}\) is the activation for each observation in the first
 (input) layer, \(\sigma'(z_i^{(2)})\) is the derivative of the sigmoid
 activation function with respect to each observation in the second
 (hidden) layer, \(a_i^{(2)}\) is the activation for each observation in
@@ -277,18 +314,22 @@ the hidden layer, and \(y_i\) is the vector of actual training values
 this network hopes to achieve.
 
 The amount we must adjust the weight in the \emph{input} layer is
-represented by: \$\$ \begin{eqnarray}
-\frac{\partial{C}}{\partial{w_i^{(1)}}}    &=& \dfrac{\partial{z_i^{(1)}}}{\partial{w_i^{(1)}}} \dfrac{\partial{a_i^{(1)}}}{\partial{z_i^{(1)}}}  \dfrac{\partial{z_i^{(2)}}}{\partial{a_i^{(1)}}}
-     \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
-     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\
-     
-&=& x_i \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
+represented by:
 
-\end{eqnarray} \$\$ where \(x_i\) is the input from our training data,
+    \begin{align*}
+\frac{\partial{C}}{\partial{w_i^{(1)}}}    &= \dfrac{\partial{z_i^{(1)}}}{\partial{w_i^{(1)}}} \dfrac{\partial{a_i^{(1)}}}{\partial{z_i^{(1)}}}  \dfrac{\partial{z_i^{(2)}}}{\partial{a_i^{(1)}}}
+     \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
+     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\    
+&= x_i \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
+     \end{align*}
+
+where \(x_i\) is the input from our training data,
 \(\sigma'(z_i^{(1)})\) is the derivative of the sigmoid activation
 function with respect to each observation in the input layer,
 \(w_i^{(2)}\) is the vector of weights in the hidden layer, and all else
 is the same as is in the previous equation.
+
+%---partial derivatives with respect to BIAS---
 
 \hypertarget{partial-derivatives-with-respect-to-bias}{%
 \paragraph{Partial derivatives with respect to
@@ -308,12 +349,12 @@ formula simplifies to the following: \[
 \]
 
 The amount we must adjust the bias in the \emph{input} layer is
-represented by: \$\$ \begin{eqnarray}
-\frac{\partial{C}}{\partial{b_i^{(1)}}}    &=& \dfrac{\partial{z_i^{(1)}}}{\partial{b_i^{(1)}}} \dfrac{\partial{a_i^{(1)}}}{\partial{z_i^{(1)}}}  \dfrac{\partial{z_i^{(2)}}}{\partial{a_i^{(1)}}}
+represented by:
+
+    \begin{align*}
+\dfrac{\partial{C}}{\partial{b_i^{(1)}}} 
+& = \dfrac{\partial{z_i^{(1)}}}{\partial{b_i^{(1)}}} \dfrac{\partial{a_i^{(1)}}}{\partial{z_i^{(1)}}}  \dfrac{\partial{z_i^{(2)}}}{\partial{a_i^{(1)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
-     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\
-     
-&=& 1 \cdot \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
-
-\end{eqnarray} \$\$
-
+     \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\ \nonumber
+& = 1 \cdot \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \nonumber
+    \end{align*}

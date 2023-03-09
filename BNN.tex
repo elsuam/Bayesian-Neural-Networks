@@ -1,12 +1,48 @@
 \chapter{Bayesian Neural Networks}
 
 \section{Introduction}
- In the Bayesian framework, training a neural network to minimize its error based on a single w is equivalent to maximizing the likelihood of the training data (i.e. finding weight w that maximizes $P(D_train|w)$. Therefore we can use Bayes’ Rule to compute an interval of potential weights based on probabilities $P(w|D_train)$
+ In the Bayesian framework, training a neural network to minimize its error based on a single point estimate $w$ is equivalent to maximizing the likelihood of the training data (i.e. finding weight w that maximizes $P(D_{train}|w)$. Therefore we can use Bayes’ Rule to compute an interval of potential weights based on probabilities $P(w|D_{train})$
 
 \section{Architecture}
 
+Stochastic neural networks, which use either stochastic activations or stochastic weights, simulate multiple possible models $\theta$ with associated probability distribution $p(\theta)$.  Aggregating independent predictors can lead to better predictions than single point estimates. \cite{Jospin}.  In comparing the predictions of multiple sample $\theta$, stochastic models better measure uncertainty.  Bayesian neural networks are a special case of stochastic neural networks in which the ensemble of possible models is obtained using Bayesian inference. \cite{mackay1992practical}
+
+\subsection{Inference}
+
+Applying Bayes Theorem to training inputs:
+$$
+p(\theta|D) = \frac{p(D_{y}|D_{x},\theta)p(\theta)}{\int_\theta p(D_{y}|D_{x},\theta')p(\theta')d\theta'}
+$$
+Where $D$ is the observed training data and $\theta$ represents the distribution of model parameters (weights and biases).
+
+
+The marginal is of particular interest to integrate out unwanted parameters.  (keep only outputs $Y$ and distributions $\Theta$)
+(write about marginalization in Bayes section)
+
+$$
+Equation (5) in Jospin
+$$
+
+
 \subsection{Description of Uncertainty}
 
-\subsection{In a Data Drought}
+BNN uncertainty \cite{Jospin}
+
+For regression and classification, average predictions of a BNN to generate result
+$$
+Equation (6) / (8) hybrid
+$$
+
+When performign regression, uncertainty is computed by the covariance matrix:
+$$
+Equation (7) here
+$$
+
+For classification tasks, uncertainty is measured by the relative probability of each class.
+$$
+Equation (8) and (9) here
+$$
+
+
 
 \section{Regularization Techniques}

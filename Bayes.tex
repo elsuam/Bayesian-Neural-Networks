@@ -1,17 +1,41 @@
 \chapter{Bayesian Statistical Methods}
 
-\section{Bayes Theorem and Probability} %-------------SECTION
+Brief description, background, difference (NOT opposition) from frequentist statistics.
 
-\subsection{Why Parameters are no Longer Fixed}
 
 \section{Bayesian Inference} %-------------SECTION
 
+Bayes Theorem; idea of parameters having distributions rather than being fixed, unknown values; simple example (i.e. coin toss, proportion given data, etc.) 
+
+
 \subsection{From Prior to Posterior}
-%The Tale of the Very Hungry Caterpillar
 
-\subsection{Bayesian Estimators}
+Selection of priors, perhaps advise on broad priors that tell little information.
 
-\subsection{Credible Intervals and the Test of Hypotheses}
+Hand calculation of a Gaussian prior to compute a posterior to be used in a later section
+
+
+Leads into the normalizing constant integral, toward MCMC
+
+%prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
+
+\subsection{Markov chain Monte Carlo}
+Used to address the problem of highly complex integral
+
+
+\subsection{Modeling Uncertainty}
+
+Types of uncertainty: aleatoric and epistemic
+
+Model $p(y|\theta)$ is a function of y that descrives the aleatoric uncertainty given fixed $\theta$.
+Likelihood $p(y|\theta)$ is a function of $\theta$ that helps infer epistemic uncertainty given observed data $y$.
+
+
+
+\subsection{Bayesian Updating}
+
+Bayesian updating, in which the posterior is the new prior
+
 
 \section{Bayesian Machine Learning} %-------------SECTION
 
@@ -20,6 +44,15 @@ Theory and notation, with examples in R
 \subsection{Linear Regression}
 Maybe make this the only example to give more time to BNN
 
+%perhaps Bayesian Linear Regression can tie into as being a special case of BNN's, like the simple case of ANN's was Linear Regression
+
+
+
+
+
+
+
+
 %\subsection{}
 
-\section{Practical Applications} %-------------SECTION
+%\section{Practical Applications} %-------------SECTION
