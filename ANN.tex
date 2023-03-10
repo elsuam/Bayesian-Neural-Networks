@@ -77,7 +77,22 @@ values of kernel and input tensors are zero except for the finite set in which v
 \end{itemize}
 
 
-\textbf{Bird Call Spectrogram example from R}
+\subsubsection{Bird Call Spectrogram example from R}
+
+Labeled data on recorded bird calls converted into spectrograms of 251x251 pixels.
+
+Train the network to be able to identify that bird call based on spectrogram shape.
+
+Use reference: \cite{kahl2017large}
+
+Two-dimensional image $X$ with a two-dimensional kernel $W$
+$$
+C(i,j) = (X * W)(i,j) = \sum_m \sum_n X(m,n)W(i-m,j-n)
+$$
+
+$m$ and $n$ are the representative pixel locations in the relevant dimension, while $i$ and $j$ are the kernel locations, where the convolution is taking place.  The infinite summation is made possible by the fact that values are zero wherever the image is not present.
+
+
 
 $$
 Insert Example Here
