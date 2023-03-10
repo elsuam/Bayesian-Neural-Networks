@@ -10,13 +10,10 @@
   \vspace{-20pt}
 \end{wrapfigure}
 
-Artificial neural networks are composed of one or more layers in between the input data and the output results.  It is common for a $L$-layered network to be recognized as such by the number of $L$ layers that have tunable parameters; although some literature describes an alternate means of describing layer sizes \cite{bishop1995} (i.e. by counting the output layer rather than the input).  For this thesis, we will only use the tunable weights criterion so not to confuse what the $l^{th}$ layer is referring to, as described in Figure \ref{NNet}.  A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or \textit{neuron}) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
-
-(previous claim may need to be modified and merged with the following)
-(following needs a citation)
-However, linearity can be achieved through the usage of a linear activation function.  In such cases, a linear neural network model is found to be more adaptive to data curvature, without the necessity for splines or higher order polynomials.
-
-Indeed, a neural network devoid of any activation function simplifies to a linear regression model. \ref{sharma2017activation} \textit{(OLS reference)}
+Artificial neural networks are composed of one or more layers in between the input data and the output results.  It is common for a $L$-layered network to be recognized as such by the number of $L$ layers that have tunable parameters; although some literature describes an alternate means of describing layer sizes \cite{bishop1995} (i.e. by counting the output layer rather than the input).  This thesis will only use the tunable weights criterion so not to confuse what the $l^{th}$ layer is referring to, as illustrated in Figure \ref{NNet}.  
+A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or \textit{neuron}) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
+However, linearity can be achieved through the usage of a linear activation function.  In such cases, a linear neural network model is found to be more adaptive to data curvature, without the necessity for splines or higher order polynomials. \cite{?}
+Indeed, a neural network devoid of any activation function simplifies to a linear regression model \ref{sharma2017activation}, which will be shown later in this section.
 
 
 The Multi-Layer Perceptron (add these into this subsection)
@@ -25,9 +22,6 @@ The Multi-Layer Perceptron (add these into this subsection)
 \tightlist
 \item
   Actually composed of sigmoid neurons
-
-\item
-Hidden layers do:
 
 \item
 Image data can get extremely large
@@ -47,7 +41,7 @@ Image data can get extremely large
 \hypertarget{foundations}{%
 \subsection{Foundations}\label{foundations}}
 
-The Perceptron
+\textbf{The Perceptron}
 
 \begin{itemize}
 \tightlist
@@ -72,13 +66,13 @@ network and \(D\) is the threshold value that the weighted sum is
 matched with to determine the binary output \(Y\).
 
 Because these inputs are calculated by computers, and computers like
-vectors, the notation is adjusted to allow for proper computation.. In
+vectors, the notation is adjusted to allow for proper computation in which $(w_i \cdot x_i)$ is the \textit{dot product} of the weights and inputs. In
 addition, Rosenblatt introduced a bias (check source) to shift the
-function to a clean threshold of \(D = 0\). \[
+function for a clean threshold of \(D = 0\). \[
 Y = 
 \begin{cases}
-0 \text{ if } w_i \cdot x_i + b_i \le 0 \\
-1 \text{ if } w_i \cdot x_i + b_i > 0
+0 \text{ if } (w_i \cdot x_i) + b_i \le 0 \\
+1 \text{ if } (w_i \cdot x_i) + b_i > 0
 \end{cases}
 \]
 
@@ -94,7 +88,9 @@ This is represented by the \emph{step function}.
 The problem with the perceptron is that a small change in weight can
 cause the outcome to change dramatically, since the output is binary.
 
-Sigmoid neuron
+\textbf{Sigmoid neuron}
+
+The elementary topology of a neural network as featured in Figure \ref{NNet} is a \textbf{Multi-Layer Perceptron}.  Despite its name, it is typically composed of being composed of \textit{sigmoid neurons}.
 
 \begin{itemize}
 \tightlist
@@ -103,16 +99,16 @@ Sigmoid neuron
   causes a small change in output
 \item
   not a binary output, rather an output of the interval {[}0,1{]}
-\item
-  Sigmoid function
 \end{itemize}
+
 
 \[
 \sigma(z) = \frac{1}{1+e^{-z}} \\
 \] Where \(z\) is the same equation from the perceptron
-\(w \cdot x + b\). That is, \[
-\sigma(w_i \cdot x_i + b_i) = \frac{1}{1+e^{-\sum_i^n w_i \cdot x_i - b}}
-\] For each \(i\) weight \(w_i\), bias \(b_i\), and input \(x_i\).
+\(w \cdot x + b\). That is, 
+$$
+\sigma((w_i \cdot x_i) + b_i) = \frac{1}{1-e^{-((w_i \cdot x_i) + b_i)}}
+$$
 
 Which is represented by the \emph{Sigmoid Function}
 
@@ -123,15 +119,34 @@ Which is represented by the \emph{Sigmoid Function}
 %    \caption{caption}
 \end{figure}
 
+\textit{(So far this section has only dealt with connections in between two layers.  Continue here to connections into subsequent layers, including notation similar to Bishop 1995 p. 119)}
+
 \textbf{A note on linearity}
 
-\textit{(OLS reference)}
+A single-layer neural network would have but one step of calculations ($input \rightarrow output$).  With no hidden layer to perform subsequent calculations, the resulting interpretation would be the expected result of the given inputs.
+$$
+y_i = (w_i \cdot x_i) + b
+$$
+This means that a neural network devoid of any hidden layers or activation function simplifies to a \textbf{linear regression} model. \cite{sharma2017activation}
 
-Make note of the comparison between linear regression and neural networks without activation funtions (i.e. Show that $w_i \cdot x_i + b_i$ is the same as performing linear regression for a network with one layer, and expand to multiple layers with no activation)
 
-Also, make the comparison to logistic regression for classification tasks
+%In the case of a two-layer neural %network with no activation functions in %between:
+%$$
+%y_i = (w_{i2} \cdot ((w_{i1} \cdot %x_{i1}) + b_1)) + b_2
+%$$
 
-Lead into the next section, outlining reasons for the call to non-linear activation functions (as described in \cite{sharma2017activation})
+
+Similarly, it can also be noted that a neural network which uses the sigmoid activation function is a generalization of \textbf{logistic regression}. \cite{dreiseitl2002logistic} \cite{schumacher1996neural}  If $\delta$ denotes the logit function expressed as the log-odds of the outcome of $X$ (0 or 1):
+$$
+\delta = ln \left( \frac{P(X)}{1-P(X)} \right) = (w_i \cdot x_i) + b_i 
+$$
+Reversing $\delta$ results in the relevant probability that $X = 1$ for the given vector of weights and bias.
+$$
+P(X) = \frac{e^\delta}{1+e^\delta} = \frac{1}{1+e^{-\delta}}
+$$
+In which $P(X) \in [0,1]$.  For logistic regression, or for a single-layer neural network using the sigmoid activation function, the calculation would end here and the resulting interpretation from the binary classification model a probability that the input is from category 1.  In deeper neural networks, the value of $P(X)$, which is one of many, gets passed on to the next layer to join its cohorts for the next calculation.
+
+The potential for neural networks expands well beyond linearity or the curvature matched by polynomial terms or splines.  Neural nets are universal function approximators, which means that they have the capacity to learn and compute any function. \cite{sharma2017activation} This is due to non-linear activation functions, for without them, transformations between successive layers will be linear, and the entire composition itself then linear, too. \cite{bishop1995}  While there is no one-size-fits all, certain activation functions have desirable properties that help give insight into the questions that neural networks answer.
 
 %---------ACTIVATION FUNCTIONS---------
 
@@ -200,7 +215,7 @@ This is simple when \(x \in \mathbb{R}\), even for
 \(x \in \mathbb{R}^2\), but gets more  and more complicated as
 dimensionality increases to \(x \in \mathbb{R}^n\). This calls for
 another means for finding function extrema (particularly minima).
-\textbf{Gradient Descent} is the process by which an extrema is found by
+\textbf{Gradient Descent} is an optimization process by which an extrema is found by
 means of iterative computation for high-dimensional functions, making it
 intrinsically useful for neural networks to learn.
 
@@ -237,12 +252,7 @@ $
 \hypertarget{backpropagation}{%
 \subsection{Backpropagation}\label{backpropagation}}
 
-\textbf{Backpropagation} is the algorithm that computes the gradient for
-high-dimensional derivatives for \textbf{gradient descent}, which helps
-us reduce the cost function. For a standard neural network, it is
-composed of the partial derivatives of the cost function with respect to
-each weight in each layer of the network, and each bias in each layer of
-the network.
+\textbf{Backpropagation} is the algorithm that drives gradient descent and computes the gradient for high-dimensional derivatives. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
 
 \[
 \nabla{C} =
@@ -259,38 +269,34 @@ the network.
 \end{bmatrix}
 \] Here, the superscript \(^{(l)}\) denotes the layer of the network and
 the subscript \(_i\) denotes a specific parameter within that specific
-layer. Since we have two layers, \(^{(2)}\) indicates the hidden layer
-and \(^{(1)}\) the input layer.
+layer. In this section, the backpropagation calculus will be explained under the example of a \textit{two-layer} network; although the same notation and derivation can be applied to networks of all sizes.
+%Here, \(^{(2)}\) will be used to indicate the hidden layer and \(^{(1)}\) the input layer.
 
 The backpropagation algorithm is catered to a specific loss function. In
-this example, the loss function is defined above as \emph{Mean Squared
+this example, the loss function is \emph{Mean Squared
 Error}. This function takes the difference between the output from the
 network and the specified desired output for each observation. To
 understand how each parameter that makes up the output must be adjusted,
 the algorithm must differentiate every part of it. This is done by use
 of the chain rule in calculus. Ultimately, two parameter
 differentiations must be computed for each observation in each layer - a
-\emph{weight} and a \emph{bias}, as illustrated in the matrix above.
+\emph{weight} and a \emph{bias}, as illustrated in the matrix above. By tracing the lineage of influence on the
+network's final output backwards
+(``back-propagating''), the output is found to be influenced by:
 
-The chain rule is applied when tracing the lineage of influence on the
-network's output. In tracing the architecture of the network backwards
-(or ``back propagating''), the output is found to be influenced by:
-
-\begin{itemize}
+\begin{enumerate}
 \tightlist
 \item
-  an activation function in between the hidden layer and the output,
-  which is influenced by the resulting computation of the hidden layer
-  \emph{weight}, \emph{bias}, and
+  an \textit{activation} function in between the hidden layer and the output,
+  which itself is influenced by the resulting computation of the hidden layer \emph{weight}, \emph{bias}, and
 \item
-  an activation function from the previous layer, which is which is
+  \textit{activation} function from the previous layer, which is itself
   influenced by the resulting computation of the previous layer
-  \emph{weight}, \emph{bias}, and activation of earlier layers.
-\end{itemize}
+  \emph{weight}, \emph{bias}, and input layer.
+\end{enumerate}
 
-Because our network only has an input and hidden layer, this
-``previous'' layer is the input layer, and the ``activation of earlier
-layers'' is our input x-value.
+In the two-layer network example, identifying the lineage stops here.  For deeper networks, item (2) is repeated with the term ``input layer'' replaced by ``activation of earlier layers.''
+
 
 %---partial derivatives with respect to WEIGHT---
 
@@ -298,8 +304,8 @@ layers'' is our input x-value.
 \paragraph{Partial derivatives with respect to
 weight}\label{partial-derivatives-with-respect-to-weight}}
 
-The amount we must adjust the weight in the \emph{hidden} layer is
-represented by:
+The amount to adjust the weight in the \emph{hidden} layer is
+represented through use of the chain rule by:
 \begin{align*}
 \frac{\partial{C}}{\partial{w_i^{(2)}}}    &=  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
@@ -313,7 +319,7 @@ activation function with respect to each observation in the second
 the hidden layer, and \(y_i\) is the vector of actual training values
 this network hopes to achieve.
 
-The amount we must adjust the weight in the \emph{input} layer is
+The amount to adjust the weight in the \emph{input} layer is
 represented by:
 
     \begin{align*}
@@ -335,7 +341,7 @@ is the same as is in the previous equation.
 \paragraph{Partial derivatives with respect to
 bias}\label{partial-derivatives-with-respect-to-bias}}
 
-The amount we must adjust the bias in the \emph{hidden} layer is
+The amount to adjust the bias in the \emph{hidden} layer is
 represented by: \[
 \frac{\partial{C}}{\partial{b_i^{(2)}}}  =  \dfrac{\partial{z_i^{(2)}}}{\partial{b_i^{(2)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
@@ -343,12 +349,12 @@ represented by: \[
 \]
 
 Because the bias is a constant, that is
-\(\dfrac{\partial{z_i^{(l)}}}{\partial{b_i^{(l)}}} = 1\), our chain-rule
+\(\dfrac{\partial{z_i^{(l)}}}{\partial{b_i^{(l)}}} = 1\), the chain-rule
 formula simplifies to the following: \[
 \frac{\partial{C}}{\partial{b_i^{(2)}}} = 1 \cdot \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
 \]
 
-The amount we must adjust the bias in the \emph{input} layer is
+And for the same reasons, the amount to adjust the bias in the \emph{input} layer is
 represented by:
 
     \begin{align*}
@@ -358,3 +364,8 @@ represented by:
      \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\ \nonumber
 & = 1 \cdot \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \nonumber
     \end{align*}
+
+
+The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, t
+
+Also mention of the step size

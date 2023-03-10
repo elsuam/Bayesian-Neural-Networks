@@ -1,33 +1,12 @@
 \chapter{Artificial Neural Networks}
 
+Artificial neural networks are what makes the extension from traditional machine learning models into deep learning methods.
 
-
-Artificial neural networks are the extension from traditional machine learning models into deep learning methods.
-
-(rewrite this into and place figures somewhere later, or in the section of working with structured/unstructured data)
-
-A common elementary application is to utilize a network to recognize and classify image date based on the pixel values, as is shown in Figure \ref{minecraft}.  In image data, each pixel is an input value determined by a number corresponding to that specific color.  For grayscale image data, that number is a value from 0 to 1.  Color images are represented as vectors of three values (RGB).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.35\textwidth]{Figures/pickaxe_1.png}
-    \hspace{30pt}
-    \includegraphics[width=.35\textwidth]{Figures/pickaxe_2.png}
-    \caption{\footnotesize{An 16x16 pixel image, with its numerical counterpart next to it.  In greyscale image data, a value of 0.0 corresponds to white, 1.0 to black, and ordered variations of gray to values in between}}
-    \label{minecraft}
-\end{figure}
-
-Classification tasks vs. regression tasks
-
-Of course, image data is not the only data that a neural network can be used on.  Any type of data can be modeled with a neural network, provided there is enough of it to match the complexity if the model.  Image data tends to have a great number of inputs to begin with.  What makes these deep learning models particularly useful is that they identify non-linear patterns, and with more abstraction than traditional machine learning algorithms like K-Nearest Neighbors or Naive Bayes.
-
-
+Classification tasks // regression tasks // computer vision and more...
 
 \section{The Architecture of Neural Networks} %-------------SECTION
 
 Hint toward issues like overfitting, but elaborate more in section 2.3.
-
-- Also, first mention \textbf{Optimization} here
 
 %---Pathway to Architecture file---
 \subfile{Architecture}  
@@ -51,7 +30,7 @@ Make mention of other optimization algorithms (Adam, Adagrad, RMSprop), with onl
 \section{Types of Neural Networks} %-------------SECTION
 The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses.
 
-%Write this up in R following along the code from %\textbf{RAI}, with supplementary information from %other sources as well.  
+Write this up in R following along the code from \textbf{RAI}, with supplementary information from other sources as well.  
 
 Obviously not all types will be covered, but here are a few.  
 
@@ -63,6 +42,50 @@ Include \textbf{mathematical notation} for each network mentioned.
 
 \subsection{Convolutional Neural Networks}
 Unstructured image data
+
+Convolution operation // Notation // Architecture and diagram
+
+A Convolutional Neural Network (CNN) is a neural network that uses the convolution operation in at least one of its layers \cite{?}.
+
+Convolution operation continuous
+$$
+C(t) = \int x(\tau)w(t - \tau)d\tau
+$$
+Convolution operation discrete
+$$
+C(t) = \sum_{\tau = -\infty}^\infty x(\tau)w(t - \tau)
+$$
+$x(t)$ is the \textbf{input} and $w(t-\tau)$ is known as the \textbf{kernel}. The shorthand operation for the convolution operation is denoted with an asterisk:
+$$
+(x * w)(t)
+$$
+
+Assumptions for CNN's \cite{Goodfellow-et-al-2016}
+
+\begin{itemize}
+  \tightlist
+  \item
+output is essentially a weighted average  
+ \item
+$w$ must be a valid probability distribution
+ \item
+$w$ is 0 for all negative arguments
+ \item
+values of kernel and input tensors are zero except for the finite set in which values are stored (i.e. size of image)
+ \item
+ - infinite summation over finite number of array elements
+\end{itemize}
+
+
+\textbf{Bird Call Spectrogram example from R}
+
+$$
+Insert Example Here
+$$
+
+%---POTENTIALLY - make a pathway to the .tex file from RMarkdown ---\subfile{CNN_BCS} 
+
+Other uses
 
 \subsection{Generative Adversarial Networks}
 Unstructured image data
