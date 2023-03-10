@@ -1,5 +1,7 @@
 \chapter{Introduction to Deep Learning}
 
+(Start by introducing some popular deep learning programs like ChatGPT and search engines)
+
 Artificial intelligence is the start to outsourcing brain function to man-made machines.  A machine is said to have "Artificial Intelligence" if it can do what people say requires intelligence \cite{jackson2019introduction}, from counting monetary denominations to surveying Mars, playing chess games to converting human speech.  Within the realm of this is the subcategory known as machine learning, in which models are tested based on training data in order to "teach" them right from wrong.  Machine learning has an increased emphasis on the use of computers in statistical analyses and a decreased emphasis on proving confidence intervals around them \cite{Goodfellow-et-al-2016}.  With astronomical advances in modern computing technology, creating elaborate learning models with raised functionality has become more and more accessible, creating a new category known as deep learning, which is the parent of the subjects within this thesis.  Deep learning models operate beyond those of traditional machine learning as such models contain layers of complexities, each performing a specific task for the overall objective.  Algorithms and procedures unite with complex mathematical formulas to generate extremely precise models without the assumptions of linear models.
 
 %---EXAMPLE FOR PHOTOS--
@@ -20,3 +22,17 @@ The evolution of the process of mimicking cognitive brain functionality within a
 \subsection{Working with Structured Data} %-------------SECTION
 
 \subsection{Working with Unstructured Data} %-------------SECTION
+
+
+A common elementary application is to utilize a network to recognize and classify image date based on the pixel values, as is shown in Figure \ref{minecraft}.  In image data, each pixel is an input value determined by a number corresponding to that specific color.  For grayscale image data, that number is a value from 0 to 1.  Color images are represented as vectors of three values (RGB).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.35\textwidth]{Figures/pickaxe_1.png}
+    \hspace{30pt}
+    \includegraphics[width=.35\textwidth]{Figures/pickaxe_2.png}
+    \caption{\footnotesize{An 16x16 pixel image, with its numerical counterpart next to it.  In greyscale image data, a value of 0.0 corresponds to white, 1.0 to black, and ordered variations of gray to values in between}}
+    \label{minecraft}
+\end{figure}
+
+Of course, image data is not the only data that a neural network can be used on.  Any type of data can be modeled with a neural network, provided there is enough of it to match the complexity if the model.  Image data tends to have a great number of inputs to begin with.

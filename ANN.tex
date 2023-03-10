@@ -1,30 +1,15 @@
 \chapter{Artificial Neural Networks}
 
+Artificial neural networks are what makes the extension from traditional machine learning models into deep learning methods.
 
-
-Artificial neural network models of all kinds are the backbone of deep learning mechanics.  A common elementary application is to utilize a network to recognize and classify image date based on the pixel values, as is shown in Figure \ref{minecraft}.  
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.35\textwidth]{Figures/pickaxe_1.png}
-    \hspace{30pt}
-    \includegraphics[width=.35\textwidth]{Figures/pickaxe_2.png}
-    \caption{\footnotesize{A two-layer neural network}}
-    \label{minecraft}
-\end{figure}
-
-
-
-
+Classification tasks // regression tasks // computer vision and more...
 
 \section{The Architecture of Neural Networks} %-------------SECTION
 
 Hint toward issues like overfitting, but elaborate more in section 2.3.
 
-- Also, first mention \textbf{Optimization} here
-
-\subfile{Architecture}  % Pathway to Architecture file
+%---Pathway to Architecture file---
+\subfile{Architecture}  
 
 %\subsection{Gradient Descent}
 
@@ -34,9 +19,16 @@ Hint toward issues like overfitting, but elaborate more in section 2.3.
 
 %\subsubsection{Simulation in R}
 
-\subsection{More Optimization Algorithms and Activation Functions}
+\subsection{More Optimization Algorithms}
+
+Aside from Gradient Descent.
+
+Describe Stochastic Gradient Descent in subtle detail.
+
+Make mention of other optimization algorithms (Adam, Adagrad, RMSprop), with only a brief description of them.  Only make mention of the ones to be used in Keras during practical examples in the next section.
 
 \section{Types of Neural Networks} %-------------SECTION
+The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses.
 
 Write this up in R following along the code from \textbf{RAI}, with supplementary information from other sources as well.  
 
@@ -44,17 +36,67 @@ Obviously not all types will be covered, but here are a few.
 
 Include \textbf{mathematical notation} for each network mentioned.
 
-\subsection{Multi-Layer Perceptron}
-Keras Model: "sequential"
+%\subsection{Multi-Layer Perceptron}
+%Keras Model: "sequential"
+%This ws described above
 
 \subsection{Convolutional Neural Networks}
 Unstructured image data
 
+Convolution operation // Notation // Architecture and diagram
+
+A Convolutional Neural Network (CNN) is a neural network that uses the convolution operation in at least one of its layers \cite{?}.
+
+Convolution operation continuous
+$$
+C(t) = \int x(\tau)w(t - \tau)d\tau
+$$
+Convolution operation discrete
+$$
+C(t) = \sum_{\tau = -\infty}^\infty x(\tau)w(t - \tau)
+$$
+$x(t)$ is the \textbf{input} and $w(t-\tau)$ is known as the \textbf{kernel}. The shorthand operation for the convolution operation is denoted with an asterisk:
+$$
+(x * w)(t)
+$$
+
+Assumptions for CNN's \cite{Goodfellow-et-al-2016}
+
+\begin{itemize}
+  \tightlist
+  \item
+output is essentially a weighted average  
+ \item
+$w$ must be a valid probability distribution
+ \item
+$w$ is 0 for all negative arguments
+ \item
+values of kernel and input tensors are zero except for the finite set in which values are stored (i.e. size of image)
+ \item
+ - infinite summation over finite number of array elements
+\end{itemize}
+
+
+\textbf{Bird Call Spectrogram example from R}
+
+$$
+Insert Example Here
+$$
+
+%---POTENTIALLY - make a pathway to the .tex file from RMarkdown ---\subfile{CNN_BCS} 
+
+Other uses
+
 \subsection{Generative Adversarial Networks}
 Unstructured image data
 
+Image generation to try and fool a "discriminator" network
+
 \subsection{Recurrent Neural Networks}
 Unstructured text data
+
+NLP/translation/text generation
+Time series forecasting
 
 \subsection{Long Short-Term Memory Network}
 Unstructured text data
