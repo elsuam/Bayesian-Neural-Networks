@@ -28,13 +28,9 @@ Describe Stochastic Gradient Descent in subtle detail.
 Make mention of other optimization algorithms (Adam, Adagrad, RMSprop), with only a brief description of them.  Only make mention of the ones to be used in Keras during practical examples in the next section.
 
 \section{Types of Neural Networks} %-------------SECTION
-The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses.
-
-Write this up in R following along the code from \textbf{RAI}, with supplementary information from other sources as well.  
+The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses. 
 
 Obviously not all types will be covered, but here are a few.  
-
-Include \textbf{mathematical notation} for each network mentioned.
 
 %\subsection{Multi-Layer Perceptron}
 %Keras Model: "sequential"
@@ -79,7 +75,20 @@ values of kernel and input tensors are zero except for the finite set in which v
 
 \subsubsection{Bird Call Spectrogram example from R}
 
+\textit{(Make brief, include Keras code, stay on track that is is simply an illustration for CNN's)}
+
 Labeled data on recorded bird calls converted into spectrograms of 251x251 pixels.
+
+\begin{figure}[H]
+\centering
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Cardellina475957.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Geothlypis13687.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Seiurus13640.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Setophaga160916.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Spinus192078.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Spizelloides45125.png}
+    \includegraphics[width = .13\textwidth]{Figures/spectrogramsamps/Zonotrichia139053.png}
+\end{figure}
 
 Train the network to be able to identify that bird call based on spectrogram shape.
 
@@ -100,15 +109,18 @@ $$
 
 %---POTENTIALLY - make a pathway to the .tex file from RMarkdown ---\subfile{CNN_BCS} 
 
-Other uses
 
 \subsection{Generative Adversarial Networks}
 Unstructured image data
+
+(Notation, but no example)
 
 Image generation to try and fool a "discriminator" network
 
 \subsection{Recurrent Neural Networks}
 Unstructured text data
+
+(Notation, MAYBE time series example)
 
 NLP/translation/text generation
 Time series forecasting
@@ -116,24 +128,14 @@ Time series forecasting
 \subsection{Long Short-Term Memory Network}
 Unstructured text data
 
+(Notation, no example)
+
 \subsection{Convolutional Recurrent Networks}
 Unstructured text data
 
+(consider removing)
+
 \section{Techniques to Improve Model Performance} %-------------SECTION
 
-The primary objective in machine learning (and therefore deep learning) is to perform well on new, unseen data. 
-
-- \textbf{Overfitting} and \textbf{underfitting}
-
-\subsection{Rating Model Performance}
-- \textbf{Generalization}
-- \textbf{Training error}  
-- \textbf{Generalization error} (test error)
-
-\subsection{Addressing Model Performance}
-- \textbf{Capacity}
-- \textbf{Regularization}
-
-\subsection{Common Problems and Relevant Techniques}
-
-Earthquake example
+%---Pathway to performance file---
+\subfile{Performance}

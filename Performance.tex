@@ -1,0 +1,39 @@
+The primary objective in machine learning (and therefore deep learning) is to perform well on new, unseen data.  The central challenge is finding the ideal balance between \textbf{overfitting} and \textbf{underfitting}.
+
+\subsection{Rating Model Performance} start with \cite{Goodfellow-et-al-2016} (ch 5)
+
+- \textbf{Training error}  
+
+Training error is reduced during optimization (minimizing cost function).
+
+- \textbf{Test error} (Generalization error)
+
+Expected value of the error on a new input, estimated by measuring performance on a test set \cite{Goodfellow-et-al-2016}.  When the model cannot obtain a sufficiently low error value in testing, it is \textbf{underfit}.
+
+When the gap between the training error and test error is too great (training error much too small), the model is \textbf{overfit}.
+
+- \textbf{Generalization}
+
+
+
+
+\subsection{Addressing Model Performance}
+
+- \textbf{Capacity} 
+
+Including polynomials in a linear regression model increases the model's capacity, allowing it to fit the shape of the points it serves.  In neural networks...
+
+- \textbf{Regularization} start with \cite{Goodfellow-et-al-2016} (ch 7) and \cite{nusrat2018comparison}
+
+\begin{itemize}
+    \item
+Early Stopping
+    \item
+Dropout
+    \item
+Weight decay
+\end{itemize}
+
+\subsection{Common Problems and Relevant Techniques}
+
+Earthquake example
