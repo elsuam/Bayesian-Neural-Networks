@@ -2,26 +2,30 @@ The primary objective in machine learning (and therefore deep learning) is to pe
 
 \subsection{Rating Model Performance} start with \cite{Goodfellow-et-al-2016} (ch 5)
 
-- \textbf{Training error}  
+During the build process, a model is faced with a training set and measured against a test set.  With the training set, the model engages its optimization techniques (gradient decent) in order to minimiza a cost function (i.e. least squares).  The measurement of error that is reduced during optimization is known as the \textit{training error}.  When performance of new predictions is measured against the test set, the expected value of the error between predictions and actual text data is the \textit{test error} (commonly referred to as the \textit{generalization error}). \cite{Goodfellow-et-al-2016}
 
-Training error is reduced during optimization (minimizing cost function).
+ When the model cannot obtain a sufficiently low test error, it is \textit{underfit}.  Often times, when a model is optimized toward a minimum training error, test error passes through a minimum rather than decreasing monotonically. \cite{mackay1992bayesian}  When the gap between the training error and test error is too great, the model is \textit{overfit}.  Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions.  In linear regression, increasing the model's capacity would be to include polynomial terms or splines to shape the model beyond a straight line.  The same applies to neural networks as well.
 
-- \textbf{Test error} (Generalization error)
-
-Expected value of the error on a new input, estimated by measuring performance on a test set \cite{Goodfellow-et-al-2016}.  When the model cannot obtain a sufficiently low error value in testing, it is \textbf{underfit}.
-
-When the gap between the training error and test error is too great (training error much too small), the model is \textbf{overfit}.
+\textit{(Use ggplot to display a model that is underfit and one that is overfit)  Underneath, try and recreate the Goodfellow graph of training error and test error)}
+$$
+Side-By-Side_of_overfit_and_Underfit_Model
+$$
 
 - \textbf{Generalization}
 
+
+- \textbf{Capacity} 
+
+Including polynomials in a linear regression model increases the model's capacity, allowing it to fit the shape of the points it serves.  In neural networks...
 
 
 
 \subsection{Addressing Model Performance}
 
-- \textbf{Capacity} 
+Mention of cross-validation s a means of comparing networks trained with different parameter values \cite{mackay1992practical}
 
-Including polynomials in a linear regression model increases the model's capacity, allowing it to fit the shape of the points it serves.  In neural networks...
+In this section, use the same equations as I had highlighted to demonstrate regularization and hint towared Bayes
+
 
 - \textbf{Regularization} start with \cite{Goodfellow-et-al-2016} (ch 7) and \cite{nusrat2018comparison}
 
@@ -34,6 +38,16 @@ Dropout
 Weight decay
 \end{itemize}
 
-\subsection{Common Problems and Relevant Techniques}
+\textit{Early stopping} is when the optimization algorithm is halted before the test error increases too much.  It is hoped that the algorithm stops at an optimal model capacity.
+
+\subsection{Reconfiguring the Model}
+
+Stochastic Neural Networks, in which the output is a random function of the input \cite{arxiv_stochast}
 
 Earthquake example
+
+
+\subsection{Quantification of Uncertainty}
+ Start with:
+\cite{8371683}
+\cite{arxiv.1505.05424}
