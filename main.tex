@@ -10,6 +10,7 @@
 \usepackage{float}
 \usepackage{floatflt}
 \usepackage{amsmath}
+\usepackage{adjustbox}
 
 
 %--Everything between here and the below cutoff is to maintain R-Code formatting--%
@@ -170,14 +171,14 @@ By  \\
 \end{spacing}
 
 
-\chapter*{Dedication}
-(optional)
+%\chapter*{Dedication}
+%(optional)
 
-	The dedication page is an optional page where you can dedicate the master’s thesis/doctoral culminating project at your discretion.  
+%	The dedication page is an optional page where you can dedicate the master’s thesis/doctoral culminating project at your discretion.  
 
 
-\chapter*{Acknowledgements}
-The acknowledgment page is an opportunity to recognize those who supported you in various capacities throughout the master’s thesis/doctoral culminating project. The chair, committee members, family members, friends, colleagues, and/or anyone you wish to recognize are often mentioned here. 
+%\chapter*{Acknowledgements}
+%The acknowledgment page is an opportunity to recognize those who supported you in various capacities throughout the master’s thesis/doctoral culminating project. The chair, committee members, family members, friends, colleagues, and/or anyone you wish to recognize are often mentioned here. 
 
 \chapter*{Abstract}
 Inspired by the mechanics of brain functionality, artificial neural networks (ANN’s) are powerful statistical models that capture complex trends in data.  These models incorporate a series of algorithms that compete with error functions to adjust their parameters based on some training data.  Because of their immense complexity, with hidden layers operating like a black box, traditional neural networks require a lot of training data in order to produce viable results.  It’s not uncommon for a neural net to have several thousand or millions of parameters, each a tiny knob that needs to be fine-tuned precisely.  This makes ANN’s so flexible during training that they can become overfit to the data that trained them and thus less practical in application.  In addition, their architecture puts a lot of trust in the algorithms that comprise them and makes it difficult to measure uncertainty in their predictions.  While regularization techniques such as dropout and weight decay address these issues, constructing a network from a Bayesian approach offers another solution, particularly in short supply of data.  Bayesian neural networks, which use the entire posterior distribution rather than a single parameter estimate, are models with a means of describing this uncertainty with more transparency.  A parameter of a BNN has a measure of belief in its value through a posterior distribution, which allows for the same input to yield slightly varying results based on the likelihood of the output.  The result is a powerful and adaptive model, with a built-in means of describing its accuracy and the capacity to learn from a small amount of data.

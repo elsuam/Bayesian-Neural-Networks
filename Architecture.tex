@@ -20,14 +20,6 @@ The Multi-Layer Perceptron (add these into this subsection)
 
 \begin{itemize}
 \tightlist
-\item
-  Actually composed of sigmoid neurons
-
-\item
-Image data can get extremely large
-
-\item
-  Other data: each observation is an input value -also can get extremely large
   
 \item
   One hidden layer is sufficient to make accurate predictions from
@@ -36,12 +28,14 @@ Image data can get extremely large
   at generalizing test data, but are harder to optimize
   \cite{Goodfellow-et-al-2016} \emph{(Re-address this claim down the
   road)}
+\item 
+    Hint toward issues like overfitting, but elaborate more later
 \end{itemize}
 
 \hypertarget{foundations}{%
 \subsection{Foundations}\label{foundations}}
 
-\textbf{The Perceptron}
+\textbf{The Perceptron} \textit{(bullet points to be converted into paragraph form)}
 
 \begin{itemize}
 \tightlist
@@ -146,14 +140,16 @@ P(X) = \frac{e^\delta}{1+e^\delta} = \frac{1}{1+e^{-\delta}}
 $$
 In which $P(X) \in [0,1]$.  For logistic regression, or for a single-layer neural network using the sigmoid activation function, the calculation would end here and the resulting interpretation from the binary classification model a probability that the input is from category 1.  In deeper neural networks, the value of $P(X)$, which is one of many, gets passed on to the next layer to join its cohorts for the next calculation.
 
-The potential for neural networks expands well beyond linearity or the curvature matched by polynomial terms or splines.  Neural nets are universal function approximators, which means that they have the capacity to learn and compute any function. \cite{sharma2017activation} This is due to non-linear activation functions, for without them, transformations between successive layers will be linear, and the entire composition itself then linear, too. \cite{bishop1995}  While there is no one-size-fits all, certain activation functions have desirable properties that help give insight into the questions that neural networks answer.
+The potential for neural networks expands well beyond linearity or the curvature matched by polynomial terms or splines.  Neural nets are universal function approximators, which means that they have the capacity to learn and compute any function. \cite{sharma2017activation} This is due to non-linear activation functions, for without them, transformations between successive layers would be linear, and the entire composition itself then linear, too. \cite{bishop1995}  While there is no one-size-fits all, certain activation functions have desirable properties that help give insight into the questions that neural networks answer.
 
 %---------ACTIVATION FUNCTIONS---------
 
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
 
-(Write about other activation functions and discuss their differences.)
+A common theme of this thesis and neural network research in general is their immense complexity.  No feature of a neural network can be expressed in exhaustive detail in one paper, and activation functions are no exception.  Many activation functions exist, with several variations of the original, each selected to improve the performance for a specific task.  The sigmoid activation function is the most widely used because it is easily differentiable and overcomes the primary drawback of the step function.  Hyperbolic tangent (Tanh) is another function very similar to sigmoid, yet it is steeper and symmetric about the origin with range (-1,1).  This is preferable in cases where gradients are not restricted to vary in a specific direction.  To mathematically compare it to sigmoid, it can be defined as $f(x) = 2 \cdot sigmoid(2x) - 1$.
+
+
 
 \begin{figure}[H]
     \includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-1.pdf}
@@ -162,38 +158,50 @@ The potential for neural networks expands well beyond linearity or the curvature
  %   \caption{caption}
 \end{figure}
 
+Another common activation function is the \textit{rectified linear unit}, or ReLU.  It is defined mathematically as $f(x) = max(0,x)$.  This means that not all neurons will be activated at the same time, which makes ReLU a very useful tool to use in hidden layers to increase efficiency and speed up the learning process. \cite{Goodfellow-et-al-2016} \cite{sharma2017activation}. 
+ Variations of ReLU include \textit{leaky ReLU} or \textit{exponential ReLU}, which introduce a means of reducing negative inputs to a very small but still trainable size, rather than zeroing them out entirely.  Similarly, variations of sigmoid, Tanh, and many other activation functions exist and are tested in the interest of improving model efficacy \cite{banerjee2019empirical}.
+
+
 %------Cost Functions---------
 
 \hypertarget{cost-functions}{%
 \subsection{Cost Functions}\label{cost-functions}}
 
-(Add several common cost functions to the mix and describe their differences)
+Cost functions, also known as error or loss functions, are defined by taking the negative logarithm of the likelihood function.\cite{bishop2006pattern}  Because of the complexity of neural networks, they have many variations to match specific tasks, and as such many different cost functions can be applied.  To give a comprehensive review of cost functions extends beyond the scope of this thesis.  Instead, some recognizable cost functions that are seen in other models will be described.
 
-(cost functions for regression tasks, cost functions for classification tasks)
-
-\textbf{Mean Squared Error} loss function (regression)
+For \textbf{regression} tasks, the \textit{Mean Squared Error} loss function is commonly used.
 
 \[
-C = \frac{1}{N} \sum_{i=1}^N (a^{(L)}_i - y_i)
-\] Where \(a^{(L)}_i\) is the outcome of a single iteration of forward
+MSE = \frac{1}{N} \sum_{i=1}^N (\hat{y_i} - y_i)
+\] Where $\hat{y_i} =$ \(a^{(L)}_i\) is the outcome of a single iteration of forward
 propagation and \(y_i\) is the true observation to compare it to.
 
-\textbf{Binary Cross-Entropy} function (classification)
+For \textbf{classification} tasks, variations of the \textit{log-loss} function are applied depending on the task.  Binary classification problems typically use the sigmoid activation function, resulting in the following loss function:
+
+%commenting out general cross-entropy
+%$$
+%CE = - \sum_{i=1}^N y_i log (\hat{y_i})
+%$$
 
 $$
-- \frac{1}{N} \sum_{i=1}^N y_i log (a^{(L)}) + (1-y_i) log(1-a^{(L)})
+BCE = - \frac{1}{N} \sum_{i=1}^N y_i log (\hat{y_i}) + (1-y_i) log(1-\hat{y_i})
 $$
 
-aka log-loss
+The equation above is often called the \textit{binary cross-entropy} or more simply the \textit{cross-entropy} loss function in literature, but the latter can be misleading.  \textit{Any} loss measured with a negative log likelihood is a cross-entropy between the distributions defined by the training set and that of the model. \cite{Goodfellow-et-al-2016}
 
-\textbf{Categorical Cross-Entropy} (or Sparse Categorical Cross-Entropy, depending on what is used in the next section)
+for \textbf{multi-class classification} models, the generalized general form of sigmoid known as \textit{softmax} is used as the activation function \cite{bishop2006pattern}.  
 
 $$
-Equation here
+P(X) = \frac{e^{\delta_i}}{\sum_j{e^{\delta_j} }}
 $$
 
-output labels are one-hot encoded  (
-[1,0,0] , [0,1,0] , [0,0,1] )
+By the same techniques, the log-loss function generalizes to the following form:
+$$
+MCE = -\sum_{i=1}^N \sum_{j=1}^M y_{ij} log (\hat{y}_{ij})
+$$
+
+All of these are cross-entropy error functions that neural networks use to optimize their parameters by gradient descent.
+
 
 %---------Gradient Descent---------
 
@@ -252,7 +260,7 @@ $
 \hypertarget{backpropagation}{%
 \subsection{Backpropagation}\label{backpropagation}}
 
-\textbf{Backpropagation} is the algorithm that drives gradient descent and computes the gradient for high-dimensional derivatives. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
+Backpropagation is the algorithm that drives gradient descent and computes the gradient for high-dimensional derivatives. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
 
 \[
 \nabla{C} =
@@ -368,4 +376,4 @@ represented by:
 
 The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, t
 
-Also mention of the step size
+\textit{(Also mention of the step size)}

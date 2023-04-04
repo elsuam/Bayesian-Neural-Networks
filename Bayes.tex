@@ -2,10 +2,34 @@
 
 Brief description, background, difference (NOT opposition) from frequentist statistics.
 
+The frequentist approach describes probability as the relative frequency of a favorable outcome as the number of samples increases to infinity.  In Bayes, probability is the number of favorable outcomes divided by the total number of possible outcomes \cite{gelmanbayesian3}
+$$
+P = \frac{N_{\text{favorable outcomes}}}{N_{\text{total possible outcomes}}}
+$$
+
+\textit{(add these into the intro paragraph)}
+\begin{itemize}
+\tightlist
+\item
+Pros: usable information with little data
+\item
+cons: computationally intensive or impossible
+\end{itemize}
+
 
 \section{Bayesian Inference} %-------------SECTION
 
-Bayes Theorem; idea of parameters having distributions rather than being fixed, unknown values; simple example (i.e. coin toss, proportion given data, etc.) 
+\textit{(theoretical representations)}
+
+A few things change when operating with the Bayesian framework.  For one, the goal is not to construct a model to estimate parameters as fixed values.  Rather, parameters are treated as random variables themselves, with the same properties as any other random variable - each could have a mean, a variance, minimum maximum, etc., and the distribution of that parameter reveals that information.
+
+Exact Bayesian inference
+
+$$
+p(w|D) = \frac{p(D|w)p(w)}{p(D)} = \frac{p(D|w)p(w)}{\int_{w'} p(D|w')p(w')dw'}
+$$
+
+
 
 
 \subsection{From Prior to Posterior}
@@ -13,17 +37,88 @@ Bayes Theorem; idea of parameters having distributions rather than being fixed, 
 Selection of priors, perhaps advise on broad priors that tell little information.
 
 Hand calculation of a Gaussian prior to compute a posterior to be used in a later section
-
-
-Leads into the normalizing constant integral, toward MCMC
-
 %prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
 
-\subsection{Markov chain Monte Carlo}
+\textit{Address computational issues like the normalizing constant, to be discussed further in the next section.}
+
+
+\subsection{Bayesian Updating}
+
+Bayesian updating, in which the posterior is the new prior
+
+$$
+pretty ggplot display here
+$$
+
+\section{Practical Computing}
+
+ As mentioned, the premier disadvantage of Bayesian inference is that is requires computationally intractable integrations.  In response, a world of practical approximation techniques exists, some of which will be discussed in this section.  These approximaton techniques can be shown to still have pristine results while dodging tricky or impossible integrals \cite{tipping2004bayesian}.
+
+ mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages)
+
+
+\subsection{Markov Chain Methods}
 Used to address the problem of highly complex integral
+\textit{(To be expanded into multiple subsections)}
+
+Start with:
+\cite{mcelreath2016statistical} \cite{gelmanbayesian3}
+\begin{itemize}
+\tightlist
+\item Overview
+\item Metropolis Algorithm
+\item Gibbs Sampling \cite{geman1984stochastic}
+\item Metropolis/M-H Algorithms
+\item MCMC
+\item Computationally efficient versions
+\item and more...
+\end{itemize}
+
+\textit{(Relevant examples in STAN whenever appropriate)}
+
+
+\section{Bayesian Machine Learning} %-------------SECTION
+
+\textit{(More practical representations)}
+
+This section focuses on more applicable approaches to Bayesian inference for machine learning tasks, with the formulation for exact inference and the approximation techniques learned in the last section to get as close to them as possible.
+
+\subsection{Marginalization}
+
+Introduce marginalization to integrate unwanted parameters.
+
+Construct notation by following along from 
+\cite{tipping2004bayesian} and page 165 of \cite{bishop2006pattern}
+
+Integrate out unwanted parameters for the \textit{predictive distribution} of a new data $t_*$:
+$$
+p(t_*|t,\alpha,\sigma^2) = \int p(t_*|,w,\sigma^2) p(w|t,\alpha,\sigma^2) dw
+$$
+
+Where  $p(w|t,\alpha,\sigma^2)$ is the posterior distribution and $p(t_*|,w,\sigma^2)$ is the likelihood of the new data.
+
+
+In the absence of many data points, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
+
+\textbf{Simulating the Predictive Distribution}
+$$
+Insert Simulationhere
+$$
+
+
+Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not related to the task at hand. \cite{bishop2006pattern}.
+
+Full posterior:
+$$
+p(w,\alpha,\sigma^2|t) = \frac{p(t|w,\sigma^2) p(w|\alpha)p(\alpha)p(\sigma^2)}{\iiint p(t|w,\sigma^2)p(w|\alpha)p(\alpha)p(\sigma^2) \text{ } dw \text{ } d\alpha \text{ } d\sigma^2}
+$$
+\textit{(Introduce alpha and beta and what they mean)}
+
 
 
 \subsection{Modeling Uncertainty}
+
+Bayes comes complete with uncertainty measures already configured by the posterior distribution.  This is a standard feature, straight out of the box, no assembly required.
 
 Types of uncertainty: aleatoric and epistemic
 
@@ -31,28 +126,8 @@ Model $p(y|\theta)$ is a function of y that descrives the aleatoric uncertainty 
 Likelihood $p(y|\theta)$ is a function of $\theta$ that helps infer epistemic uncertainty given observed data $y$.
 
 
-
-\subsection{Bayesian Updating}
-
-Bayesian updating, in which the posterior is the new prior
-
-
-\section{Bayesian Machine Learning} %-------------SECTION
-
-Theory and notation, with examples in R
-
 \subsection{Linear Regression}
-Maybe make this the only example to give more time to BNN
+
+Application of all of the above as a means of transitioning into the next chapter
 
 %perhaps Bayesian Linear Regression can tie into as being a special case of BNN's, like the simple case of ANN's was Linear Regression
-
-
-
-
-
-
-
-
-%\subsection{}
-
-%\section{Practical Applications} %-------------SECTION
