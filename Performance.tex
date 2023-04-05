@@ -7,6 +7,50 @@ During the build process, a model is faced with a training set and measured agai
  When the model cannot obtain a sufficiently low test error, it is \textit{underfit}.  Often times, when a model is optimized toward a minimum training error, test error passes through a minimum rather than decreasing monotonically. \cite{mackay1992bayesian}  When the gap between the training error and test error is too great, the model is \textit{overfit}.  Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions.  In linear regression, increasing the model's capacity would be to include polynomial terms or splines to shape the model beyond a straight line.  The same applies to neural networks as well.
 
 \textit{(Use ggplot to display a model that is underfit and one that is overfit)  Underneath, try and recreate the Goodfellow graph of training error and test error)}
+
+%---begin R code for ggplot display of over- and underfit---
+%--If this code is modified in R, push it to GotHub to Overeaf and re-copy and paste
+\hypertarget{overfit-and-underfit}{%
+\subsubsection{Overfit and Underfit}\label{overfit-and-underfit}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Generate some noisy data}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{3}\NormalTok{)}
+\NormalTok{a }\OtherTok{\textless{}{-}} \FunctionTok{runif}\NormalTok{(}\DecValTok{12}\NormalTok{, }\AttributeTok{min=}\DecValTok{0}\NormalTok{, }\AttributeTok{max=}\DecValTok{90}\NormalTok{)}
+\NormalTok{c }\OtherTok{\textless{}{-}} \DecValTok{24}\SpecialCharTok{*}\FunctionTok{sin}\NormalTok{(.}\DecValTok{05}\SpecialCharTok{*}\NormalTok{a) }\SpecialCharTok{+} \FunctionTok{rnorm}\NormalTok{(}\FunctionTok{length}\NormalTok{(a),}\DecValTok{0}\NormalTok{,}\DecValTok{5}\NormalTok{) }\SpecialCharTok{+} \DecValTok{40}
+
+\CommentTok{\#create data frame and base plot}
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(a,c)}
+\NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ a, }\AttributeTok{y =}\NormalTok{ c)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{3}\NormalTok{, }\AttributeTok{color =} \StringTok{"purple"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{ylim}\NormalTok{(}\DecValTok{30}\NormalTok{,}\DecValTok{80}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme\_minimal}\NormalTok{()}
+
+
+\CommentTok{\# underfit model}
+
+\NormalTok{model }\SpecialCharTok{+}
+    \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =}\NormalTok{ lm,}
+              \AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(x,}\DecValTok{1}\NormalTok{),}
+              \AttributeTok{fullrange =}\NormalTok{ T,}
+              \AttributeTok{color =} \StringTok{"turquoise"}\NormalTok{,}
+              \AttributeTok{se =}\NormalTok{ F)}
+
+\CommentTok{\# overfit model}
+
+\NormalTok{pol }\OtherTok{\textless{}{-}} \DecValTok{9} \CommentTok{\# polynomial order}
+\NormalTok{model }\SpecialCharTok{+} 
+    \FunctionTok{stat\_smooth}\NormalTok{(}\AttributeTok{method =}\NormalTok{ lm,}
+              \AttributeTok{formula =}\NormalTok{ y }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(x,pol),}
+              \AttributeTok{fullrange =}\NormalTok{ T,}
+              \AttributeTok{color =} \StringTok{"turquoise"}\NormalTok{,}
+              \AttributeTok{se =}\NormalTok{ F)}
+\end{Highlighting}
+\end{Shaded}
+
+%-----end R code snippet--------------------
+
 $$
 Side-By-Side_of_overfit_and_Underfit_Model
 $$
