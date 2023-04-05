@@ -155,11 +155,62 @@ ggplot(pd, aes(x = polynomials, y = MSE)) +
 
 # Bayes
 
+
 ## Bayesian Updating
 
 For each possible explaination of the sample, count all the ways in which the sample could happen. Explanations with more ways to produce the sample are more plausible.
 
 ```{r}
+#prob <- runif(1,0,1) #single observation from a uniform distribution to be the probability we want to find
+prob <- .6
+samplesize <- 8
+df <- NULL
+
+for (i in 1:samplesize){
+  good <- 0:100 #Denotes a good observation
+  bad <- 100:0  #Denotes a bad observation
+  #  if(i %% 10==0){                    #for every 10th sample (when activated and sample size is increased)
+    sample <- rbinom(i,1, prob)         #random draw of 0 or 1 i times
+    y <- good^(sum(sample==1))*bad^(sum(sample==0)) #observations of 'good' and 'bad' exponentiated respective to                                                       binomial draws (1 for good, 0 for bad)
+    dat <- data.frame(x=0:100, y=y/max(y), col=rep(i:i, each=101)) #normalize y and place values into a data frame
+    df <- rbind(df,dat)                             #repeat for each value of i into same data frame
+  #  }
+}
+
+ # plot data
+ggplot(df,aes(x=x,y=y,group=col,colour=factor(col), alpha = col )) +
+  geom_line(size = 1.5)
+
+ # plot most recent posterior only
+ggplot(df[which(df$col == samplesize),], aes(x=x,y=y,group=col,colour=factor(col) )) + 
+  geom_line(size = 1.5)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- old Bayesian Updating code that uses base R plot function
+```{r eval=FALSE, include=FALSE}
 #ways/sum(ways)
 
 prob <- runif(1,0,1) #single observation from a uniform distribution to be the probability we want to find
@@ -192,23 +243,7 @@ plot(likelihood)
 
 plot(posterior)    #plots the posterior distribution
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-->
 
 
 
