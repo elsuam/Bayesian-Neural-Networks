@@ -1,0 +1,225 @@
+---
+title: "Thesis Figures and Code Snippets"
+subtitle: "STA 610"
+author: "Samuel Richards"
+output:
+  pdf_document:
+    keep_tex: TRUE
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_folding: hide
+    number_sections: no
+---
+
+<!--Use this file for a separate project; modify it for Thesis when it is in Overleaf -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = 'Figures/')
+library(tidyverse)
+library(gridExtra)
+```
+
+# Artificial Neural Networks
+
+## Step Function
+```{r step-function, echo=FALSE}
+step <- function(x){
+  ifelse (x <= 0,0,1) 
+}
+
+f <- seq(-8,8, length=1000)
+
+plot(f,step(f), type = 's', lwd = 8, main="Step Function", xlab = " ", ylab = " ", ylim = c(0,1), col = "turquoise", frame.plot = T)
+```
+
+
+## Sigmid Function
+```{r sigmoid-function, echo=FALSE}
+sigmoid <- function(x){
+  return(1 / (1 + exp(-x)))
+}
+
+f <- seq(-8,8, length=1000)
+
+plot(f,sigmoid(f), main="Sigmoid Function", xlab = " ", ylab = " ", ylim = c(0,1), col = "turquoise", frame.plot = T)
+```
+
+
+## Other Activation Functions
+```{r other-activation-functions, echo=FALSE}
+relu <- function(x){
+  ifelse (x<0,0,x) 
+}
+
+f <- seq(-8,8, length=1000)
+
+plot(f,tanh(f), main="Hyperbolic Tangent", xlab = " ", ylab = " ", col = "turquoise")
+plot(f,relu(f), main="ReLU", xlab = " ", ylab = " ", col = "turquoise")
+```
+
+
+
+## Gradient Descent
+
+### 2-D example
+```{r grad_desc_2D, echo=FALSE}
+f <- seq(-8,8, length=1000)
+
+plot(f,2*f^3+10*f^2, main=" ", xlab = " ", ylab = " ", col = "darkred")
+```
+
+### 3-D example
+```{r grad_desc, eval=FALSE, include=FALSE}
+#Only use the final output from the 2D animation and the 3D output of the relevant function
+# turned off so not to overflow figures folder
+
+library(animation) 
+
+ani.options(interval = 0.8, nmax = 50)
+f1 = function(x, y) 1/2*x^2 + 4*sin(y)
+
+xx = grad.desc(f1, pi * c(-2, -2, 2, 2), c(-2 * pi, 2))
+
+xx$persp(col = "lightblue", theta = 30, phi = 30)
+```
+
+
+## Regularization
+
+### Overfit and Underfit
+
+```{r}
+#Generate some noisy data
+set.seed(3)
+a <- runif(12, min=0, max=90)
+c <- 24*sin(.05*a) + rnorm(length(a),0,5) + 40
+
+#create data frame and base plot
+df <- data.frame(a,c)
+model <- ggplot(df, aes(x = a, y = c)) +
+        geom_point(size = 3, color = "purple") +
+        ylim(30,80) +
+        theme_minimal()
+
+
+# underfit model
+
+model +
+    stat_smooth(method = lm,
+              formula = y ~ poly(x,1),
+              fullrange = T,
+              color = "turquoise",
+              se = F)
+
+# overfit model
+
+pol <- 9 # polynomial order
+model + 
+    stat_smooth(method = lm,
+              formula = y ~ poly(x,pol),
+              fullrange = T,
+              color = "turquoise",
+              se = F)
+
+
+```
+
+
+<!---
+foiled attempt at replicating the graph from Goodfellow
+```{r eval=FALSE, include=FALSE}
+
+polynomials <- 1:11
+
+MSE <- NULL
+testerr <- NULL
+for (i in polynomials) {
+    mod_training <- lm(c ~ poly(a, degree = i), data = df)
+    predictions <- predict(mod_training, data = df)
+    MSE[i] <- mean((df$c - predictions)^2)
+    testerr[i] <- abs(predictions - c[i])
+}
+
+pd <- data.frame(polynomials, MSE, testerr)
+
+ggplot(pd, aes(x = polynomials, y = MSE)) +
+    geom_line() +
+    geom_line(y = testerr) +
+    scale_x_continuous(breaks = polynomials) +
+    theme_bw()
+```
+-->
+
+
+
+# Bayes
+
+## Bayesian Updating
+
+For each possible explaination of the sample, count all the ways in which the sample could happen. Explanations with more ways to produce the sample are more plausible.
+
+```{r}
+#ways/sum(ways)
+
+prob <- runif(1,0,1) #single observation from a uniform distribution to be the probability we want to find
+
+
+sample <- rbinom(100,1, prob)
+#plot(sample)
+
+W <- sum(sample=="1")
+L <- sum(sample=="0")
+#p <- seq(0,1,length = 100)
+
+
+p_grid <- seq(from=0, to=1, length.out = 100)  #100 values for proportion (p) between 0 and 1
+
+#prior distribution 
+prior <- dbeta(p_grid, 10,10) #(interval of previous assumptions/explanations (p) and the probability for each value)
+
+#(note that you do not need data for a prior distribution - the data washes out the "falsities" of the prior)
+
+likelihood <- dbinom(sum(W), size=100, prob=p_grid) #Relative number of ways we can see W out of (W+L) from the Binomial Sampling Formula for all of the respective proportions outlined in p_grid
+
+posterior <- likelihood * prior #sets up and normalizes the posterior distribution
+posterior <- posterior / sum(posterior)
+
+
+plot(prior)
+
+plot(likelihood)
+
+plot(posterior)    #plots the posterior distribution
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
