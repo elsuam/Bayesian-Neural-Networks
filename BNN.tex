@@ -23,16 +23,32 @@ Equation (5) in Jospin
 $$
 
 
+\section{Model Performance Metrics}
+
+Comparison how assessing and improving the performance of a BNN compares to that of ANN's.
+
+
+
+
+
+
 \subsection{Description of Uncertainty}
 
 BNN uncertainty \cite{Jospin}
+
+Bayes comes complete with uncertainty measures already configured by the posterior distribution.  This is a standard feature, straight out of the box, no assembly required.
+
+
+Model $p(y|\theta)$ is a function of y that describes the aleatoric uncertainty given fixed $\theta$ (random variation).
+Likelihood $p(y|\theta)$ is a function of $\theta$ that helps infer epistemic uncertainty given observed data $y$ (the model's uncertainty in its outcome, as seen earlier).
+
 
 For regression and classification, average predictions of a BNN to generate result
 $$
 Equation (6) / (8) hybrid
 $$
 
-When performign regression, uncertainty is computed by the covariance matrix:
+When performing regression, uncertainty is computed by the covariance matrix:
 $$
 Equation (7) here
 $$
@@ -42,9 +58,9 @@ $$
 Equation (8) and (9) here
 $$
 
+\section{Fitting a BNN}
 
-\section{Regularization Techniques}
+Final run at the Tohoku Earthquake example that fits an \textit{ACTUAL} BNN with plenty of performance metrics displayed.
 
-Comparison how assessing and improving the performance of a BNN compares to that of ANN's.
 
-Somewhere, either here or 
+Each Subsection will be the main steps as shown in my R code.
