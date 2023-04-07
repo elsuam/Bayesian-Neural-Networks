@@ -87,7 +87,7 @@ Start with:
 
 \textit{(More practical representations)}
 
-This section focuses on more applicable approaches to Bayesian inference for machine learning tasks, with the formulation for exact inference and the approximation techniques learned in the last section to get as close to them as possible.
+This section focuses on more tools in the Bayesian framework
 
 \subsection{Marginalization}
 
@@ -154,41 +154,41 @@ $$
 
 This section will apply a Bayesian Approach to setting $\alpha$ and $\beta$ parameters, as told by (Mackay, 1992) \cite{mackay1992practical} and (Forsee and Hagan, 1997). \cite{foresee1997gauss}
 
-The weights of the network as random variables. By Bayes' rule:\footnote{
-\textcolor{darkgray}{
-Note that (Mackay, 1992) defines a term $R$ as the chosen or "prior" regularizer, which represents the potential for selecting alternative control parameters for for $E_W$.  If included, Bayes' rule would then be represented  as:
-$$
-P(w|D,\alpha,\beta,A,R) = \frac{P(D|w,\beta,A,R) P(w|\alpha,A,R)}{P(D|\alpha,\beta,A,R)}
-$$
- and subsequent formulation would be modified to represent $R$. However, this example only considers the sums of squares regularizer from chapter 1 and so the extended notation has been be omitted for this thesis.
- }}
+The weights of the network as random variables. By Bayes' rule:
  
 $$
 P(w|D,\alpha,\beta,A) = \frac{P(D|w,\beta,A) P(w|\alpha,A)}{P(D|\alpha,\beta,A)}
 $$
 
-where $D$ is the observed data, and $A$ is the network architecture. Under the assumption that the model residuals follow a normal distribution...yadayada...
-Likelihood: (assumes gaussian noise i.e. normality of residuals)
+where $D$ is the observed data, and $A$ is the network architecture.\footnote{
+\textcolor{darkgray}{
+Note that (Mackay, 1992) defines a term $R$ as the chosen or "prior" regularizer, which represents the potential for selecting alternative control parameters for for $E_W$.  If included, Bayes' rule would then be represented  as:
+$$
+P(w|D,\alpha,\beta,A,R) = \frac{P(D|w,\beta,A,R) P(w|\alpha,A,R)}{P(D|\alpha,\beta,A,R)}
+$$
+ and subsequent formulation would be modified to represent $R$. However, this example only considers the sums of squares regularizer $E_W$ from chapter 1 and so the extended notation has been be omitted for this thesis.
+ }}
+Taking into assumption that the model residuals follow a normal distribution, the likelihood function \cite{foresee1997gauss}, representing the probability of the data given weights $w$, is
 $$
 P(D|w,\beta,A) = \frac{1}{Z_D(\beta)} e^{-\beta E_D}
 $$
-Prior: (gaussian prior)
+and by establishing the prior distribution as normal, its density is represented as:
 $$
 P(w|\alpha,A) = \frac{1}{Z_W(\alpha)} e^{-\alpha E_W}
 $$
-where
+for which
 $$
-Z_D(\beta) = \frac{\pi}{\beta}^{1/2} \text{ and }
-Z_W(\alpha) = \frac{\pi}{\alpha}^{N/2}
+Z_D(\beta) = \left( \frac{\pi}{\beta} \right) ^{n/2} \text{ and }
+Z_W(\alpha) = \left( \frac{\pi}{\alpha} \right) ^{N/2}
 $$
 
-The posterior distribution can be represented as:
+Putting this all together, the posterior distribution can be represented as:
 $$
 P(w|D,\alpha,\beta,A) = \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{P(D|\alpha,\beta,A)} \\
-= \frac{1}{Z_F(\alpha,\beta)} e^{-F(w)}
+= \frac{e^{-(\beta E_D + \alpha E_W)}}{Z_F(\alpha,\beta)}
 $$
 
-Under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization in chapter 1 $F = \alpha E_w(w|A) + \beta E_D(D|w,A)$.
+Thus it can be noted by the formula above that under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization formula $F = \alpha E_w(w|A) + \beta E_D(D|w,A)$ as seen in chapter 1.  For later use, the normalizing constant in the denominator is $Z_F(\alpha,\beta) = \int d^k w e^{-(\alpha E_W + \beta E_D)}$.
 
 
 \textbf{Optimizing the Regularization Parameters}
@@ -210,12 +210,17 @@ $$
 \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{\frac{1}{Z_F(\alpha,\beta)} e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)} \cdot \frac{e^{-(\beta E_D + \alpha E_W)}}{e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)}
 $$
 
-CONTINUE HERE with (F and H equations (7) and (8)) 
+The denominator is comprised of known constants $Z_D(\beta)$ and $Z_W(\alpha)$.  What is left is to determine $Z_F(\alpha,\beta)$.  Having outlined the Bayesian techniques, this thesis will not cover this decomposition.  In practice, it requires estimation by Taylor series expansion and computation of the Hessian matrix of the full optimization formula $H = \beta \nabla^ E_D + \alpha \nabla^2 E_W$ to determine the number of effective parameters in the neural network that are reducing the error function.  This decomposition can be found in (Mackay, 1992) and (Forsee and Hagan, 1997).
 
+
+\begin{comment}
 Through \textbf{margialization}, the true posterior $P(w|D,A)$ is obtained by integrating out $\alpha$ and $\beta$:
 $$
 P(w|D,A) = \int P(w|D,\alpha,\beta,A) P(\alpha, \beta | D,A) \text{ } d\alpha \text{ } d\beta
 $$
+\end{comment}
 
+\subsubsection{Earthquakes Revisited}
 
-Returns to \textbf{earthquake example}
+Introduce the brnn package
+
