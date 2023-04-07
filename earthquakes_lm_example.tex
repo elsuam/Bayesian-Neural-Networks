@@ -1,35 +1,28 @@
 
 
-Data was queried using USGS Earthquake Catalog:
-\url{https://earthquake.usgs.gov/earthquakes/search/} to select all
-recorded earthquakes of magnitude 4.5 and above with the following query
-parameters:
+On match 11, 2011 a magnitude 9.1 earthquake struck Japan, the epicenter just 76km from the eastern coast of the Tohoku region.  This caused a tsunami that collapsed a nearby nuclear reactor resulting in the Fukushima Daiichi Nuclear Disaster, a meltdown that resulted in 19,500 total deaths.  The reactor was built to withstand earthquakes up to 8.6 in magnitude.
 
-\begin{itemize}
-\tightlist
-\item
-  latitude 35.4 - 41.2
-\item
-  longitude 137.5 - 145.2
-\item
-  Timeframe(UTC): 2011-03-11 00:00:00 - 1965-01-01 00:00:00
-\end{itemize}
+The following example illustrates a statistical model of annual earthquake frequencies of the greater Tohoku region.
+Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat)
+%(\url{https://earthquake.usgs.gov/earthquakes/search/})
+to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.\footnote{A more comprehensive analysis to supplement this thesis is available on GitHub at the following link: 
+\url{https://github.com/elsuam/Tohoku-Earthquakes}}
 
-The data was stored locally in a .csv file named \texttt{earthquakes}.
+\begin{comment}
+The data was stored locally in a .csv file named \texttt{earthquakes}.  The USGS also has an package called \texttt{rcomcat} to query
+data directly into \texttt{R}, but its version was not compatible at the time of this thesis.
+\end{comment}
 
-The organization also has an package called \texttt{rcomcat} to query
-data directly into \texttt{R}, but its version was not compatible at the
-time of this thesis.
-
-After pre-processing, the data was fit into a frequecy table of magnitudes rounded to one decimal place.  Frequencies were calibrated to display the frequency of magnitudes at or above each earthquake size:
+After pre-processing, the data was coerced into a table of magnitudes rounded to one decimal place and the following plots generated to display the annual frequency of magnitudes \textit{at or above} each size earthquake.  Figure \ref{tohoku_unfit} displays the data on both the standard and logarithmic scale.
 
 \begin{figure}[H]
-    \includegraphics[width=0.5\linewidth]{Figures/}
-    \vspace{-20pt}
-    \caption{\footnotesize{The regression model to the left has minimal capacity.  It underfits the data. The model to the right depicts an overfitting model.}}
-    \label{capacityviz}
+ %   \center
+    \includegraphics[width=0.5\linewidth]{Figures/tohoku_standardscale.png}
+    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale.png}
+   % \vspace{-10pt}
+    \caption{\footnotesize{Annual Tohoku earthquake frequencies of magnitude 4.5 and above near displayed on the standard scale (left) and the logarithmic scale(right).}}
+    \label{tohoku_unfit}
 \end{figure}
-
 
 
 \begin{comment}
@@ -39,6 +32,14 @@ After pre-processing, the data was fit into a frequecy table of magnitudes round
 
 After log transformation of the data, a linear model is fit using
 \texttt{R}.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit.png}
+   % \vspace{-10pt}
+    \caption{\footnotesize{The regression model to the left has minimal capacity.  It underfits the data. The model to the right depicts an overfitting model.}}
+    \label{capacityviz}
+\end{figure}
 
 \begin{Shaded}
 \begin{Highlighting}[]
