@@ -244,53 +244,8 @@ increases. It seems to be getting better\ldots{}
 ## [1,] 3212.887
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# \#predictions on test data}
-\CommentTok{\# pps \textless{}{-} predict(mlp, newdata = data.frame(mag = test$mag))}
-\CommentTok{\# }
-\CommentTok{\# \#MSE to get test error}
-\CommentTok{\# sum((pps {-} test$freqc)\^{}2)}
-
-
-\CommentTok{\# {-}{-}{-} code to generate plot of predicted over actual data {-}{-}{-}}
-
-\NormalTok{addt }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{8}\NormalTok{,}\FloatTok{9.1}\NormalTok{, }\AttributeTok{by =}\NormalTok{ .}\DecValTok{1}\NormalTok{) }\CommentTok{\#additional magnitude data points to add to prediction data}
-
-\CommentTok{\#{-}{-}{-}actual test data{-}{-}{-}}
-\NormalTok{earthquakes\_p }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{)] }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{type =} \StringTok{"actual"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{add\_row}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ addt, }\AttributeTok{freqc =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{type =} \StringTok{"actual"}\NormalTok{)}
-
-\CommentTok{\#{-}{-}{-}predicted data{-}{-}{-}}
-\NormalTok{magg }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{append}\NormalTok{(addt) }\CommentTok{\#append additional magnitudes to make predictions}
-\NormalTok{earthquakes\_p2 }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ magg,}
-                             \AttributeTok{freqc =} \FunctionTok{predict}\NormalTok{(mlp, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ magg)),}
-                             \AttributeTok{type =} \StringTok{"predicted"}\NormalTok{)}
-
-\CommentTok{\#{-}{-}{-}combine test and predictions for plot{-}{-}{-}}
-\NormalTok{plot }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(earthquakes\_p2,earthquakes\_p)}
-
-\FunctionTok{ggplot}\NormalTok{(plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mag, }\AttributeTok{y =}\NormalTok{ freqc, }\AttributeTok{group =}\NormalTok{ type, }\AttributeTok{color =}\NormalTok{ type)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{shape =} \DecValTok{17}\NormalTok{ ) }\SpecialCharTok{+}
-  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Magnitude"}\NormalTok{,}
-       \AttributeTok{y =} \StringTok{"Annual Frequency of At Least this Magnitude"}\NormalTok{,}
-       \AttributeTok{title =} \StringTok{"Annual Earthquake Frequency near Tohoku, Japan {-} Logarithmic Scale"}\NormalTok{,}
-       \AttributeTok{subtitle =} \StringTok{"Three{-}Layer Neural Network"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 12 rows containing missing values (`geom_line()`).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 12 rows containing missing values (`geom_point()`).
-\end{verbatim}
-
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-7-1.pdf}
+Using this neural network model, the expected frequency of a magnitude
+9.1 earthquake would be one every \texttt{1/10\^{}p} years.
 
 \hypertarget{testing-capacity-levels-and-mse-measurements}{%
 \subsection{testing capacity levels and MSE
