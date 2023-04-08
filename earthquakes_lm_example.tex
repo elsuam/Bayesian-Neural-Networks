@@ -30,15 +30,15 @@ After pre-processing, the data was coerced into a table of magnitudes rounded to
 \subsection{Linear models of the data}\label{linear-models-of-the-data}}
 \end{comment}
 
-After log transformation of the data, a linear model is fit using
+It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, a the model is fit using
 \texttt{R}.
 
 \begin{figure}[H]
     \center
     \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{The regression model to the left has minimal capacity.  It underfits the data. The model to the right depicts an overfitting model.}}
-    \label{capacityviz}
+    \caption{\footnotesize{The regression model of earthquake frequencies with minimal capacity.}}
+    \label{tohoku_lm}
 \end{figure}
 
 \begin{Shaded}
@@ -74,13 +74,23 @@ After log transformation of the data, a linear model is fit using
 \end{verbatim}
 
 
-For completeness, this model shows that on average, for every 1.0
-increase in magnitude, the lapsed time between earthquakes of \emph{at
-least} that magnitude is expected to increase by \(1/10^{-1.01971}\) =
-10.4642956 years.
+For completeness, this model shows that on average, for every 1.0 increase in magnitude, the lapsed time between earthquakes of \emph{at least} that magnitude is expected to increase by \(1/10^{-1.01971}\) = 10.4643 years.
 
 For a magnitude 9.1 earthquake, the expected frequency would be one
-every \(1/10^{6.38365-1.01971(9.1)}\) = \texttt{1/10\^{}p} years.
+every \(1/10^{(6.38365 - 1.01971 \cdot 9.1)}\) = 786.47 years.  This might be enough for Fukushima engineering officials to decide to design a nuclear reactor more resistant to higher magnitude earthquakes.  However, the graph contains a slight curvature that perhaps contains a better fit.  Below are two such options that display the capacity raised to second and third order polynomial.
+
+\begin{figure}[H]
+ %   \center
+    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit2.png}
+    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit3.png}
+   % \vspace{-10pt}
+    \caption{\footnotesize{The regression model fit to the data with the second order polynomial (left) and the third order polynomial (right).}}
+    \label{tohoku_lm23}
+\end{figure}
+
+By accounting for the curvature of the data, the predicted frequency of a data point outside of this interval changes dramatically.  A regression model inclusive of the second order polynomial predicts a magnitude 9.1 earthquake to occur every 5693.64 years; that with a third order polynomial to predict one every 24,721.19 years.
+
+The following code outputs a data frame of polynomial levels and the relative expected interval of time between earthquakes of magnitude 9.1 or above in the Tohoku area.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -108,3 +118,4 @@ every \(1/10^{6.38365-1.01971(9.1)}\) = \texttt{1/10\^{}p} years.
 ## 8        8  6.102735e-40
 \end{verbatim}
 
+As discussed in earlier sections, increasing the level at which the model fits the data comes with a very some meaningful caveat: it becomes less likely to extrapolate meaningful results.  By the fourth polynomial order, a magnitude 9.1 earthquake is expected only every 49,000 years.  By the fifth order, the predictions become useless and blatantly nonsensical.
