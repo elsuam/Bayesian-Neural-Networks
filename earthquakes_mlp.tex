@@ -1,7 +1,7 @@
-\hypertarget{mlp}{%
-\subsubection{mlp}\label{mlp}}
 
-Here is a conundrum. I'm using the \texttt{mlp} function to generate a
+\subsection{Multi-Layer Perceptron}
+
+Here is a conundrum. I'm using the \texttt{mlp} function from \texttt{neuralnets}package to generate a
 neural network to better fit the data. It's a beutiful fit actually, and
 quite surprising for little data (perhaps becasue it has low noise?).
 Still, I cannot seem to show that MSE \textbf{increases} as capacity
@@ -36,10 +36,20 @@ increases. It seems to be getting better\ldots{}
 \end{verbatim}
 
 Using this neural network model, the expected frequency of a magnitude
-9.1 earthquake would be one every \texttt{1/10\^{}p} years.
+9.1 earthquake would be one every 3,212.89 years.  That's less frequent than the base linear model from before, and more frequent than the second order polynomial model that accounted for the curvature of the data.  Still it may not be enough to convince the Fukushima engineering officials to build a stronger reactor.  A plot of the data is shown below:
 
-\subsubbsection{testing capacity levels and MSE
-measurements}
+\begin{figure}[H]
+    \center
+    \includegraphics[width=0.8\linewidth]{Figures/tohoku_logscale_mlp.png}
+   % \vspace{-10pt}
+    \caption{\footnotesize{Annual Tohoku earthquake frequencies modeled by a neural network}}
+    \label{tohoku_mlp}
+\end{figure}
+
+
+\subsubsection{Capacity Simulation for Neural Network}
+
+Adding more neurons or more layers to a neural network can increase its capacity.  The code below builds different networks to answer the same question in predicting Tohoku earthquake frequencies.  For each model, the \textbf{generalization (test) error} is calculated by sums of squares.  Three networks are made, each with one more layer than the previous and each with 5 neurons per hidden layer.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -91,3 +101,8 @@ measurements}
 ## 1 0.009838334 0.008655795 0.01114061
 \end{verbatim}
 
+The two-layer network has a test error of 0.009838334.  With the addition of a second hidden layer (three in total), this drops to 0.008655795.  However, when increasing the capacity with the addition of another hidden layer 0.01114061, the test error increases much more than even the original two-layer network.  This is indicative of an overfit model.
+
+\textbf{NEXT UP:} correct this by showing the most reduced GAP between training and test error
+
+\textit{(excerpt from earlier: When the gap between the training error and test error is too great, the model is overfit)}
