@@ -219,13 +219,15 @@ differentiating the function.
     \includegraphics[width = .7\textwidth]{Figures/grad_desc_2D-1.pdf}
 \end{figure}
 
-This is simple when \(x \in \mathbb{R}\), even for
+This is ideal when \(x \in \mathbb{R}\), even for
 \(x \in \mathbb{R}^2\), but gets more  and more complicated as
 dimensionality increases to \(x \in \mathbb{R}^n\). This calls for
 another means for finding function extrema (particularly minima).
 \textbf{Gradient Descent} is an optimization process by which an extrema is found by
 means of iterative computation for high-dimensional functions, making it
 intrinsically useful for neural networks to learn.
+
+Figure \ref{grad} displays the three dimensional function $z = \frac{1}{2} x^2 + 4 sin(y)$.  Observing gradient descent in two or three dimensions is perhaps the simplest way to visualize complexity, as biological limitations bar the visualization of higher dimensions.  For computers, however, it is no trouble and the process is the same.  The network propagates forward and determines the outcome error for the vector of weights $w_i$ and biases $b_i$ in the network with the loss function.  It then computes the gradient - the adjustment to every specific $w_i$ and $b_i$ parameter that gives the direction of steepest descent to the loss function - and takes a step in that direction.
 
 Gradient Descent
 
@@ -253,6 +255,8 @@ $
 \begin{figure}[H]
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
     \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
+    \caption{wadup}
+    \label{grad}
 \end{figure}
 
 %---BACKPROPAGATION---
