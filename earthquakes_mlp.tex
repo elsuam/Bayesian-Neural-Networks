@@ -1,11 +1,7 @@
 
 \subsection{Multi-Layer Perceptron}
 
-Here is a conundrum. I'm using the \texttt{mlp} function from \texttt{neuralnets}package to generate a
-neural network to better fit the data. It's a beutiful fit actually, and
-quite surprising for little data (perhaps becasue it has low noise?).
-Still, I cannot seem to show that MSE \textbf{increases} as capacity
-increases. It seems to be getting better\ldots{}
+To assist with the data, the \texttt{neuralnet} function from the \texttt{mlp} package will be used to fit a multi-layer perceptron network.  After pre-processing to split the data, the network architectue is defined as a three-layer network with 5 neurons in each hidden layer.  The function uses resilient backpropagation by default and sigmoid activation between layers.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -42,7 +38,7 @@ Using this neural network model, the expected frequency of a magnitude
     \center
     \includegraphics[width=0.8\linewidth]{Figures/tohoku_logscale_mlp.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{Annual Tohoku earthquake frequencies modeled by a neural network}}
+  %  \caption{\footnotesize{Annual Tohoku earthquake frequencies modeled by a neural network}}
     \label{tohoku_mlp}
 \end{figure}
 
