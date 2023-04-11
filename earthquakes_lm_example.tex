@@ -1,5 +1,4 @@
 
-
 On March 11, 2011 a magnitude 9.1 earthquake struck Japan, the epicenter just 76km from the eastern coast of the Tohoku region.  This caused a tsunami that collapsed a nearby nuclear reactor resulting in the Fukushima Daiichi Nuclear Disaster, a meltdown that resulted in 19,500 total deaths.  The reactor was built to withstand earthquakes up to 8.6 in magnitude.
 
 The following example illustrates a statistical model of annual earthquake frequencies of the greater Tohoku region.
@@ -12,6 +11,8 @@ to select all recorded earthquakes of magnitude 4.5 and above near the epicenter
 The data was stored locally in a .csv file named \texttt{earthquakes}.  The USGS also has an package called \texttt{rcomcat} to query
 data directly into \texttt{R}, but its version was not compatible at the time of this thesis.
 \end{comment}
+
+\subsection{Linear Regression Models}
 
 After pre-processing, the data was coerced into a table of magnitudes rounded to one decimal place and the following plots generated to display the annual frequency of magnitudes \textit{at or above} each size earthquake.  Figure \ref{tohoku_unfit} displays the data on both the standard and logarithmic scale.
 
@@ -35,7 +36,7 @@ It is apparent based on this visualization that the logarithmic scale is more su
 
 \begin{figure}[H]
     \center
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit.png}
+    \includegraphics[width=0.65\linewidth]{Figures/tohoku_logscale_fit.png}
    % \vspace{-10pt}
     \caption{\footnotesize{The regression model of earthquake frequencies with minimal capacity.}}
     \label{tohoku_lm}
