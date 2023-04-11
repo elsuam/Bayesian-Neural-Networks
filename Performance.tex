@@ -1,4 +1,4 @@
-The primary objective in machine learning (and therefore deep learning) is to perform well on new, unseen data.  The central challenge is finding the ideal balance between \textbf{overfitting} and \textbf{underfitting}.
+The primary objective in machine learning (and therefore deep learning) is to perform well on new, unseen data.  The central challenge is finding the ideal balance between \textbf{overfitting} and \textbf{underfitting}.  In order to accomplish this balancing act, model performance is rated by its prediction on a test set and regulated to preserve the flexibility of a high-parameter network.
 
 \subsection{Rating Model Performance}
 
@@ -66,22 +66,16 @@ During the build process, a model is faced with a training set and measured agai
     \label{capacityviz}
 \end{figure}
 
-
-- \textbf{Generalization}
-
+%- \textbf{Generalization}
 
 \subsection{Addressing Model Performance}
 
-There is no one way to set the dials of a neural network.  Generally, they are established by trial and error, train/test split, or more sophisticated techniques as cross-validation to compare networks trained with different parameter values. \cite{mackay1992practical}  The technique to improve model performance
+There is no one way to set the dials of a neural network.  Generally, they are established by trial and error, train/test split, or more sophisticated techniques as cross-validation to compare networks trained with different parameter values. \cite{mackay1992practical}  The ensemble of techniques to calibrate the model toward both training data and new data is known as \textbf{Regularization}.  More technically, this is really any modification made to the learning process that aims to reduce test error (but not training error) \cite{Goodfellow-et-al-2016}.  This thesis covers three common techniques to regularize neural networks: \textit{Early stopping}, \textit{dropout}, and \textit{weight decay}.
 
+\textit{Early stopping} is when the optimization algorithm is halted before the test error increases too much.  It is hoped that the algorithm stops at an optimal model capacity. To do this, as the model is being fit to the training data, its test error is simultaneously calculated. 
+ Often, the algorithm stops when the test error reaches a minimum, as opposed to the training error. \cite{doan2004generalization}
 
-
-\textbf{Regularization} is really any modification made to the learning process that aims to reduce test error (but not training error) \cite{Goodfellow-et-al-2016}
-
-
-\textit{Early stopping} is when the optimization algorithm is halted before the test error increases too much.  It is hoped that the algorithm stops at an optimal model capacity.
-
-\textit{Dropout} is \cite{srivastava2014dropout}
+\textit{Dropout} refers to the technique of temporarily removing neurons (and all involved connections) at random  at each iteration of training.\cite{srivastava2014dropout}  For example, a dropout with control parameter $p_{drop} = .25$ means that at each cycle of training, a random 75\% of the network is used and a new 75\% is sampled for the next step. This simultaneously speeds up computation as well as prevents overfitting because it reduces the number of calculations at each step of the model building process.
 
 \textit{Weight decay} is the neural network equivalent to ridge regression in machine learning.  For more information on regularization techniques in traditional machine learning, consult \cite{Goodfellow-et-al-2016}  Weight decay is when a  term is added to the optimizer to penalize (often larger) weights in hopes to achieve a smoother fit. \cite{mackay1992practical}  For example, suppose a network architecture $A$ is defined for a model.  This architecture contains the specifications of the number of layers, neurons in each layer, activation functions, and available connections between layers.  The function mapping is defined as $\hat{y}(x^m;w,A)$.  If the gradient descent algorithm is used to reduce the following error function of the data $E_D$:
 $$

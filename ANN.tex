@@ -9,23 +9,19 @@ Classification tasks // regression tasks // computer vision and more...
 %---Pathway to Architecture file---
 \subfile{Architecture}  
 
-%\subsection{Gradient Descent}
-
-%\subsubsection{Simulation in R}
-
-%\subsection{Backpropagation}
-
-%\subsubsection{Simulation in R}
 
 \subsection{More Optimization Algorithms}
 
-Aside from Gradient Descent.
-
-Describe Stochastic Gradient Descent in subtle detail.
-
-Make mention of other optimization algorithms (Adam, Adagrad, RMSprop), with only a brief description of them.  Only make mention of the ones to be used in Keras during practical examples in the next section.
+With each iteration, after the gradient is computed, a step is taken in that direction.  Yet, just how far a step is to be determined.  If the step is too large, a local minimum may not be found and the algorithm never converge.  If the step is too sall, it may be extremely computationally intensive to reach convergence.  Sometimes, it can be shown mathematically how to determine an optimal step size for special cases \cite{nar2018step}, or several step sizes can be tested \cite{Goodfellow-et-al-2016} and an appropriate one determined.  Other algorithms exist for training neural networks, either as variants to gradient descent or a completely new means; some of which aim to save computation or adjust the step size according to the model.  For example, \textbf{stochastic gradient descent} saves computation by sampling the parameters with which to calculate the gradient.  Other methods like Adagrad (Adaptive Gradient Algorithm), RMSProp (Root Mean Square Propagation), and RProp (Resilient Backpropagation)\cite{rproprprop} aim to adapt the step size rather than maintaining a fixed value for each iteration.
 
 \section{Types of Neural Networks} %-------------SECTION
+
+%---Pathway to Keras_types file---
+\subfile{Keras_types}
+
+\begin{comment}
+Commenting out the old text, replaced by subfile...
+
 The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses. 
 
 Obviously not all types will be covered, but here are a few.  
@@ -132,6 +128,8 @@ Unstructured text data
 Unstructured text data
 
 (consider removing)
+
+\end{comment}
 
 \section{Techniques to Improve Model Performance} %-------------SECTION
 
