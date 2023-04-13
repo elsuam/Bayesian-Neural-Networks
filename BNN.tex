@@ -119,6 +119,11 @@ p(B_i|D) = \frac{p(D|B_i)p(B_i)}{p(D)}
 $$
 Without justification to prefer one model over the other, the prior $p(B_i)$ would be the same.  Therefore, the complexity of the model is contingent only upon the data likelihood under each model $p(D|B_i)$.  Different models can be compared; the model with the highest likelihood of the data has better evidence for its predictions.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = .7\textwidth]{Figures/BNN_weightstoc.png}
+\end{figure}
+
 \subsection{Mixed Networks}
 Just as a Convolutional Neural Network is simply any neural network which incorporates the convolution operation, so too can a Bayesian component of a neural network be limited to just one layer.
 
