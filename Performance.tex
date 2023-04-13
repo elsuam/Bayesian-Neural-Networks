@@ -73,7 +73,14 @@ During the build process, a model is faced with a training set and measured agai
 There is no one way to set the dials of a neural network.  Generally, they are established by trial and error, train/test split, or more sophisticated techniques as cross-validation to compare networks trained with different parameter values. \cite{mackay1992practical}  The ensemble of techniques to calibrate the model toward both training data and new data is known as \textbf{Regularization}.  More technically, this is really any modification made to the learning process that aims to reduce test error (but not training error) \cite{Goodfellow-et-al-2016}.  This thesis covers three common techniques to regularize neural networks: \textit{Early stopping}, \textit{dropout}, and \textit{weight decay}.
 
 \textit{Early stopping} is when the optimization algorithm is halted before the test error increases too much.  It is hoped that the algorithm stops at an optimal model capacity. To do this, as the model is being fit to the training data, its test error is simultaneously calculated. 
- Often, the algorithm stops when the test error reaches a minimum, as opposed to the training error. \cite{doan2004generalization}
+ Often, the algorithm stops when the test error reaches a minimum. \cite{doan2004generalization}
+
+ \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figures/early_stop.png}
+    \vspace{-20pt}
+    \label{earlystop}
+\end{figure}
 
 \textit{Dropout} refers to the technique of temporarily removing neurons (and all involved connections) at random  at each iteration of training.\cite{srivastava2014dropout}  For example, a dropout with control parameter $p_{drop} = .25$ means that at each cycle of training, a random 75\% of the network is used and a new 75\% is sampled for the next step. This simultaneously speeds up computation as well as prevents overfitting because it reduces the number of calculations at each step of the model building process.
 

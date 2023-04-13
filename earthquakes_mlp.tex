@@ -45,7 +45,7 @@ Using this neural network model, the expected frequency of a magnitude
 
 \subsubsection{Capacity Simulation for Neural Network}
 
-Adding more neurons or more layers to a neural network can increase its capacity.  The code below builds different networks to answer the same question in predicting Tohoku earthquake frequencies.  For each model, the \textbf{generalization (test) error} is calculated by sums of squares.  Three networks are made, each with one more layer than the previous and each with 5 neurons per hidden layer.
+Adding more neurons or more layers to a neural network can increase its capacity.  The code below builds different networks to answer the same question in predicting Tohoku earthquake frequencies.  For each model, the test error is calculated by sums of squares.  Three networks are made, each with one more layer than the previous and each with 5 neurons per hidden layer.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -60,7 +60,8 @@ Adding more neurons or more layers to a neural network can increase its capacity
 \NormalTok{pps }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(mlp, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
 
 \CommentTok{\#SSE to get test error}
-\NormalTok{SSE1 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TestErr1 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TrainErr1 }\OtherTok{\textless{}{-}}\NormalTok{ mlp}\SpecialCharTok{$}\NormalTok{result.matrix[}\DecValTok{1}\NormalTok{,]}
 
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{4723}\NormalTok{)}
 \CommentTok{\#{-}{-}{-}two hidden layers{-}{-}{-}}
@@ -73,7 +74,8 @@ Adding more neurons or more layers to a neural network can increase its capacity
 \NormalTok{pps }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(mlp, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
 
 \CommentTok{\#SSE to get test error}
-\NormalTok{SSE2 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TestErr2 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TrainErr2 }\OtherTok{\textless{}{-}}\NormalTok{ mlp}\SpecialCharTok{$}\NormalTok{result.matrix[}\DecValTok{1}\NormalTok{,]}
 
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{4723}\NormalTok{)}
 \CommentTok{\#{-}{-}{-}three hidden layers{-}{-}{-}}
@@ -86,19 +88,23 @@ Adding more neurons or more layers to a neural network can increase its capacity
 \NormalTok{pps }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(mlp, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
 
 \CommentTok{\#MSE to get test error}
-\NormalTok{SSE3 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TestErr3 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{((pps }\SpecialCharTok{{-}}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{freqc)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{TrainErr3 }\OtherTok{\textless{}{-}}\NormalTok{ mlp}\SpecialCharTok{$}\NormalTok{result.matrix[}\DecValTok{1}\NormalTok{,]}
 
-\FunctionTok{data.frame}\NormalTok{(SSE1,SSE2,SSE3)}
+\CommentTok{\#View results}
+\NormalTok{TestError }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(TestErr1,TestErr2,TestErr3)[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{]}
+\NormalTok{TrainError }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(TrainErr1, TrainErr2, TrainErr3)[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{]}
+\NormalTok{GeneralizationGap }\OtherTok{\textless{}{-}}\NormalTok{ TrainError }\SpecialCharTok{{-}}\NormalTok{ TestError}
+
+\FunctionTok{data.frame}\NormalTok{(}\FunctionTok{rbind}\NormalTok{(TestError,TrainError,GeneralizationGap))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##          SSE1        SSE2       SSE3
-## 1 0.009838334 0.008655795 0.01114061
+##                            X1          X2         X3
+## TestError         0.009838334 0.008655795 0.01114061
+## TrainError        0.038023503 0.017808021 0.02909132
+## GeneralizationGap 0.028185169 0.009152226 0.01795071
 \end{verbatim}
 
-The two-layer network has a test error of 0.009838334.  With the addition of a second hidden layer (three in total), this drops to 0.008655795.  However, when increasing the capacity with the addition of another hidden layer 0.01114061, the test error increases much more than even the original two-layer network.  This is indicative of an overfit model.
-
-\textbf{NEXT UP:} correct this by showing the most reduced GAP between training and test error
-
-\textit{(excerpt from earlier: When the gap between the training error and test error is too great, the model is overfit)}
+The table above shows error measurements for a network with one, with two, and with three hidden layers.  The \textit{generalization gap}, which is a measure of difference between the two errors, is minimized for the network with two hidden layers.  That this value increases moving from a network with two to three hidden layers is indicative that the three-layer model is overfit.  Based on this table, the model with two hidden layers used above is the optimal fit.
