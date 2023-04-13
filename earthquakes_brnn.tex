@@ -251,7 +251,7 @@ predictions for a magnitude 9.1 earthquake
 ## Number of parameters (weights and biases) to estimate: 18 
 ## Nguyen-Widrow method
 ## Scaling factor= 4.2 
-## gamma= 6.2643     alpha= 0.2499   beta= 651.2619
+## gamma= 6.6171     alpha= 0.1129   beta= 869.274
 \end{verbatim}
 
 \begin{Shaded}
@@ -270,9 +270,13 @@ predictions for a magnitude 9.1 earthquake
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\#1/(10\^{}b) \# return interval of years based on 9.1 prediction}
+\DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{b) }\CommentTok{\# return interval of years based on 9.1 prediction}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## [1] 106.9823
+\end{verbatim}
 
 Using this neural network model, the expected frequency of a magnitude
 9.1 earthquake would be one every \texttt{1/10\^{}b} years.
