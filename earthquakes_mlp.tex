@@ -1,7 +1,7 @@
 
-\subsection{Multi-Layer Perceptron}
+\subsubsection{Multi-Layer Perceptron}
 
-To assist with the data, the \texttt{neuralnet} function from the \texttt{mlp} package will be used to fit a multi-layer perceptron network.  After pre-processing to split the data, the network architectue is defined as a three-layer network with 5 neurons in each hidden layer.  The function uses resilient backpropagation by default and sigmoid activation between layers.
+Next, the \texttt{neuralnet} function from the \texttt{mlp} package is used to fit a multi-layer perceptron network to the earthquake data.  After pre-processing to split the data, the network architectue is defined as a three-layer network with 5 neurons in each hidden layer.  The function uses resilient backpropagation by default and sigmoid activation between layers.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -107,4 +107,4 @@ Adding more neurons or more layers to a neural network can increase its capacity
 ## GeneralizationGap 0.028185169 0.009152226 0.01795071
 \end{verbatim}
 
-The table above shows error measurements for a network with one, with two, and with three hidden layers.  The \textit{generalization gap}, which is a measure of difference between the two errors, is minimized for the network with two hidden layers.  That this value increases moving from a network with two to three hidden layers is indicative that the three-layer model is overfit.  Based on this table, the model with two hidden layers used above is the optimal fit.
+The table above shows error measurements for a network with one, with two, and with three hidden layers.  The \textit{generalization gap}, which is a measure of difference between the two errors, is minimized for the network with two hidden layers.  That this value increases moving from a network with two to three hidden layers is indicative that the three-layer model is overfit.  Based on this table, the model with two hidden layers used above is the optimal fit.  However, this model is devoid of any regularization technique.  In a later section, the same example will be revisited using \textit{weight decay} in which parameters $\alpha$ and $\beta$ are determined from a Bayesian approach.  In the meantime, this thesis will summarize some important and methods of Bayesian Statistics.

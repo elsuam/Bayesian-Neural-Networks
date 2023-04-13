@@ -229,33 +229,11 @@ intrinsically useful for neural networks to learn.
 
 Figure \ref{grad} displays the three dimensional function $z = \frac{1}{2} x^2 + 4 sin(y)$.  Observing gradient descent in two or three dimensions is perhaps the simplest way to visualize complexity, as biological limitations bar the visualization of higher dimensions.  For computers, however, it is no trouble and the process is the same.  The network propagates forward and determines the outcome error for the vector of weights $w_i$ and biases $b_i$ in the network with the loss function.  It then computes the gradient - the adjustment to every specific $w_i$ and $b_i$ parameter that gives the direction of steepest descent to the loss function - and takes a step in that direction.
 
-Gradient Descent
-
-\begin{itemize}
-\tightlist
-\item
-  Computes the gradient 
-$  
-  \nabla f(x_n) =
-  \left[ \frac{\partial f}{\partial x_1} , \frac{\partial f}{\partial x_2} , ... , \frac{\partial f}{\partial x_n} \right]
-$
-  
-\item
-  can be thought of as stepping down off a mountain
-
-  \begin{itemize}
-  \tightlist
-  \item
-    each step is that which reduces height the most
-  \end{itemize}
-\end{itemize}
-
-
 
 \begin{figure}[H]
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
     \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
-    \caption{wadup}
+    \caption{The function in three dimensions, with a top-down observation that shows the path of gradient descent.  Each blue arrow represents a step.}
     \label{grad}
 \end{figure}
 
@@ -378,6 +356,4 @@ represented by:
     \end{align*}
 
 
-The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, t
-
-\textit{(Also mention of the step size)}
+The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, the specific derivatives calculated will be different as these are changed as well.
