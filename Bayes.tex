@@ -1,40 +1,36 @@
 \chapter{Bayesian Statistical Methods}
 
-Brief description, background, difference (NOT opposition) from frequentist statistics.
+Often called inverse probability in its budding stages, \cite{salsburg2002lady} Bayesian Statistics is an approach to analyzing data by use a theorem developed by the Reverend Thomas Bayes, although the theorem was not published until after his death.  Bayes' Theorem (or Bayes' Rule) describes the conditional probability of an event.
 
 The frequentist approach describes probability as the relative frequency of a favorable outcome as the number of samples increases to infinity.  In Bayes, probability is the number of favorable outcomes divided by the total number of possible outcomes \cite{gelmanbayesian3}
 $$
 P = \frac{N_{\text{favorable outcomes}}}{N_{\text{total possible outcomes}}}
 $$
 
-\textit{(add these into the intro paragraph)}
-\begin{itemize}
-\tightlist
-\item
-Pros: usable information with little data
-\item
-cons: computationally intensive or impossible
-\end{itemize}
+It is important to note that to apply statistical methods by use of Bayes does not violate any accords of frequentism and that it does not stand as an opposition to the frequentist analogue.  Bayesian methods simply offer another perspective, with some useful features in specialized cases - one of which is the ability to generate mathematically savvy results with very little data.  The downside is that to find that "total number of possible outcomes" can be very computationally intensive.
 
 
 \section{Fundamentals of Bayesian Inference} %-------------SECTION
 
-\textit{(theoretical representations)}
+%\textit{(theoretical representations)}
 
 A few things change when operating with the Bayesian framework.  For one, the goal is not to construct a model to estimate parameters as fixed values.  Rather, parameters are treated as random variables themselves, with the same properties as any other random variable - each could have a mean, a variance, minimum maximum, etc., and the distribution of that parameter reveals that information.
 
-Exact Bayesian inference
+Whereas frequentism often employes maximum likelihood modeling $p(y|\theta)$ to find the parameters $\theta$ which give the most likely estimation of the data, a Bayesian probabilistic approach finds the most likely distribution of parameters from the data $p(\theta|D)$\cite{mullachery2018bayesian}.  Bayesian inference (by Bayes' Theorem, given data set $D$) is as follows:
 
 $$
-p(w|D) = \frac{p(D|w)p(w)}{p(D)} = \frac{p(D|w)p(w)}{\int_{w'} p(D|w')p(w')dw'}
+p(\theta|D) = \frac{p(D|\theta)p(\theta)}{p(D)} = \frac{p(D|\theta)p(\theta)}{\int_{\theta'} p(D|\theta')p(\theta')d\theta'}
 $$
 
 
 \subsection{From Prior to Posterior}
 
+To determine the posterior $p(\theta|D)$ requires selection of a prior $p(\theta)$ and determination of the likelihood of the data under supposition of $\theta$, $p(D|\theta)$.  The denominator is often regarded as the \textit{normalizing constant}, which ensures the outcome is a probability between 0 and 1.  Without it, the posterior is represented as being proportional to the prior and the likelihood $p(\theta|D) \propto p(D|\theta)p(\theta)$, but not interpretable as a posterior probability.  The issue tends to be in that the normalizing constant is a hardship to calculate exactly and often impossible at all.  This is where estimation techniques come in, but more on that later.
+
 Selection of priors, perhaps advise on broad priors that tell little information.
 
-Hand calculation of a Gaussian prior to compute a posterior to be used in a later section
+Typically, priors within the same family as the likelihood (i.e. a Bernoulli likelohood and a Beta prior) have analytically helpful properties \cite{mullachery2018bayesian}. These \textit{conjugate priors}, while mathematically useful, often place undesirable assumptions on the model.  Therefore it is usually preferred not to rely on conjugate priors in order to sacrifice mathematical precision for model accuracy by approximation.
+
 %prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
 
 
@@ -48,9 +44,7 @@ $$
 
 \textit{Address computational issues like the normalizing constant, to be discussed further in the next section.}
 
-\section{Practical Computing}
-
-
+\section{Practical Computing} %-------------SECTION
 
  As mentioned, the premier disadvantage of Bayesian inference is that is requires computationally intractable integrations.  In response, a world of practical approximation techniques exists, some of which will be discussed in this section.  These approximaton techniques can be shown to still have pristine results while dodging tricky or impossible integrals \cite{tipping2004bayesian}.
 
@@ -61,73 +55,120 @@ p(w|D) \approx \frac{p(D|w)p(w)}{Z}
 $$
 In which $Z$ is approximated by some sophisticated means.
 
- mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages)
+ %mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages) and lead into \textbf{Markov Chain Monte Carlo Methods}
+
+Simpler models can be estimated by means of grid approximation \cite{mcelreath2016statistical}, in which the domain of the posterior is split up into many finite intervals and values calculated accordingly.  Quadratic Approximation is another method for approximating the posterior.  It assumes the area by the peak of the posterior distribution is approximately normally distributed, which is common \cite{mcelreath2016statistical}, and approximates that distribution because the logarithm of a normal distribution forms a quadratic function.  Both of these techniques pail in comparison to use of \textbf{Markov Chain Monte Carlo} Methods.  In essence, a Markov Chain is one which the $i^{th}$ outcome is dependent upon the $(i-1)^{th}$ outcome.  MCMC is a class of algorithms based on this feature.  Some algorithms below are described for their techniques to estimating very closely a complex posterior distribution.  Unless otherwise cited, most descriptions come from (McElreath, 2016 \cite{mcelreath2016statistical}) and (Gelman et. al, 2021 \cite{gelmanbayesian3}) 
 
 
-\subsection{Markov Chain Methods}
-Used to address the problem of highly complex integral
-\textit{(To be expanded into multiple subsections)}
+%\textit{(Relevant examples in STAN whenever appropriate)}
 
-Start with:
-\cite{mcelreath2016statistical} \cite{gelmanbayesian3}
+\subsection{Metropolis (Rosenbluth-Teller) Algorithm}
+
+The Metropolis Algorithm is named after the first author of the published article that introduced the world to their "Fast Computing Machines" \cite{metropolis1953equation}, although it is unclear how the work was divided. Marshall Rosenbluth and Edward Teller are co-authors, along with their wives, who performed much of the calculations.  The algorithm is as follows:
+
+\begin{enumerate}
+\tightlist
+\item{Set current point $\theta_0$ with probability $p(\theta_0|y) > 0$}
+
+\item{Sample a proposal $\theta^*$ from a proposal distribution $J_t(\theta^* | \theta^{t-1})$ at time $t$.}
+
+\item{The acceptence of the proposal is $A = min \left( \frac{p(\theta^*|y)}{p(\theta^{t-1})|y} , 1 \right) $}
+\end{enumerate}
+
+This means that the proposed move will always be accepted if it is toward a higher probability position that current.  Otherwise, it will be accepted with probability $\frac{p(\theta*|y)}{p(\theta^{t-1})|y}$
+
+Works when the proposal distribution is symmetric, that is, when $J_t(\theta^* | \theta^{t-1}) = J_t(\theta^{t-1} | \theta^*)$
+
+\subsection{Metropolis-Hastings Algorithm}
+
+To allow for non-symmetric distributions, the Metropolis-Hastings algorithm generalizes the Metropolis algorithm.  The ratio of densities becomes:
+$$
+\frac{ p(\theta^*|y) / J_t(\theta^* | \theta^{t-1}) }{ p(\theta^{t-1}|y) / J_t(\theta^{t-1} | \theta^*) }
+$$
+
+and a minimum between that ratio and 1 is selected.
+
+\subsection{Hamiltonian Monte Carlo}
+
+Rather than a random walk through the posterior, HMC moves the exploration problem into a space containing a position parameter $\lambda$ and a momentum parameter $r$.  HMC has the ability to make confident, far stride and as a result converge faster than other algorithms \cite{mullachery2018bayesian}.
+The parameters of HMS are step size $s$ and number of steps $L$. Sampling from a standard multivariate normal distribution, Leapfrog updates are made to determine the proposed position $\tilde{lambda}$ and momentum $\tilde{r}$.  The proposed values are determined, through use of Laplace transform $\mathcal{L}$, by
+$$
+min\left( 1, \frac{exp[\mathcal{L}(\tilde{\lambda} - \frac{1}{2} \tilde{r} \cdot \tilde{r}]}
+{exp[\mathcal{L}(\lambda^{m-1}) - \frac{1}{2} r^0 \cdot r^0] }
+\right)
+$$
+and, if accepted, the new position is $\lambda^m \leftarrow \tilde{\lambda}$ and momentum $r^m \leftarrow -\tilde{r}$
+
+\subsection{Gibbs Sampling}
+
+Gibbs Sampling is another variant of M-H that uses clever proposals based on the criterea of alternating conditional sampling
+
+Two-variable example: \cite{geman1984stochastic}  
+
+$p(x,y)$ is a probability density that can be sampled more easily as conditional distributions $p(x|y)$ and $p(y|x)$.  Gibbs Samping is as follows:
+\begin{enumerate}
+\item{initialize $(x_0,y_0)$}
+\item{sample $x_1 \sim p(x|y_0)$, then $y_1 \sim p(y|x_1)$, then $x_2 \sim p(x|y_1)$, then $y_2 \sim p(y|x_2)$}
+\item{ ...}
+\item{sample $x_n \sim p(x|y_{n-1})$, then $y_n \sim p(y|x_n)$}
+\end{enumerate}
+
+In higher dimensions:
+
 \begin{itemize}
 \tightlist
-\item Overview
-\item Metropolis (Rosenbluth) Algorithm
-\item M-H Algorithms
-\item Gibbs Sampling \cite{geman1984stochastic}
-\item MCMC
-\item Computationally efficient versions
+\item{$\theta_j$ represents the subvector that makes up the components of $\theta$.  For example, a parameter representing categories "blue", "red", "green", and "yellow" has four components.}
+\item{At each iteration $t$, each level of $\theta^t_j$ is sampled ($\theta^t_{blue}$, $\theta^t_{red}$, $\theta^t_{green}$, $\theta^t_{yellow}$)}
+\item{ $p(\theta_j|\theta^{t-1}_{-j},y)$, where $\theta^{t-1}_{-j}$ represents all components of $\theta$ except for $\theta_j$.}
 \end{itemize}
 
-\textit{(Relevant examples in STAN whenever appropriate)}
+
+
+
+
+
+
+\subsection{Variational Inference}
+
+MCMC methods are the bets methods for approximating the posterior with samples from the exact posterior, but their Achilles' heel lies in their lack of scalability \cite{Jospin}.  Variational inference methods convert an integration problem into an optimization problem \cite{mullachery2018bayesian}.  They introduce a distribution $q(\theta;H)$ called the variational distribution parameterized by $H$.  $q(\theta;H)$ must be flexible enough to provide a wide variety of posterior distributions in order to capture the posterior $p(\theta|D)$.  Closeness between the variational distribution and the true posterior is measured by Kullback-Leibler divergence \cite{blei2017variational}:
+$$
+KL(q||p) = E_q\left[ log\frac{q(\theta;H)}{p(\theta|D)} \right]
+$$
+The family of parameters $H$ is optimized to minimize $KL(q||p)$, in a similar manner that gradient descent seeks to optimize network parameters.  Much of variational inference has been omitted for this thesis, but extensive detail on these techniques can obtained from (Blai, 2017 \cite{blei2017variational}).
 
 
 \section{Bayesian Data Analysis} %-------------SECTION
 
-\textit{(More practical representations)}
+%\textit{(More practical representations)}
 
 This section focuses on more tools in the Bayesian framework
 
 \subsection{Marginalization}
 
-Introduce marginalization to integrate unwanted parameters. (Occam's Razor things)
+An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all unnecessary variables, they are integrated out
+\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|y,\alpha,\sigma^2)$, with $\alpha$ derived from the prior and which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation)
 
-Construct notation by following along from 
-\cite{tipping2004bayesian} and page 165 of \cite{bishop2006pattern}
-
-Posterior Inference given (introduce the notational terms)
+Integrate out unwanted parameters for the \textit{predictive distribution} of a new data $y$:
 $$
-Tipping p. 14
+p(y|x,\alpha,\sigma^2) = \int p(y|\theta,\sigma^2) p(\theta|x,\alpha,\sigma^2) dw
 $$
 
-Integrate out unwanted parameters for the \textit{predictive distribution} of a new data $t_*$:
-$$
-p(t_*|t,\alpha,\sigma^2) = \int p(t_*|w,\sigma^2) p(w|t,\alpha,\sigma^2) dw
-$$
-
-Where  $p(w|t,\alpha,\sigma^2)$ is the posterior distribution and $p(t_*|w,\sigma^2)$ is the likelihood of the new data.  If $w$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior $p(w|t,\alpha,\sigma^2)$. \cite{salad}
-
-
+Where  $p(y|x,\alpha,\sigma^2)$ is the posterior predictive distribution of predicted outputs $y$ and $p(y|\theta,\sigma^2)$ is the likelihood of the new data.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior $p(y|x,\alpha,\sigma^2)$. \cite{salad} \cite{Jospin}.  
+Setting aside the complex notation, this is simply a means of generating predictions from the parameter distribution gained by use of Bayes' Rule.  It describes the uncertainty the model has and allows for better flexibility without supplemental engineering.
 In the absence of many data points, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
 
+%\textbf{Simulating the Predictive Distribution}
+%$$
+%Insert Simulationhere
+%$$
 
-\textbf{Simulating the Predictive Distribution}
+Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not related to the task at hand. \cite{bishop2006pattern}.  The general Bayesian predictive framework employs the full posterior \cite{tipping2004bayesian}:
 $$
-Insert Simulationhere
+p(\theta,\alpha,\sigma^2|x) = \frac{p(x|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}{\iiint p(x|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
 $$
+However, this is moving beyond the scope of this thesis.  Bayesian Statistics offers a multitude of possibilities to indulge statistical models beyond estimation, such as regularizing, determining thresholds like Information Criteria, cross validating, and more.  Libraries could be filled with the studies of its potential and relative simulations on complex machine learning models.  The next sections return to discuss neural networks with applications of Bayes to select certain features.
 
-Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not related to the task at hand. \cite{bishop2006pattern}.
-
-Full posterior:
-$$
-p(w,\alpha,\sigma^2|t) = \frac{p(t|w,\sigma^2) p(w|\alpha)p(\alpha)p(\sigma^2)}{\iiint p(t|w,\sigma^2)p(w|\alpha)p(\alpha)p(\sigma^2) \text{ } dw \text{ } d\alpha \text{ } d\sigma^2}
-$$
-
-
-
-
-
+\begin{comment}
 \subsection{Predictive Accuracy Measures}
 I feel I need to put Bayes-CV somewhere...
 
@@ -139,7 +180,7 @@ lppd_{CV} = \sum_{i=1}^N \frac{1}{S} \sum_{s=1}^S logP(w_i|\theta_{-i,s})
 $$
 
 \textbf{Information Criteria} also found in Rethinking (p. 223) and BDA (p. 169)
-
+\end{comment}
 
 \subsection{Bayesian Regularization}
 
