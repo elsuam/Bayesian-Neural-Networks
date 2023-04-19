@@ -1,19 +1,15 @@
+\subsection{Example: Bayesian Regularized Neural Network}
 
-\subsection{brnn method}\label{brnn-method}
+This example returns to the Tohoku Earthquake problem, offering another potential solution.  It uses the \texttt{brnn} package to fit a neural network with Bayesian regularization by means as described above and in further detail by (Mackay, 1992).  Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced later.  This example serves merely as direct exposure to the regularization techniques described.
 
-6-layer neural network that utilizes Bayesian Regularization
-
-predictions for a magnitude 9.1 earthquake
-
-\hypertarget{building-the-network}{%
-\subsubsection{Building the Network}\label{building-the-network}}
+The model is a 6-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area.  Its syntax is relatively simple, with many defaults that can be modified for special cases.  The default optimization is the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag}
 \NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{freqc}
 
-\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{6}\NormalTok{)                       }\CommentTok{\# build model}
+\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{6}\NormalTok{)   }
 \end{Highlighting}
 \end{Shaded}
 
@@ -26,8 +22,8 @@ predictions for a magnitude 9.1 earthquake
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =} \FloatTok{9.1}\NormalTok{)) }\CommentTok{\# store 9.1 prediction}
-\FunctionTok{summary}\NormalTok{(brnn)                                     }\CommentTok{\# summary of mocel}
+
+\FunctionTok{summary}\NormalTok{(brnn)            }\CommentTok{\# summary of model}
 \end{Highlighting}
 \end{Shaded}
 
@@ -37,11 +33,26 @@ predictions for a magnitude 9.1 earthquake
 ## Inputs and output were  normalized
 ## Training finished because  Changes in F= beta*SCE + alpha*Ew in last 3 iterations less than 0.001
 \end{verbatim}
+\begin{comment}
+The above output describes the model in text.  Notationally, the model is given (as imputed into the general formula from the \texttt{brnn} package documentation) by:
+$$
+\hat{y_i} = \sum_{k=1}^6 w_k g_k (b_k + \sum_{j=1}^{31} x_{ij} \beta_j^{[k]} ) + e_i
+$$
 
+\begin{gather*}
+e_i \sim N(0,\sigma^2) \\
+w_k \text{ is the weight of the } k^{th} \text{ neuron} \\
+b_k \text{ is the bias of the } k^{th} \text{ neuron} \\
+\beta_j^{[k]} \text{ is the weight of the } j^{th} \text{ input to the net} \\
+g_k \text{ is the activation function } g_k(x) = \frac{e^{2x}-1}{e^{2x}+1}
+\end{gather*}
+\end{comment}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{b) }\CommentTok{\# return interval of years based on 9.1 prediction}
+\CommentTok{\# return interval of years based on 9.1 prediction}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =} \FloatTok{9.1}\NormalTok{)) }
+\DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{b) }
 \end{Highlighting}
 \end{Shaded}
 
@@ -50,7 +61,9 @@ predictions for a magnitude 9.1 earthquake
 \end{verbatim}
 
 Using this neural network model, the expected frequency of a magnitude
-9.1 earthquake would be one every \texttt{1/10\^{}b} years.
+9.1 earthquake would be one every 106.98 years.  This may be an alarming catch to the Fukushima engineering officials!  And indeed they may aim to design a stronger reactor. A plot of the data is shown below:
+
+\begin{comment}
 
 \hypertarget{plots-for-brnn}{%
 \subsubsection{plots for brnn}\label{plots-for-brnn}}
@@ -87,11 +100,15 @@ Using this neural network model, the expected frequency of a magnitude
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-11-1.pdf}
+\end{comment}
 
-\hypertarget{plot-for-brnn-returned-to-standard-scale}{%
-\subsubsection{plot for brnn returned to standard
-scale}\label{plot-for-brnn-returned-to-standard-scale}}
+\begin{figure}[H]
+    \center
+    \includegraphics[width=0.8\linewidth]{Figures/tohoku_logscale_brnn.png}
+   % \vspace{-10pt}
+  %  \caption{\footnotesize{Annual Tohoku earthquake frequencies modeled by a neural network}}
+    \label{tohoku_brnn}
+\end{figure}
 
-Simulating 100 networks' predictions for magnitude 9.1 with
-\emph{neurons = 6}
+Suppose the Fukushima engineering officials are not as astonished as anticipated; instead they simply ask, ``How certain are we about this prediction?''  This model by itself is not able to answer that question. 
+%It lacks the additional scaffolding described in earlier sections.  In the next and final chapter, the remaining techniques for practical neural network modeling will incorporate the Bayesian techniques learned in this chapter with predictive accuracy measures.  The final example will further embellish the prediction at hand and tell the story to the engineers.
