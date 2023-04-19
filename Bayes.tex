@@ -26,23 +26,16 @@ $$
 \subsection{From Prior to Posterior}
 
 To determine the posterior $p(\theta|D)$ requires selection of a prior $p(\theta)$ and determination of the likelihood of the data under supposition of $\theta$, $p(D|\theta)$.  The denominator is often regarded as the \textit{normalizing constant}, which ensures the outcome is a probability between 0 and 1.  Without it, the posterior is represented as being proportional to the prior and the likelihood $p(\theta|D) \propto p(D|\theta)p(\theta)$, but not interpretable as a posterior probability.  The issue tends to be in that the normalizing constant is a hardship to calculate exactly and often impossible at all.  This is where estimation techniques come in, but more on that later.
-
-Selection of priors, perhaps advise on broad priors that tell little information.
-
+%Selection of priors, perhaps advise on broad priors that tell little information.
 Typically, priors within the same family as the likelihood (i.e. a Bernoulli likelohood and a Beta prior) have analytically helpful properties \cite{mullachery2018bayesian}. These \textit{conjugate priors}, while mathematically useful, often place undesirable assumptions on the model.  Therefore it is usually preferred not to rely on conjugate priors in order to sacrifice mathematical precision for model accuracy by approximation.
-
 %prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
 
+\textbf{Bayesian Updating} is a concept in which the posterior distribution can be reused as the prior distribution when more data arrives \cite{mcelreath2016statistical}.  This is a useful attribute because the original prior outlines some assumptions of a model, which are then used to compute the posterior, the conditional probability of the parameters in light of those assumptions and the data likelihood.  By holding on to the posterior, the model can predict more realistic expectations based on the previous assumptions and the pattern of data that the model has already seen before.
 
-\subsection{Bayesian Updating}
+%\subsection{Bayesian Updating}
 
-Bayesian updating, in which the posterior is the new prior
 
-$$
-pretty ggplot display here
-$$
 
-\textit{Address computational issues like the normalizing constant, to be discussed further in the next section.}
 
 \section{Practical Computing} %-------------SECTION
 
@@ -124,10 +117,6 @@ In higher dimensions:
 
 
 
-
-
-
-
 \subsection{Variational Inference}
 
 MCMC methods are the bets methods for approximating the posterior with samples from the exact posterior, but their Achilles' heel lies in their lack of scalability \cite{Jospin}.  Variational inference methods convert an integration problem into an optimization problem \cite{mullachery2018bayesian}.  They introduce a distribution $q(\theta;H)$ called the variational distribution parameterized by $H$.  $q(\theta;H)$ must be flexible enough to provide a wide variety of posterior distributions in order to capture the posterior $p(\theta|D)$.  Closeness between the variational distribution and the true posterior is measured by Kullback-Leibler divergence \cite{blei2017variational}:
@@ -141,7 +130,7 @@ The family of parameters $H$ is optimized to minimize $KL(q||p)$, in a similar m
 
 %\textit{(More practical representations)}
 
-This section focuses on more tools in the Bayesian framework
+A nice feature of Bayesian Statistics is the ability to make sense out of few data points, without the need for minimum sample size or rules of thumb.  Another is the ability to extract the desired distribution of interest independent of the particular parameter settings. \cite{bishop2006pattern}
 
 \subsection{Marginalization}
 
@@ -193,15 +182,13 @@ $$
 
 
 
-This section will apply a Bayesian Approach to setting $\alpha$ and $\beta$ parameters, as told by (Mackay, 1992) \cite{mackay1992practical} and (Forsee and Hagan, 1997). \cite{foresee1997gauss}
-
-The weights of the network as random variables. By Bayes' rule:
+This section will apply a Bayesian Approach to setting $\alpha$ and $\beta$ parameters, as told by (Mackay, 1992) \cite{mackay1992practical} and (Forsee and Hagan, 1997) \cite{foresee1997gauss}.  To begin, a probabilistic interpretation of network learning \cite{mackay1992practical} is introduced.  Under this framework, the weights of the network are represented as random variables, rather than fixed, unknown, and estimable.  By Bayes' rule:
  
 $$
 P(w|D,\alpha,\beta,A) = \frac{P(D|w,\beta,A) P(w|\alpha,A)}{P(D|\alpha,\beta,A)}
 $$
 
-where $D$ is the observed data, and $A$ is the network architecture.\footnote{
+where $D$ is the observed data and $A$ is the network architecture.\footnote{
 \textcolor{darkgray}{
 Note that (Mackay, 1992) defines a term $R$ as the chosen or "prior" regularizer, which represents the potential for selecting alternative control parameters for for $E_W$.  If included, Bayes' rule would then be represented  as:
 $$
@@ -229,7 +216,7 @@ P(w|D,\alpha,\beta,A) = \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\b
 = \frac{e^{-(\beta E_D + \alpha E_W)}}{Z_F(\alpha,\beta)}
 $$
 
-Thus it can be noted by the formula above that under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization formula $F = \alpha E_w(w|A) + \beta E_D(D|w,A)$ as seen in chapter 1.  For later use, the normalizing constant in the denominator is $Z_F(\alpha,\beta) = \int d^k w e^{-(\alpha E_W + \beta E_D)}$.
+The exponent in the numerator is the negative.  Thus it can be noted by the formula above that under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization formula $F = \alpha E_w(w|A) + \beta E_D(D|w,A)$ as seen in chapter 1.  For later use, the normalizing constant in the denominator is $Z_F(\alpha,\beta) = \int d^k w e^{-(\alpha E_W + \beta E_D)}$.
 
 
 \textbf{Optimizing the Regularization Parameters}
@@ -251,7 +238,7 @@ $$
 \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{\frac{1}{Z_F(\alpha,\beta)} e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)} \cdot \frac{e^{-(\beta E_D + \alpha E_W)}}{e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)}
 $$
 
-The denominator is comprised of known constants $Z_D(\beta)$ and $Z_W(\alpha)$.  What is left is to determine $Z_F(\alpha,\beta)$.  Having outlined the Bayesian techniques, this thesis will not cover this decomposition.  In practice, it requires estimation by Taylor series expansion and computation of the Hessian matrix of the full optimization formula $H = \beta \nabla^ E_D + \alpha \nabla^2 E_W$ to determine the number of effective parameters in the neural network that are reducing the error function.  This decomposition can be found in (Mackay, 1992) and (Forsee and Hagan, 1997).
+The denominator is comprised of known constants $Z_D(\beta)$ and $Z_W(\alpha)$.  What is left is to determine $Z_F(\alpha,\beta)$.  Having outlined the Bayesian techniques, this thesis will not cover this decomposition.  In practice, it requires estimation by Taylor series expansion and computation of the Hessian matrix of the full optimization formula $H = \beta \nabla^ E_D + \alpha \nabla^2 E_W$ to determine the number of effective parameters in the neural network that are reducing the error function.  This decomposition can be found in (Mackay, 1992) and (Forsee and Hagan, 1997).  This technique to setting parameters $\alpha$ and $\beta$ sets the stage for the final chapter of this thesis. As will be shown, combining the complexity of neural networks with the probabilistic framework of network learning provides transparent interpretations to complex abstractions within data.
 
 
 \begin{comment}
@@ -260,9 +247,3 @@ $$
 P(w|D,A) = \int P(w|D,\alpha,\beta,A) P(\alpha, \beta | D,A) \text{ } d\alpha \text{ } d\beta
 $$
 \end{comment}
-
-\subsection{Example: Bayesian Regularized Neural Network}
-
-Introduce the brnn package
-
-\subfile{earthquakes_brnn}
