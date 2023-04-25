@@ -35,9 +35,10 @@ This is represented by the \emph{step function}.
 
 \begin{figure}[H]
     \centering
+    \vspace{-40pt}
     \includegraphics[width = .7\textwidth]{Figures/step-function-1.pdf}
     \vspace{-40pt}
- %   \caption{caption}
+    \caption{\footnotesize The step function, which takes any input and returns a binary output value 0 or 1.}
 \end{figure}
 
 The problem with the perceptron is that a small change in weight can
@@ -45,13 +46,14 @@ cause the outcome to change dramatically, since the output is binary \cite{niels
 \[
 \sigma(z) = \frac{1}{1+e^{-z}} \\
 \]
-Which is represented by the \emph{Sigmoid Function} below.
+Which is represented by the \emph{sigmoid function}.
 
 \begin{figure}[H]
     \centering
+   \vspace{-40pt}
     \includegraphics[width = .7\textwidth]{Figures/sigmoid-function-1.pdf}
    \vspace{-40pt}
-%    \caption{caption}
+    \caption{\footnotesize The sigmoid function, which allows for continuous output values from 0 to 1.}
 \end{figure}
 
 
@@ -112,10 +114,11 @@ Many activation functions exist, with several variations of the original, each s
 
 
 \begin{figure}[H]
+    \vspace{-10pt}
     \includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-1.pdf}
     \includegraphics[width=0.5\linewidth]{Figures/other-activation-functions-2.pdf}
     \vspace{-40pt}
- %   \caption{caption}
+    \caption{\footnotesize Hyperbolic tangent and ReLU activation functions.  Notice the similarity between sigmoid and hyperbolic tangent; although the latter returnes values from -1 to 1.}
 \end{figure}
 
 Another common activation function is the \textit{rectified linear unit}, or ReLU.  It is defined mathematically as $f(x) = max(0,x)$.  This means that not all neurons will be activated at the same time, which makes ReLU a very useful tool to use in hidden layers to increase efficiency and speed up the learning process. \cite{Goodfellow-et-al-2016} \cite{sharma2017activation}. 
@@ -169,14 +172,16 @@ All of these are cross-entropy error functions that neural networks use to optim
 \subsection{Gradient Descent}\label{gradient-descent}}
 
 The efficiency of a neural network is measured and corrected with each
-iteration based on reducing a cost function. This is the same s finding
-a local minimum of a function. In a simple case below, given the
-function \(f(x) = x^3 + 10x^2\), a local minimum is found by
-differentiating the function.
+iteration based on reducing a cost function. This is the same as finding
+a local minimum of a function.  Figure \ref{red} appears to have a local minimum somewhere around approximately $x = 4$ In a simple case below, given the function \(f(x) = \frac{x^3}{2} - x^2 - 12x\), a local minimum is found by differentiating the function and finding the correct turning points in which the slope is zero. 
 
 \begin{figure}[H]
     \centering
+    \vspace{-40pt}
     \includegraphics[width = .7\textwidth]{Figures/grad_desc_2D-1.pdf}
+    \vspace{-40pt}
+    \caption{\footnotesize }
+    \label{red}
 \end{figure}
 
 This is ideal when \(x \in \mathbb{R}\), even for
@@ -193,7 +198,7 @@ Figure \ref{grad} displays the three dimensional function $z = \frac{1}{2} x^2 +
 \begin{figure}[H]
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
     \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
-    \caption{The function in three dimensions, with a top-down observation that shows the path of gradient descent.  Each blue arrow represents a step.}
+    \caption{\footnotesize The function in three dimensions, with a top-down observation that shows the path of gradient descent.  Each blue arrow represents a step.}
     \label{grad}
 \end{figure}
 
