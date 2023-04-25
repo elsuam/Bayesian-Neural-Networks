@@ -1,20 +1,24 @@
 \chapter{Artificial Neural Networks}
 
-Artificial neural networks are what makes the extension from traditional machine learning models into deep learning methods.
+%\begin{comment}
+\begin{wrapfigure}{r}{0.35\textwidth}
+  \vspace{-20pt}
+    \centering
+    \includegraphics[width=.37\textwidth]{Figures/NN_int.png}
+    \caption{\footnotesize{A two-layer neural network with the \emph{input} as the first layer and the \emph{hidden} layer as the second.  The final layer displayed is the output result}}
+  \label{NNet}
+  \vspace{-17pt}
+\end{wrapfigure}
+%\end{comment}
 
-Classification tasks // regression tasks // computer vision and more...
+Inspired by the interlacing of brain tissue, artificial neural networks are what makes the extension from traditional machine learning models into deep learning methods.  Different types exist for different tasks, each with countless variations in architecture, optimization, and methods of performance measurement. A common theme to this thesis is the immense complexity of ANNs. Subject literature appears to have little to no generalizations for network types; each is a specialized or broadly encapsulative method for certain tasks.  Often, scientists of the matter seek to compare neural network features when presented with data to determine how one fairs over another when cased with similar problems. \cite{nusrat2018comparison} \cite{sharma2017activation} \cite{8371683}
 
-\section{The Architecture of Neural Networks} %-------------SECTION
+ANNs are composed of one or more layers in between the input data and the output results.  Inputs propagate forward through the layers in the network, each of which performing its respective calculations toward the overall objective.  The final output is measured by a prespecified cost function (i.e. sums of squares) between the input values and desired results, and an optimization algorithm tells the network how to adjust each weight specifically in order to reduce that cost and perform better.  This chapter analyzes neural network architectures, cost functions, and  optimization algorithms; and outlines some common types of neural networks. It then reviews some techniques from modern literature on how to analyze and improve the performance of these advanced deep learning mechanisms.
+
 
 %---Pathway to Architecture file---
 \subfile{Architecture}  
 
-
-\subsection{More Optimization Algorithms}
-
-With each iteration, after the gradient is computed, a step is taken in that direction.  Yet, just how far a step is to be determined.  If the step is too large, a local minimum may not be found and the algorithm never converge.  If the step is too sall, it may be extremely computationally intensive to reach convergence.  Sometimes, it can be shown mathematically how to determine an optimal step size for special cases \cite{nar2018step}, or several step sizes can be tested \cite{Goodfellow-et-al-2016} and an appropriate one determined.  Other algorithms exist for training neural networks, either as variants to gradient descent or a completely new means; some of which aim to save computation or adjust the step size according to the model.  For example, \textbf{stochastic gradient descent} saves computation by sampling the parameters with which to calculate the gradient.  Other methods like Adagrad (Adaptive Gradient Algorithm), RMSProp (Root Mean Square Propagation), and RProp (Resilient Backpropagation)\cite{rproprprop} aim to adapt the step size rather than maintaining a fixed value for each iteration.
-
-\section{Types of Neural Networks} %-------------SECTION
 
 %---Pathway to Keras_types file---
 \subfile{Keras_types}
@@ -22,7 +26,7 @@ With each iteration, after the gradient is computed, a step is taken in that dir
 \begin{comment}
 Commenting out the old text, replaced by subfile...
 
-The previous section described a \textbf{Multi-Layer Perceptron} network.  This section is devoted to other network types and their most practical uses. 
+The previous section described a Multi-Layer Perceptron network.  This section is devoted to other network types and their most practical uses. 
 
 Obviously not all types will be covered, but here are a few.  
 
@@ -135,6 +139,8 @@ Unstructured text data
 
 %---Pathway to performance file---
 \subfile{Performance}
+
+
 
 \subsection{Example: Tohoku Earthquakes}
 

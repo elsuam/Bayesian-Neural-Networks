@@ -1,68 +1,29 @@
 
 %---ARCHITECTURE---
+\section{Neural Network Architecture} %-------------SECTION
 
-\begin{wrapfigure}{r}{0.3\textwidth}
-  \vspace{-50pt}
-    \centering
-    \includegraphics[width=.4\textwidth]{Figures/NN_int.png}
-    \caption{\footnotesize{A two-layer neural network with the \emph{input} as the first layer and the \emph{hidden} layer as the second.  The final layer displayed is simply the output result}}
-  \label{NNet}
-  \vspace{-20pt}
-\end{wrapfigure}
+Selection of ANN architecture consists of defining the number of layers, the number of neurons in each layer, the connections between them, and the activation function(s) to use. One hidden layer is sufficient to make accurate predictions from training data. More hidden layers increase the depth of the network. Deeper networks are better at generalizing test data, but are harder to optimize. \cite{Goodfellow-et-al-2016} 
+It is common for a $L$-layered network to be recognized as such by the number of $L$ layers that have tunable parameters; although some literature describes an alternate means of describing layer sizes \cite{bishop1995} (i.e. by counting the output layer rather than the input).  This thesis will only use the tunable weights criterion so not to confuse what the $l^{th}$ layer is referring to, as illustrated in Figure \ref{NNet}.  
 
-Artificial neural networks are composed of one or more layers in between the input data and the output results.  It is common for a $L$-layered network to be recognized as such by the number of $L$ layers that have tunable parameters; although some literature describes an alternate means of describing layer sizes \cite{bishop1995} (i.e. by counting the output layer rather than the input).  This thesis will only use the tunable weights criterion so not to confuse what the $l^{th}$ layer is referring to, as illustrated in Figure \ref{NNet}.  
-A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or \textit{neuron}) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions.\cite{bishop2006pattern}.
-However, linearity can be achieved through the usage of a linear activation function.  In such cases, a linear neural network model is found to be more adaptive to data curvature, without the necessity for splines or higher order polynomials. \cite{?}
-Indeed, a neural network devoid of any activation function simplifies to a linear regression model \ref{sharma2017activation}, which will be shown later in this section.
-
-
-The Multi-Layer Perceptron (add these into this subsection)
-
-\begin{itemize}
-\tightlist
-  
-\item
-  One hidden layer is sufficient to make accurate predictions from
-  training data. More hidden layers increase the depth of the network,
-  and often calls for fewer units per layer. Deeper networks are better
-  at generalizing test data, but are harder to optimize
-  \cite{Goodfellow-et-al-2016} \emph{(Re-address this claim down the
-  road)}
-\item 
-    Hint toward issues like overfitting, but elaborate more later
-\end{itemize}
+A neural network is based on a feed-forward mapping, in which connections exist only directly between any two subsequent layers, and each unit (or \textit{neuron}) is connected to all neurons in its adjacent layer(s).  Such feed-forward designs are non-linear mappings between a set of input variables and a set of output variables, in which direct connections between layers are transformed by non-linear activation functions \cite{bishop2006pattern}.
+However, linearity can be achieved through the usage of a linear activation function.  In such cases, a linear neural network model is found to be more adaptive to data curvature, without the necessity for splines or higher order polynomials. Indeed, a neural network devoid of any activation function simplifies to a linear regression model \cite{sharma2017activation}, which will be shown later in this section.
 
 \hypertarget{foundations}{%
-\subsection{Foundations}\label{foundations}}
+\subsection{Neurons}\label{foundations}}
 
-\textbf{The Perceptron} \textit{(bullet points to be converted into paragraph form)}
-
-\begin{itemize}
-\tightlist
-\item
-  artificial neuron developed by Frank Rosenblatt in the 1950s
-  \cite{nielsen}
-\item
-  Takes several binary inputs and outputs a single binary output:
-\item
-  Output is determined by the weighted sum of all input values with
-  respective weights
-\end{itemize}
+The idea of an \textit{artificial neuron}, represented by a circle in Figure \ref{NNet}, began with Frank Rosenblatt in the 1950 \cite{nielsen}.  Rosenblatt coined the idea of a \textbf{perceptron}, which takes the value of 0 or 1.  The weights, represented as connecting lines in the figure, influence the binary output of the perceptron by whether or not the weighted sum of all input input values $x_i$ multiplied by the respective weights $w_i$ reaches a prespecified threshold:
 
 \[
 Y = 
 \begin{cases}
-0 \text{ if } \sum_i^n w_ix_i \le D \\
-1 \text{ if } \sum_i^n w_ix_i > D
+0 \text{ if } \sum_i^n w_ix_i \le M \\
+1 \text{ if } \sum_i^n w_ix_i > M
 \end{cases}
-\] Where \(i\) can be any number \(n\) of input values composed in the
-network and \(D\) is the threshold value that the weighted sum is
-matched with to determine the binary output \(Y\).
-
-Because these inputs are calculated by computers, and computers like
-vectors, the notation is adjusted to allow for proper computation in which $(w_i \cdot x_i)$ is the \textit{dot product} of the weights and inputs. In
-addition, Rosenblatt introduced a bias (check source) to shift the
-function for a clean threshold of \(D = 0\). \[
+\] Where \(i\) can be any number of input values composed in the
+network, and \(M\) is the threshold value that the weighted sum is
+matched with to determine the binary output \(Y\).  Because these inputs are calculated by computers, and computers like
+vectors, the above notation is adjusted to allow for proper computation in which $(w_i \cdot x_i)$ is the dot product of the weights and inputs. In
+addition, a bias term $b_i$ is introduced to shift the function for a clean threshold of \(M = 0\). \[
 Y = 
 \begin{cases}
 0 \text{ if } (w_i \cdot x_i) + b_i \le 0 \\
@@ -80,31 +41,11 @@ This is represented by the \emph{step function}.
 \end{figure}
 
 The problem with the perceptron is that a small change in weight can
-cause the outcome to change dramatically, since the output is binary.
-
-\textbf{Sigmoid neuron}
-
-The elementary topology of a neural network as featured in Figure \ref{NNet} is a \textbf{Multi-Layer Perceptron}.  Despite its name, it is typically composed of being composed of \textit{sigmoid neurons}.
-
-\begin{itemize}
-\tightlist
-\item
-  modified from perceptrons so that small changes in weights or bias
-  causes a small change in output
-\item
-  not a binary output, rather an output of the interval {[}0,1{]}
-\end{itemize}
-
-
+cause the outcome to change dramatically, since the output is binary \cite{nielsen}.  A perceptron change from 0 to 1 will impact the following calculation. For deep networks, this butterfly effect can make the anticipated scheme of outputs much worse than before, and the machine will have a hard time converging to the desired results.  To solve this problem, a smoothing component is applied to give the machine the ability to output a continuous range of potential weights and biases.  Typically, this is done with the \textit{sigmoid} activation function:
 \[
 \sigma(z) = \frac{1}{1+e^{-z}} \\
-\] Where \(z\) is the same equation from the perceptron
-\(w \cdot x + b\). That is, 
-$$
-\sigma((w_i \cdot x_i) + b_i) = \frac{1}{1-e^{-((w_i \cdot x_i) + b_i)}}
-$$
-
-Which is represented by the \emph{Sigmoid Function}
+\]
+Which is represented by the \emph{Sigmoid Function} below.
 
 \begin{figure}[H]
     \centering
@@ -113,13 +54,27 @@ Which is represented by the \emph{Sigmoid Function}
 %    \caption{caption}
 \end{figure}
 
-\textit{(So far this section has only dealt with connections in between two layers.  Continue here to connections into subsequent layers, including notation similar to Bishop 1995 p. 119)}
+
+The elementary topology of a neural network as featured in Figure \ref{NNet} is called a \textbf{Multi-Layer Perceptron}.  Despite its name, it is typically composed of sigmoid neurons.  As such, the resulting calculation for the weighted sum of inputs from one layer into one sigmoid neuron in the next layer is:
+$$
+\sigma(z) = \sigma((w_i \cdot x_i) + b_i) = \frac{1}{1-e^{-((w_i \cdot x_i) + b_i)}}
+$$
+
+And indeed $\sigma(z)$ becomes one of many inputs $x_i$ into the next layer, which would be used to compute a weighted sum and coerced under activation again until the network has propagated to the output.
+
+
+%\textit{(So far this section has only dealt with connections in between two layers.  Continue here to connections into subsequent layers, including notation similar to Bishop 1995 p. 119)}
+
+
+
+
+
 
 \textbf{A note on linearity}
 
 A single-layer neural network would have but one step of calculations ($input \rightarrow output$).  With no hidden layer to perform subsequent calculations, the resulting interpretation would be the expected result of the given inputs.
 $$
-y_i = (w_i \cdot x_i) + b
+y_i = (w_i \cdot x_i) + b_i
 $$
 This means that a neural network devoid of any hidden layers or activation function simplifies to a \textbf{linear regression} model. \cite{sharma2017activation}
 
@@ -136,18 +91,23 @@ $$
 $$
 Reversing $\delta$ results in the relevant probability that $X = 1$ for the given vector of weights and bias.
 $$
-P(X) = \frac{e^\delta}{1+e^\delta} = \frac{1}{1+e^{-\delta}}
+P(X) = \frac{e^\delta}{1+e^\delta} = \frac{1}{1+e^{-\delta}} = \sigma(\delta)
 $$
 In which $P(X) \in [0,1]$.  For logistic regression, or for a single-layer neural network using the sigmoid activation function, the calculation would end here and the resulting interpretation from the binary classification model a probability that the input is from category 1.  In deeper neural networks, the value of $P(X)$, which is one of many, gets passed on to the next layer to join its cohorts for the next calculation.
 
 The potential for neural networks expands well beyond linearity or the curvature matched by polynomial terms or splines.  Neural nets are universal function approximators, which means that they have the capacity to learn and compute any function. \cite{sharma2017activation} This is due to non-linear activation functions, for without them, transformations between successive layers would be linear, and the entire composition itself then linear, too. \cite{bishop1995}  While there is no one-size-fits all, certain activation functions have desirable properties that help give insight into the questions that neural networks answer.
+
+
+
 
 %---------ACTIVATION FUNCTIONS---------
 
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
 
-A common theme of this thesis and neural network research in general is their immense complexity.  No feature of a neural network can be expressed in exhaustive detail in one paper, and activation functions are no exception.  Many activation functions exist, with several variations of the original, each selected to improve the performance for a specific task.  The sigmoid activation function is the most widely used because it is easily differentiable and overcomes the primary drawback of the step function.  Hyperbolic tangent (Tanh) is another function very similar to sigmoid, yet it is steeper and symmetric about the origin with range (-1,1).  This is preferable in cases where gradients are not restricted to vary in a specific direction.  To mathematically compare it to sigmoid, it can be defined as $f(x) = 2 \cdot sigmoid(2x) - 1$.
+The sigmoid activation function gives the output of a neuron a continuous range [0,1].  While this is common in practice, other activation functions can be used that coerce the output of the neuron in various ways.
+%No feature of a neural network can be expressed in exhaustive detail in one paper, and activation functions are no exception.
+Many activation functions exist, with several variations of the original, each selected to improve the performance for a specific task.  The sigmoid activation function is the most widely used because it is easily differentiable and overcomes the primary drawback of the step function.  Hyperbolic tangent (Tanh) is another function very similar to sigmoid, yet it is steeper and symmetric about the origin with range (-1,1).  This is preferable in cases where gradients are not restricted to vary in a specific direction.  To mathematically compare it to sigmoid, it can be defined as $f(x) = 2 \cdot sigmoid(2x) - 1$.
 
 
 
@@ -357,3 +317,8 @@ represented by:
 
 
 The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, the specific derivatives calculated will be different as these are changed as well.
+
+
+\subsection{More Optimization Algorithms}
+
+With each iteration, after the gradient is computed, a step is taken in that direction.  Yet, just how far a step is to be determined.  If the step is too large, a local minimum may not be found and the algorithm never converge.  If the step is too sall, it may be extremely computationally intensive to reach convergence.  Sometimes, it can be shown mathematically how to determine an optimal step size for special cases \cite{nar2018step}, or several step sizes can be tested \cite{Goodfellow-et-al-2016} and an appropriate one determined.  Other algorithms exist for training neural networks, either as variants to gradient descent or a completely new means; some of which aim to save computation or adjust the step size according to the model.  For example, \textbf{stochastic gradient descent} saves computation by sampling the parameters with which to calculate the gradient.  Other methods like Adagrad (Adaptive Gradient Algorithm), RMSProp (Root Mean Square Propagation), and RProp (Resilient Backpropagation)\cite{rproprprop} aim to adapt the step size rather than maintaining a fixed value for each iteration.
