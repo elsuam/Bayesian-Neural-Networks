@@ -130,7 +130,7 @@ The family of parameters $H$ is optimized to minimize $KL(q||p)$, in a similar m
 
 %\textit{(More practical representations)}
 
-A nice feature of Bayesian Statistics is the ability to make sense out of few data points, without the need for minimum sample size or rules of thumb.  Another is the ability to extract the desired distribution of interest independent of the particular parameter settings. \cite{bishop2006pattern}
+A nice feature of Bayesian Statistics is the ability to make sense out of few data points, without the need for a minimum sample size or rules of thumb.  Another is the ability to extract the desired distribution of interest independent of the particular parameter settings \cite{bishop2006pattern}.  Between the two of these, meaningful predictions can be extrapolated without having to employ cross-validation or bootstrapping techniques.
 
 \subsection{Marginalization}
 
@@ -155,7 +155,7 @@ Ideally, to be fully Bayesian and practice the mastery of marginalization is to 
 $$
 p(\theta,\alpha,\sigma^2|x) = \frac{p(x|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}{\iiint p(x|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
 $$
-However, this is moving beyond the scope of this thesis.  Bayesian Statistics offers a multitude of possibilities to indulge statistical models beyond estimation, such as regularizing, determining thresholds like Information Criteria, cross validating, and more.  Libraries could be filled with the studies of its potential and relative simulations on complex machine learning models.  The next sections return to discuss neural networks with applications of Bayes to select certain features.
+However, this is moving beyond the scope of this thesis.  Bayesian Statistics offers a multitude of possibilities to indulge statistical models beyond estimation, such as regularizing, determining thresholds like Information Criteria, cross validating, and more.  Libraries could be filled with the studies of its potential and relative simulations on complex machine learning models.  The next section returns to discuss neural networks with applications of Bayes to select certain features.
 
 \begin{comment}
 \subsection{Predictive Accuracy Measures}

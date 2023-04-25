@@ -159,10 +159,4 @@ encoded result from the network.
 \subsection{Generative Adversarial Networks
 (GAN)}\label{generative-adversarial-networks-gan}}
 
-Image generation to try and fool a ``discriminator'' network
-
-\hypertarget{long-short-term-memory-network}{%
-\subsection{Long Short-Term Memory
-Network}\label{long-short-term-memory-network}}
-
-Special type of RNN \cite{Rai}
+A unique element of these networks is that they are actually comprised of two networks - a \textit{generator} and a \textit{discriminator} - to compete against one another and generate new data.  This is typically applied in image generation applications.  The generator creates random data to send to the discriminator, which is designed to differentiate between real training values (i.e. labeled images) and the fake generated ones.  These two networks interact until the generator starts to produce realistic data that the discriminator cannot easily differentiate from the training data.  This network type deviates from the other common types above in that it has a source of random variation in its training.  An extensive tutorial to all above mentioned network types and more to build in \texttt{R} with \texttt{keras} is available in (Rai, 2019 \cite{rai}).
