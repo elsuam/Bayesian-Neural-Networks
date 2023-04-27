@@ -136,7 +136,7 @@ For \textbf{regression} tasks, the \textit{Mean Squared Error} loss function is 
 
 \[
 MSE = \frac{1}{N} \sum_{i=1}^N (\hat{y_i} - y_i)
-\] Where $\hat{y_i} =$ \(a^{(L)}_i\) is the outcome of a single iteration of forward
+\] Where $\hat{y_i}$ is the outcome of a single iteration of network forward
 propagation and \(y_i\) is the true observation to compare it to.
 
 For \textbf{classification} tasks, variations of the \textit{log-loss} function are applied depending on the task.  Binary classification problems typically use the sigmoid activation function, resulting in the following loss function:
@@ -163,7 +163,7 @@ $$
 MCE = -\sum_{i=1}^N \sum_{j=1}^M y_{ij} log (\hat{y}_{ij})
 $$
 
-All of these are cross-entropy error functions that neural networks use to optimize their parameters by gradient descent.
+Despite the exclusive name of the last two, all of these are \textit{cross-entropy} error functions that neural networks use optimize their parameters by comparison of distributions.  This optimization procedure is typically done with \textbf{gradient descent.}
 
 
 %---------Gradient Descent---------
@@ -173,41 +173,45 @@ All of these are cross-entropy error functions that neural networks use to optim
 
 The efficiency of a neural network is measured and corrected with each
 iteration based on reducing a cost function. This is the same as finding
-a local minimum of a function.  Figure \ref{red} appears to have a local minimum somewhere around approximately $x = 4$ In a simple case below, given the function \(f(x) = \frac{x^3}{2} - x^2 - 12x\), a local minimum is found by differentiating the function and finding the correct turning points in which the slope is zero. 
+a local minimum of a function.  Given the function \(f(x) = \frac{x^3}{2} - x^2 - 12x\), Figure \ref{red} appears to have a local minimum somewhere around approximately $x = 4$, which can be calculated with precision by differentiating the function and finding the correct turning points.
 
 \begin{figure}[H]
     \centering
     \vspace{-40pt}
     \includegraphics[width = .7\textwidth]{Figures/grad_desc_2D-1.pdf}
     \vspace{-40pt}
-    \caption{\footnotesize }
+    \caption{\footnotesize An arbitrary one-dimensional function that has a local minimum and a local maximum.  As dimensionality increases, the ease of visualizing or finding an accurate solution disappears.}
     \label{red}
 \end{figure}
 
 This is ideal when \(x \in \mathbb{R}\), even for
 \(x \in \mathbb{R}^2\), but gets more  and more complicated as
 dimensionality increases to \(x \in \mathbb{R}^n\). This calls for
-another means for finding function extrema (particularly minima).
-\textbf{Gradient Descent} is an optimization process by which an extrema is found by
-means of iterative computation for high-dimensional functions, making it
-intrinsically useful for neural networks to learn.
-
-Figure \ref{grad} displays the three dimensional function $z = \frac{1}{2} x^2 + 4 sin(y)$.  Observing gradient descent in two or three dimensions is perhaps the simplest way to visualize complexity, as biological limitations bar the visualization of higher dimensions.  For computers, however, it is no trouble and the process is the same.  The network propagates forward and determines the outcome error for the vector of weights $w_i$ and biases $b_i$ in the network with the loss function.  It then computes the gradient - the adjustment to every specific $w_i$ and $b_i$ parameter that gives the direction of steepest descent to the loss function - and takes a step in that direction.
+another means for finding function extrema, particularly minima.
+Gradient descent is an optimization process by which an extreme is found by
+means of iterative computation of partial derivatives for high-dimensional functions, making it intrinsically useful for neural networks to learn.  To observe gradient descent in two or three dimensions is perhaps the simplest way to visualize its process.  Figure \ref{grad} displays the three dimensional function $z = \frac{1}{2} x^2 + 4 sin(y)$.  To get to a local minimum by means of gradient descent is like rolling a ball down the side of the function with ammended physical laws of inertia, in which the ball only goes downhill and stops when it cannot move further down.  The blue line is the path of the ball, each arrow a snapshot ``step.''
 
 
 \begin{figure}[H]
+    \vspace{-12pt}
     \includegraphics[width = .4\textwidth]{Figures/grad_desc-51.png}
     \includegraphics[width = .6\textwidth]{Figures/grad_desc-50.pdf}
     \caption{\footnotesize The function in three dimensions, with a top-down observation that shows the path of gradient descent.  Each blue arrow represents a step.}
     \label{grad}
+    \vspace{-10pt}
 \end{figure}
+
+
+Biological limitations bar the visualization of higher dimensions.  For computers, this is no trouble and the process is the same, only with more components to calculate the gradient.  The basic concept is to select a starting point, determine the direction of steepest descent, and take a step in that direction.  When the network propagates forward for the first time, it initializes the parameters by determining the outcome error for the vector of weights $w_i$ and biases $b_i$ using the loss function.  It then computes the gradient - the adjustment to every specific $w_i$ and $b_i$ parameter that gives the direction of steepest descent to the loss function - and takes a step in that direction.  The process is repeated with another propagation forward to calculate the error and determine the next step.
+
+Gradient descent is not isolated to deep learning, and in fact drives the learning of machine learning algorithms, too \cite{Goodfellow-et-al-2016}.  However, deep learning networks have multiple layers and non-linear activation, which require more careful attention to calculate the gradient.  Neural networks do this by working backwards, known as \textit{backpropagating}.  The idea is to adjust the weights and biases in each network layer, starting with the desired output step, until the input layer is adjusted and the network can run again.
 
 %---BACKPROPAGATION---
 
 \hypertarget{backpropagation}{%
 \subsection{Backpropagation}\label{backpropagation}}
 
-Backpropagation is the algorithm that drives gradient descent and computes the gradient for high-dimensional derivatives. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
+Backpropagation is the algorithm that drives gradient descent and computes the gradient for neural networks. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
 
 \[
 \nabla{C} =
