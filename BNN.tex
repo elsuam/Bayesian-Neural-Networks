@@ -58,11 +58,10 @@ The normalizing constant in the denominator is what has been seen before: the di
 
 Marginalization takes reign when determining the distribution of network predictions.  This means integrating out $\theta$ from the final model.  Given the posterior distribution of network parameters $p(\theta|D)$, the distribution of network predictions $p(y|x,D)$ is calculated as:
 $$
-p(y|x,D) = \int_\theta p(y|x,\theta')p(\theta'|D)d\theta'
+p(y^*|x,D) = \int_\theta p(y^*|x,\theta)p(\theta|D)d\theta
 $$
 
 Usually in practice, due to the nature of stochastic networks, a collection of samples $\Theta$ is taken from $p(\theta|D)$ and $Y$ from $p(y|x,D)$ \cite{Jospin}. These samples are aggregated to measure uncertainty and generate an estimate $\hat{y}$.
-
 
 \subsection{Description of Uncertainty}
 
