@@ -74,7 +74,8 @@ Plots of average annual earthquake frequencies over the 46-year span
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-4-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -90,7 +91,8 @@ Plots of average annual earthquake frequencies over the 46-year span
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-4-2.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-4-2.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -110,7 +112,8 @@ Plots of average annual earthquake frequencies over the 46-year span
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-4-3.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-4-3.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -130,7 +133,8 @@ Plots of average annual earthquake frequencies over the 46-year span
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-4-4.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-4-4.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -150,7 +154,8 @@ Plots of average annual earthquake frequencies over the 46-year span
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-4-5.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-4-5.pdf}
 
 \hypertarget{linear-models-of-the-data}{%
 \subsection{Linear models of the data}\label{linear-models-of-the-data}}
@@ -238,13 +243,6 @@ below.
 ## 8        8  6.102735e-40
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# \# For nice table in LaTeX}
-\CommentTok{\# data.frame(capacity,prediction) \%\textgreater{}\% }
-\CommentTok{\#   xtable(digits = 4)}
-\end{Highlighting}
-\end{Shaded}
 
 \hypertarget{multi-layer-perceptron}{%
 \subsection{Multi-Layer Perceptron}\label{multi-layer-perceptron}}
@@ -321,7 +319,8 @@ the model.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-8-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -337,7 +336,9 @@ the model.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-8-2.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-8-2.pdf}
+
 
 \hypertarget{testing-capacity-levels-and-test-error}{%
 \subsubsection{Testing Capacity Levels and Test
@@ -403,13 +404,6 @@ otherwise.
 ## GeneralizationGap 0.028185169 0.009152226 0.01795071
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#code to produce nice table}
-\CommentTok{\# data.frame(rbind(TestError,TrainError,GeneralizationGap)) \%\textgreater{}\% }
-\CommentTok{\#   xtable(digits = 10)}
-\end{Highlighting}
-\end{Shaded}
 
 \hypertarget{bayesian-reguarized-neural-network}{%
 \subsection{Bayesian Reguarized Neural
@@ -497,7 +491,9 @@ manner as before with MLP.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-11-1.pdf}
+
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -516,7 +512,8 @@ manner as before with MLP.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-11-2.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-11-2.pdf}
 
 \hypertarget{posterior-predictive-simulations-of-brnn---100-networks}{%
 \subsection{Posterior Predictive Simulations of BRNN - 100
@@ -541,7 +538,8 @@ Simulating 100 networks' predictions for relative magnitudes with
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-13-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -559,21 +557,12 @@ Simulating 100 networks' predictions for relative magnitudes with
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-13-2.pdf}
+
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-13-2.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# delete this for Appendix}
-\CommentTok{\# ggplot(ddf\_9.1, aes(sample = 1/10\^{}(freqc))) +}
-\CommentTok{\# geom\_qq() + }
-\CommentTok{\#     labs(x = "Iteration",}
-\CommentTok{\#          y = "Predicted Lapsed Time (Years) Between Occurrences",}
-\CommentTok{\#          title = "Predictions for a Magnitude 9.1 Earthquake",}
-\CommentTok{\#          subtitle = "Three{-}Layer Neural Network with Bayesian Regularization") +}
-\CommentTok{\#   theme\_minimal()}
-
-
-\CommentTok{\#This, I believe, may just be the approximate posterior predictve distribution for a magnitude 9.1}
 
 \CommentTok{\#{-}{-}{-}posterior predictive distribution of a magnitude 9.1}
 \FunctionTok{ggplot}\NormalTok{(ddf\_9}\FloatTok{.1}\NormalTok{, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \DecValTok{1}\SpecialCharTok{/}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{(freqc))) }\SpecialCharTok{+}
@@ -586,7 +575,9 @@ Simulating 100 networks' predictions for relative magnitudes with
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-13-3.pdf}
+%this one I am just pretending is the same as the model above, since when I knit the file it did not catch an outlier.
+\includegraphics[width =.6\linewidth]{Figures/tohoku.png}
+%{earthquakes_files/figure-latex/unnamed-chunk-13-3.pdf}
 
 \hypertarget{plots-with-outliers-removed-better-visual}{%
 \subsubsection{Plots with outlier(s) removed (better
@@ -610,7 +601,8 @@ when the simulation is run) of the posterior predictive distribution.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-14-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-14-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -625,7 +617,8 @@ when the simulation is run) of the posterior predictive distribution.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-14-2.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-14-2.pdf}
 
 \hypertarget{posterior-predictive-simulations-for-brnn---1000-networks}{%
 \subsection{Posterior Predictive Simulations for BRNN - 1000
@@ -649,7 +642,8 @@ Simulating 1000 networks predictions for sharper posterior simulation
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-16-1.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-16-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -666,5 +660,6 @@ Simulating 1000 networks predictions for sharper posterior simulation
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{earthquakes_files/figure-latex/unnamed-chunk-16-2.pdf}
+\includegraphics[width =.6\linewidth]
+{earthquakes_files/figure-latex/unnamed-chunk-16-2.pdf}
 

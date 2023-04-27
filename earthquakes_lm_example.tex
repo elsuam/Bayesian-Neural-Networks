@@ -4,13 +4,11 @@ On March 11, 2011 a magnitude 9.1 earthquake struck Japan, the epicenter just 76
 The following example, inspired by (Silver, 2015)\cite{silver2015signal} illustrates a statistical model of annual earthquake frequencies of the greater Tohoku region.
 Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat)
 %(\url{https://earthquake.usgs.gov/earthquakes/search/})
-to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.\footnote{A more comprehensive analysis to supplement this thesis is available on GitHub at the following link: 
-\url{https://github.com/elsuam/Tohoku-Earthquakes}}
+to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.
 
-\begin{comment}
-The data was stored locally in a .csv file named \texttt{earthquakes}.  The USGS also has an package called \texttt{rcomcat} to query
-data directly into \texttt{R}, but its version was not compatible at the time of this thesis.
-\end{comment}
+%\footnote{A more comprehensive analysis to supplement this thesis is available on GitHub at the following link: 
+%\url{https://github.com/elsuam/Tohoku-Earthquakes}}
+
 
 \subsubsection{Linear Regression Models}
 After pre-processing, the data was coerced into a table of magnitudes rounded to one decimal place and the following plots generated to display the annual frequency of magnitudes \textit{at or above} each size earthquake.  Figure \ref{tohoku_unfit} displays the data on both the standard and logarithmic scale.
@@ -25,13 +23,8 @@ After pre-processing, the data was coerced into a table of magnitudes rounded to
 \end{figure}
 
 
-\begin{comment}
-\hypertarget{linear-models-of-the-data}{%
-\subsection{Linear models of the data}\label{linear-models-of-the-data}}
-\end{comment}
 
-For comparison and visualization, the first model to fit the data is an linear regression model using ordinary least squares.  It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, the model is fit using
-\texttt{R}.
+For comparison and visualization, the first model to fit the data is an linear regression model using ordinary least squares.  It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, the model is fit using R.
 
 \begin{figure}[H]
     \center
@@ -41,6 +34,8 @@ For comparison and visualization, the first model to fit the data is an linear r
     \label{tohoku_lm}
 \end{figure}
 
+%------------------comment--------------------------------------------
+\begin{comment}
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\#transforming to the log scale}
@@ -51,6 +46,8 @@ For comparison and visualization, the first model to fit the data is an linear r
 \FunctionTok{summary}\NormalTok{(linear)}
 \end{Highlighting}
 \end{Shaded}
+\end{comment}
+%---------------------------------------------------------------------
 
 \begin{verbatim}
 ## 
@@ -88,8 +85,34 @@ every \(1/10^{(6.38365 - 1.01971 \cdot 9.1)}\) = 786.47 years.  This might be en
     \label{tohoku_lm23}
 \end{figure}
 
-By accounting for the curvature of the data, the predicted frequency of a data point outside of this interval changes dramatically.  A regression model inclusive of the second order polynomial predicts a magnitude 9.1 earthquake to occur every 5693.64 years; that with a third order polynomial to predict one every 24,721.19 years.
+By accounting for the curvature of the data, the predicted frequency of a data point outside of this interval changes dramatically.  A regression model inclusive of the second order polynomial predicts a magnitude 9.1 earthquake to occur every 5693.64 years. %; that with a third order polynomial to predict one every 24,721.19 years.
+Table \ref{captable} summarizes the model's predictions based on increasing levels of polynomial terms. As discussed in earlier sections, increasing the level at which the model fits the data comes with a very meaningful caveat: it becomes less likely to extrapolate meaningful results.
 
+% latex table generated in R 4.2.2 by xtable 1.8-4 package
+% Thu Apr 27 13:55:07 2023
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & Capacity & Predicted Interval \\ 
+  \hline
+& 1 & 786.4653 \\ 
+& 2 & 5693.6383 \\ 
+& 3 & 24721.1916 \\ 
+& 4 & 48788.9777 \\ 
+& 5 & 0.4514 \\ 
+& 6 & 1.5224e-33 \\ 
+& 7 & 8.6087e-153 \\ 
+& 8 & 6.1027e-40 \\ 
+   \hline
+\end{tabular}
+\caption{\footnotesize Model capacity levels and predictions for a magnitude 9.1 earthquake.  After the fourth order polynomial, predictions become rather nonsenical}
+\label{captable}
+\end{table}
+
+
+%------------------comment--------------------------------------------
+\begin{comment}
 The following code outputs a data frame of polynomial levels and the relative expected interval of time between earthquakes of magnitude 9.1 or above in the Tohoku area.
 
 \begin{Shaded}
@@ -117,26 +140,5 @@ The following code outputs a data frame of polynomial levels and the relative ex
 ## 7        7 8.608668e-153
 ## 8        8  6.102735e-40
 \end{verbatim}
-
-
-% latex table generated in R 4.2.2 by xtable 1.8-4 package
-% Thu Apr 27 13:55:07 2023
-\begin{table}[ht]
-\centering
-\begin{tabular}{rrr}
-  \hline
- & Capacity & Predicted Interval \\ 
-  \hline
-& 1 & 786.4653 \\ 
-& 2 & 5693.6383 \\ 
-& 3 & 24721.1916 \\ 
-& 4 & 48788.9777 \\ 
-& 5 & 0.4514 \\ 
-& 6 & 1.5224e-33 \\ 
-& 7 & 8.6087e-153 \\ 
-& 8 & 6.1027e-40 \\ 
-   \hline
-\end{tabular}
-\end{table}
-
-As discussed in earlier sections, increasing the level at which the model fits the data comes with a very some meaningful caveat: it becomes less likely to extrapolate meaningful results.  By the fourth polynomial order, a magnitude 9.1 earthquake is expected only every 49,000 years.  By the fifth order, the predictions become useless and blatantly nonsensical.
+\end{comment}
+%---------------------------------------------------------------------

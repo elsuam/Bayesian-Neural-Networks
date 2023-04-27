@@ -145,13 +145,13 @@ A nice feature of Bayesian Statistics is the ability to make sense out of few da
 \subsection{Marginalization}
 
 An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all unnecessary variables, they are integrated out
-\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|y,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
-To determine the distribution of new predictions $\hat{y}$ requires integrating the product of the posterior and the likelihood of new predictions with respect to the parameters of the model:
+\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, given a data set $D$, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|D,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
+To determine the distribution of new predictions $y^*$ requires integrating the product of the posterior and the likelihood of new predictions with respect to the parameters of the model:
 $$
-p(\hat{y}|y,\alpha,\sigma^2) = \int p(\hat{y}|\theta,\sigma^2) p(\theta|y,\alpha,\sigma^2) d\theta
+p(y^*|D,\alpha,\sigma^2) = \int p(y^*|\theta,\sigma^2) p(\theta|D,\alpha,\sigma^2) d\theta
 $$
 
-Therefore, $p(\hat{y}|y,\alpha,\sigma^2)$ is the \textit{posterior predictive distribution} of predicted outputs $\hat{y}$ under the circumstances set forth in the model.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior \cite{salad} \cite{Jospin}.  
+Therefore, $p(y^*|,\alpha,\sigma^2)$ is the \textit{posterior predictive distribution} of predicted outputs $y^*$ under the circumstances set forth in the model.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior \cite{salad} \cite{Jospin}.  
 Setting aside the complex notation, this is simply a means of generating predictions from the parameter distribution gained by use of Bayes' Rule.  It describes the uncertainty the model has and allows for better flexibility without supplemental engineering.
 In the absence of many data points, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
 
@@ -160,19 +160,19 @@ In the absence of many data points, the predictive distribution will be very spa
 %Insert Simulationhere
 %$$
 
-Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not directly related to the task at hand \cite{bishop2006pattern}.  If the goal is to generate a distribution for the prediction of $\hat{y}$ given the training labels $y$, the desired distribution is $p(\hat{y}|y)$.  For all other parameters, \textit{hyperpriors} $p(\alpha)$ and $p(\sigma^2)$ are defined. The general Bayesian predictive framework employs the full posterior \cite{tipping2004bayesian}:
+Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not directly related to the task at hand \cite{bishop2006pattern}.  If the goal is to generate a distribution for the prediction of $y^*$ given the training labels $D$, the desired distribution is $p(y^*|D)$.  For all other parameters, \textit{hyperpriors} $p(\alpha)$ and $p(\sigma^2)$ are defined. The general Bayesian predictive framework employs the full posterior \cite{tipping2004bayesian}:
 $$
-p(\theta,\alpha,\sigma^2|y) = \frac{p(y|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}
-{\iiint p(y|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
+p(\theta,\alpha,\sigma^2|D) = \frac{p(D|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}
+{\iiint p(D|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
 $$
 
-Bayesian inference would proceed with integrating the product of the likelihood of predictions $\hat{y}$ by the full posterior to get $p(\hat{y}|y)$:
+Bayesian inference would proceed with integrating the product of the likelihood of predictions $y^*$ by the full posterior to get $p(y^*|D)$:
 $$
-p(\hat{y}|y) = \iiint p(\hat{y}|\theta,\sigma^2) p(\theta,\alpha,\sigma^2|y)
+p(y^*|D) = \iiint p(y^*|\theta,\sigma^2) p(\theta,\alpha,\sigma^2|y)
 \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2
 $$
 
-The equation above represents the distribution of model predictions based solely on the data.  It is independent of model parameters, control parameters, or noise assumptions.  However, this moves beyond the scope of this thesis.  What will be sought in future sections is the predictive distribution given the certain criteria set forth in the model; that is, for a model with specified assumptions to learning, the predictive distribution comparable to $p(\hat{y}|y,\alpha,\sigma^2)$ marginalized over its parameters $\theta$.
+The equation above represents the distribution of model predictions based solely on the data.  It is independent of model parameters, control parameters, or noise assumptions.  However, this moves beyond the scope of this thesis.  What will be sought in future sections is the predictive distribution given the certain criteria set forth in the model; that is, for a model with specified assumptions to learning, the predictive distribution comparable to $p(y^*|D,\alpha,\sigma^2)$ marginalized over its parameters $\theta$.
 
 \textbf{(this is because, and show this in the later example, we are using the same architecture, same regularizer, etc.)}
 
