@@ -107,4 +107,19 @@ Adding more neurons or more layers to a neural network can increase its capacity
 ## GeneralizationGap 0.028185169 0.009152226 0.01795071
 \end{verbatim}
 
+% latex table generated in R 4.2.2 by xtable 1.8-4 package
+% Thu Apr 27 13:43:54 2023
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrr}
+  \hline
+ & 1 Hidden Layer & 2 Hidden Layers & 3 Hidden Layers \\ 
+  \hline
+Test Error & 0.0098383338 & 0.0086557953 & 0.0111406131 \\ 
+  Train Error & 0.0380235026 & 0.0178080209 & 0.0290913220 \\ 
+  Generalization Gap & 0.0281851688 & 0.0091522255 & 0.0179507089 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
 The table above shows error measurements for a network with one, with two, and with three hidden layers.  The \textit{generalization gap}, which is a measure of difference between the two errors, is minimized for the network with two hidden layers.  That this value increases moving from a network with two to three hidden layers is indicative that the three-layer model is overfit.  Based on this table, the model with two hidden layers used above is the optimal fit.  However, this model is devoid of any regularization technique.  In a later section, the same example will be revisited using \textit{weight decay} in which parameters $\alpha$ and $\beta$ are determined from a Bayesian approach.  In the meantime, this thesis will summarize some important and methods of Bayesian Statistics.
