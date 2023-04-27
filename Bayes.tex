@@ -1,26 +1,37 @@
 \chapter{Bayesian Statistical Methods}
 
-Often called inverse probability in its budding stages, \cite{salsburg2002lady} Bayesian Statistics is an approach to analyzing data by use a theorem developed by the Reverend Thomas Bayes, although the theorem was not published until after his death.  Bayes' Theorem (or Bayes' Rule) describes the conditional probability of an event.
-
-The frequentist approach describes probability as the relative frequency of a favorable outcome as the number of samples increases to infinity.  In Bayes, probability is the number of favorable outcomes divided by the total number of possible outcomes \cite{gelmanbayesian3}
+Often called inverse probability in its budding stages, \cite{salsburg2002lady} Bayesian Statistics is an approach to analyzing data by use a theorem developed by the Reverend Thomas Bayes; although the theorem was not published until after his death.  Bayes' Theorem (or Bayes' Rule) describes the conditional probability of an event.  The frequentist approach describes probability as the relative frequency of a favorable outcome as the number of samples increases to infinity.  In Bayes.
+probability is representative of the current state of knowledge on the potential outcomes based on prior knowledge.
+ \begin{comment}
+In Bayes, probability is the weighted sum of favorable outcomes multiplied by the plausibility of that outcome, divided by the total number of possible outcomes \cite{mcelreath2016statistical}
 $$
-P = \frac{N_{\text{favorable outcomes}}}{N_{\text{total possible outcomes}}}
+P = \frac{\sum_i n_{\text{ ways to produce favorable outcome i}} \cdot p_{\text{ possibility of i}} }{N_{\text{total possible outcomes}}}
 $$
+\end{comment}
 
-It is important to note that to apply statistical methods by use of Bayes does not violate any accords of frequentism and that it does not stand as an opposition to the frequentist analogue.  Bayesian methods simply offer another perspective, with some useful features in specialized cases - one of which is the ability to generate mathematically savvy results with very little data.  The downside is that to find that "total number of possible outcomes" can be very computationally intensive.
+Consider a tiny example where a coin was determined to have three potential levels of fairness assigned: $P(tails) = .75, P(tails) = .5, P(tails) = .25$.  The frequentist would flip as many times as necessary to test a hypothesis with high enough power to determine the fairness of the coin beyond reasonable doubt.  The Bayesian would assess the distributional relationship for the fairness of the coin based on prior knowledge and the likelihood of its current outcome.
+Suppose after two flips the choice came up (heads,heads).  Since the set of possible outcomes is (H,H),(H,T),(T,H),(T,T), there is only one way out of four to produce (H,H).  This number is multiplied by each value of fairness to determine the potential for the true fairness value.
+\begin{align*}
+P(tails) &= (.75, .5, .25) \\
+P(tails|H,H) &= P(H,H) \cdot \left[ P(heads) = 1- P(tails) \right] \\
+&= \frac{1}{4} \cdot \frac{1}{4} = \frac{1}{16} \\
+&= \frac{1}{4} \cdot \frac{1}{2} = \frac{1}{8} \\
+&= \frac{1}{4} \cdot \frac{3}{4} = \frac{3}{16} \\
+\end{align*}
+Therefore, based on the prior knowledge of potential fairness levels, the most likely fairness is that the coin has a probability of showing tails of .25.  However, the distribution of likely fairness levels is very wide so the other options should not be ruled out.  What is important is that the parameter assignment has a distribution that still gives usable information even with very little data. As more flips are conducted, more probability density will accumulate toward the true $P(tails)$ identified by the frequentist's estimation; although under Bayes it will always be interpreted as a random variable.
 
 
 \section{Fundamentals of Bayesian Inference} %-------------SECTION
 
 %\textit{(theoretical representations)}
-
-A few things change when operating with the Bayesian framework.  For one, the goal is not to construct a model to estimate parameters as fixed values.  Rather, parameters are treated as random variables themselves, with the same properties as any other random variable - each could have a mean, a variance, minimum maximum, etc., and the distribution of that parameter reveals that information.
-
-Whereas frequentism often employes maximum likelihood modeling $p(y|\theta)$ to find the parameters $\theta$ which give the most likely estimation of the data, a Bayesian probabilistic approach finds the most likely distribution of parameters from the data $p(\theta|D)$\cite{mullachery2018bayesian}.  Bayesian inference (by Bayes' Theorem, given data set $D$) is as follows:
+It is important to note that to apply statistical methods by use of Bayes does not violate any accords of frequentism and that it does not stand as an opposition to the frequentist analogue.  Bayesian methods simply offer another perspective, with some useful features in specialized cases - one of which is the ability to generate mathematically savvy results with very little data.  The goal is not to construct a model to estimate parameters as fixed values. Rather, parameters are treated as random variables themselves, with the same properties as any other random variable - each could have a mean, a variance, minimum maximum, etc., and the distribution of that parameter reveals that information.
+Whereas frequentism often employes maximum likelihood modeling $p(D|\theta)$ to find the parameters $\theta$ which give the most likely estimation of the data, a Bayesian probabilistic approach finds the most likely distribution of parameters from the data $p(\theta|D)$\cite{mullachery2018bayesian}.  Bayesian inference (by Bayes' Theorem, given data set $D$) is as follows:
 
 $$
 p(\theta|D) = \frac{p(D|\theta)p(\theta)}{p(D)} = \frac{p(D|\theta)p(\theta)}{\int_{\theta'} p(D|\theta')p(\theta')d\theta'}
 $$
+
+This says that for each value of the parameter, count all the ways in which the data can be produced, and multiply that sum by the plausibility that the parameter is so.  Do this for every parameter value, and divide by the sum of the product.  This gives the updated distribution of parameter values.
 
 
 \subsection{From Prior to Posterior}
@@ -30,7 +41,7 @@ To determine the posterior $p(\theta|D)$ requires selection of a prior $p(\theta
 Typically, priors within the same family as the likelihood (i.e. a Bernoulli likelohood and a Beta prior) have analytically helpful properties \cite{mullachery2018bayesian}. These \textit{conjugate priors}, while mathematically useful, often place undesirable assumptions on the model.  Therefore it is usually preferred not to rely on conjugate priors in order to sacrifice mathematical precision for model accuracy by approximation.
 %prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
 
-\textbf{Bayesian Updating} is a concept in which the posterior distribution can be reused as the prior distribution when more data arrives \cite{mcelreath2016statistical}.  This is a useful attribute because the original prior outlines some assumptions of a model, which are then used to compute the posterior, the conditional probability of the parameters in light of those assumptions and the data likelihood.  By holding on to the posterior, the model can predict more realistic expectations based on the previous assumptions and the pattern of data that the model has already seen before.
+\textbf{Bayesian Updating} is a concept in which the posterior distribution can be reused as the prior distribution when more data arrives \cite{mcelreath2016statistical}.  In the coin flip example, this would be the addition of more flips, generating a more narrow distribution centered on the most likely value of coin fairness based on the flip results.  Each time the coin is flipped, new prior probabilities for coin fairness would be generated based on the outcome from the previous flips.  This is a useful attribute because the original prior outlines some assumptions of a model, which are then used to compute the posterior, the conditional probability of the parameters in light of those assumptions and the data likelihood.  By holding on to the posterior, the model can predict more realistic expectations based on the previous assumptions and the pattern of data that the model has already seen before.
 
 %\subsection{Bayesian Updating}
 
@@ -40,13 +51,12 @@ Typically, priors within the same family as the likelihood (i.e. a Bernoulli lik
 \section{Practical Computing} %-------------SECTION
 
  As mentioned, the premier disadvantage of Bayesian inference is that is requires computationally intractable integrations.  In response, a world of practical approximation techniques exists, some of which will be discussed in this section.  These approximaton techniques can be shown to still have pristine results while dodging tricky or impossible integrals \cite{tipping2004bayesian}.
-
- Approximate Bayesian inference
+ The approximated version of Bayesian inference looks something like this:
 
 $$
-p(w|D) \approx \frac{p(D|w)p(w)}{Z}
+p(\theta|D) \approx \frac{p(D|\theta)p(\theta)}{Z}
 $$
-In which $Z$ is approximated by some sophisticated means.
+where $Z$ is approximated by some sophisticated means.
 
  %mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages) and lead into \textbf{Markov Chain Monte Carlo Methods}
 
@@ -135,14 +145,13 @@ A nice feature of Bayesian Statistics is the ability to make sense out of few da
 \subsection{Marginalization}
 
 An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all unnecessary variables, they are integrated out
-\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|y,\alpha,\sigma^2)$, with $\alpha$ derived from the prior and which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation)
-
-Integrate out unwanted parameters for the \textit{predictive distribution} of a new data $y$:
+\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|y,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
+To determine the distribution of new predictions $\hat{y}$ requires integrating the product of the posterior and the likelihood of new predictions with respect to the parameters of the model:
 $$
-p(y|x,\alpha,\sigma^2) = \int p(y|\theta,\sigma^2) p(\theta|x,\alpha,\sigma^2) dw
+p(\hat{y}|y,\alpha,\sigma^2) = \int p(\hat{y}|\theta,\sigma^2) p(\theta|y,\alpha,\sigma^2) d\theta
 $$
 
-Where  $p(y|x,\alpha,\sigma^2)$ is the posterior predictive distribution of predicted outputs $y$ and $p(y|\theta,\sigma^2)$ is the likelihood of the new data.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior $p(y|x,\alpha,\sigma^2)$. \cite{salad} \cite{Jospin}.  
+Therefore, $p(\hat{y}|y,\alpha,\sigma^2)$ is the \textit{posterior predictive distribution} of predicted outputs $\hat{y}$ under the circumstances set forth in the model.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior \cite{salad} \cite{Jospin}.  
 Setting aside the complex notation, this is simply a means of generating predictions from the parameter distribution gained by use of Bayes' Rule.  It describes the uncertainty the model has and allows for better flexibility without supplemental engineering.
 In the absence of many data points, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
 
@@ -151,11 +160,23 @@ In the absence of many data points, the predictive distribution will be very spa
 %Insert Simulationhere
 %$$
 
-Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not related to the task at hand. \cite{bishop2006pattern}.  The general Bayesian predictive framework employs the full posterior \cite{tipping2004bayesian}:
+Ideally, to be fully Bayesian and practice the mastery of marginalization is to integrate out \textit{all} variables that are not directly related to the task at hand \cite{bishop2006pattern}.  If the goal is to generate a distribution for the prediction of $\hat{y}$ given the training labels $y$, the desired distribution is $p(\hat{y}|y)$.  For all other parameters, \textit{hyperpriors} $p(\alpha)$ and $p(\sigma^2)$ are defined. The general Bayesian predictive framework employs the full posterior \cite{tipping2004bayesian}:
 $$
-p(\theta,\alpha,\sigma^2|x) = \frac{p(x|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}{\iiint p(x|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
+p(\theta,\alpha,\sigma^2|y) = \frac{p(y|\theta,\sigma^2) p(\theta|\alpha)p(\alpha)p(\sigma^2)}
+{\iiint p(y|\theta,\sigma^2)p(\theta|\alpha)p(\alpha)p(\sigma^2) \text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2}
 $$
-However, this is moving beyond the scope of this thesis.  Bayesian Statistics offers a multitude of possibilities to indulge statistical models beyond estimation, such as regularizing, determining thresholds like Information Criteria, cross validating, and more.  Libraries could be filled with the studies of its potential and relative simulations on complex machine learning models.  The next section returns to discuss neural networks with applications of Bayes to select certain features.
+
+Bayesian inference would proceed with integrating the product of the likelihood of predictions $\hat{y}$ by the full posterior to get $p(\hat{y}|y)$:
+$$
+p(\hat{y}|y) = \iiint p(\hat{y}|\theta,\sigma^2) p(\theta,\alpha,\sigma^2|y)
+\text{ } d\theta \text{ } d\alpha \text{ } d\sigma^2
+$$
+
+The equation above represents the distribution of model predictions based solely on the data.  It is independent of model parameters, control parameters, or noise assumptions.  However, this moves beyond the scope of this thesis.  What will be sought in future sections is the predictive distribution given the certain criteria set forth in the model; that is, for a model with specified assumptions to learning, the predictive distribution comparable to $p(\hat{y}|y,\alpha,\sigma^2)$ marginalized over its parameters $\theta$.
+
+\textbf{(this is because, and show this in the later example, we are using the same architecture, same regularizer, etc.)}
+
+%Bayesian Statistics offers a multitude of possibilities to indulge statistical models beyond estimation, such as regularizing, determining thresholds like Information Criteria, cross validating, and more.  Libraries could be filled with the studies of its potential and relative simulations on complex machine learning models.  The next section returns to discuss neural networks with applications of Bayes to select certain features.
 
 \begin{comment}
 \subsection{Predictive Accuracy Measures}

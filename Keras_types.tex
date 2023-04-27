@@ -1,18 +1,8 @@
 
-\section{Types of Neural Networks} %-------------SECTION
+%----------MLP------------------------------
+\subsection{Multi-Layer Perceptron}
 
-The previous section described a Multi-Layer Perceptron network. This
-section is devoted to other network types and their most practical uses. Listed are a few primary network types and their general purposes.
-
-At the cutting edge, neural networks can be built with the
-\texttt{keras} package in \texttt{R}. Keras is a high-level API centered
-on the construction of deep learning models in a fast, user-friendly
-environment. It uses the \texttt{TensorFlow} engine built by Google and
-is written in \texttt{Python}. \texttt{keras} is fully integrated with
-\texttt{R}, though an installation of \texttt{Python} is required to run
-the package. Features of the \texttt{keras} package will be discussed in
-conjunction with the type of model described.
-
+7
 A standard MLP is called with the \texttt{keras\_model\_sequential()}
 function. With the below syntax, a network architecture can be defined,
 model compiled and optimization schemes defined, and fit accordingly to
@@ -45,41 +35,10 @@ argument rates the model performance. Lastly fitting a model involves
 commands that tell \texttt{keras} how to train and aggregate
 simultaneous models to generate a useful network.
 
-\hypertarget{convolutional-neural-networks-cnn}{%
-\subsection{Convolutional Neural Networks
-(CNN)}\label{convolutional-neural-networks-cnn}}
 
-A Convolutional Neural Network (CNN) is a neural network that uses the \textbf{convolution} operation in at least one of its layers.  The convolution operation is as follows:
 
-Convolution operation continuous \[
-C(t) = \int x(\tau)w(t - \tau)d\tau
-\] Convolution operation discrete \[
-C(t) = \sum_{\tau = -\infty}^\infty x(\tau)w(t - \tau)
-\] \(x(t)\) is the \textbf{input} and \(w(t-\tau)\) is known as the
-\textbf{kernel}. The shorthand operation for the convolution operation
-is denoted with an asterisk: \[
-(x * w)(t)
-\]
-
-This is primarily useful for computer vision models.  The kernel, which is much smaller than the image, moves across the image and performs its calculation on each pixel value within the proportion of the image it has captured.  It moves throughout the image and calculates on every combination of adjacent pixels until all pixels are accounted for.
-
-Assumptions for CNN's \cite{Goodfellow-et-al-2016}
-\begin{itemize}
-\tightlist
-\item{output is essentially a weighted average}
-\item{\(w\) must be a valid probability distribution and 0 for all negative arguments}
-\item{values of kernel and input tensors are zero except for the finite set in which values are stored (i.e. the size of the image)}
-\item{infinite summation over finite number of array elements}
-\end{itemize}
-
-Two-dimensional image \(X\) with a two-dimensional kernel \(W\) \[
-C(i,j) = (X * W)(i,j) = \sum_m \sum_n X(m,n)W(i-m,j-n)
-\]
-
-\(m\) and \(n\) are the representative pixel locations in the relevant
-dimension, while \(i\) and \(j\) are the kernel locations, where the
-convolution is taking place. The infinite summation is made possible by
-the fact that values are zero wherever the image is not present.
+%----------CNN------------------------------
+\subsection{Convolutional Neural Networks}
 
 In \texttt{keras}, the following code defines a two-dimensional network
 for computer vision tasks in a CNN. Because it is two-dimensional, it is
@@ -122,14 +81,13 @@ All-in-all, this network has 609,354 estimable parameters among its
 layers. Had there existed a dense connection in convolutional layers,
 the number of parameters would have exceeded 40 million.
 
-\hypertarget{recurrent-neural-networks-rnn}{%
-\subsection{Recurrent Neural Networks
-(RNN)}\label{recurrent-neural-networks-rnn}}
 
-Connections between nodes of a RNN can upcycle, allowing for the output of
-one neuron to be input into a neuron before it.
-\cite{medsker2001recurrent}  This is especially useful for sequential data, such as language/text classification and time series forecasting. Mappings of connections between outputs can be \emph{one-to-one},
-\emph{one-to-many}, \emph{many-to-one}, or \emph{many-to-many}.
+
+
+%----------RNN------------------------------
+
+\subsection{Recurrent Neural Networks
+(RNN)}\label{recurrent-neural-networks-rnn}
 
 The \texttt{keras} model for RNN architecture is defined below:
 
@@ -154,9 +112,3 @@ input. Lastly, the density layer delivers the final result. Above, it is
 set to one unit (binary outcome). Increasing the number of units in this
 layer would result in more classifiers for the output based on a one-hot
 encoded result from the network.
-
-\hypertarget{generative-adversarial-networks-gan}{%
-\subsection{Generative Adversarial Networks
-(GAN)}\label{generative-adversarial-networks-gan}}
-
-A unique element of these networks is that they are actually comprised of two networks - a \textit{generator} and a \textit{discriminator} - to compete against one another and generate new data.  This is typically applied in image generation applications.  The generator creates random data to send to the discriminator, which is designed to differentiate between real training values (i.e. labeled images) and the fake generated ones.  These two networks interact until the generator starts to produce realistic data that the discriminator cannot easily differentiate from the training data.  This network type deviates from the other common types above in that it has a source of random variation in its training.  An extensive tutorial to all above mentioned network types and more to build in \texttt{R} with \texttt{keras} is available in (Rai, 2019 \cite{rai}).

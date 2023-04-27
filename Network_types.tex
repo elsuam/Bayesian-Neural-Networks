@@ -1,0 +1,61 @@
+
+\section{Types of Neural Networks} %-------------SECTION
+
+The previous section described a Multi-Layer Perceptron network. This
+section is devoted to other network types and their most practical uses. Listed are a few primary network types and their general purposes.
+
+At the cutting edge, neural networks can be built with the\texttt{keras} package in R. \texttt{keras} is a high-level API centered
+on the construction of deep learning models in a fast, user-friendly environment. \cite{tensorflow2015-whitepaper} It uses the TensorFlow engine built by Google and
+is written in Python by François Chollet, one of the main contributors of TensorFlow. \texttt{keras} is fully integrated with
+R, though an installation of Python is required to run the package. Features of the \texttt{keras} package are detailed in the appendix of this thesis, but more extensive tutorials on how to build neural networks this way can be found in (Rai, 2019 \cite{rai})
+
+%----------CNN------------------------------
+
+\hypertarget{convolutional-neural-networks-cnn}{%
+\subsection{Convolutional Neural Networks
+(CNN)}\label{convolutional-neural-networks-cnn}}
+
+A Convolutional Neural Network (CNN) is best suited for data that has a grid-like topology \cite{Goodfellow-et-al-2016}.  Image data is a premier use for a CNN.  Image data is enormous; one pixel is a parameter value that needs to be estimated. CNN's prevail over the MLP for computer vision tasks because the image can be assessed in small pieces at a time, rather than all at once in a densely-connected network.  What defines a CNN is a neural network that uses the \textbf{convolution} operation in at least one of its layers.  The convolution operation is as follows:
+
+Convolution operation continuous \[
+C(t) = \int x(\tau)w(t - \tau)d\tau
+\] Convolution operation discrete \[
+C(t) = \sum_{\tau = -\infty}^\infty x(\tau)w(t - \tau)
+\] \(x(t)\) is the \textbf{input} and \(w(t-\tau)\) is known as the
+\textbf{kernel}. The shorthand operation for the convolution operation
+is denoted with an asterisk: \[
+(x * w)(t)
+\]
+
+The kernel, which is much smaller than the image, moves across the image and performs its calculation on each pixel value within the proportion of the image it has captured.  It moves throughout the image and calculates on every combination of adjacent pixels until all pixels are accounted for.  This makes for a few notable assumptions CNN's have \cite{Goodfellow-et-al-2016}: for one, the output can be seen as a weighted average at every moment the convolution operation is performed.  Thus, $w$ must be a valid probability distribution or this ceases to be the case.  Additionally, values of the kernel and input tensors are assumed to be zero in infinite space except for the finite set in which the values are stored (i.e. the dimension of the image).  With all of these in play, the convolution produces an infinite summation over the finite array of elements, as represented below.
+
+Two-dimensional image \(X\) with a two-dimensional kernel \(W\) \[
+C(i,j) = (X * W)(i,j) = \sum_m \sum_n X(m,n)W(i-m,j-n)
+\]
+
+\(m\) and \(n\) are the representative pixel locations in the relevant
+dimension, while \(i\) and \(j\) are the kernel locations, where the
+convolution is taking place. The infinite summation is made possible by
+the fact that values are zero wherever the image is not present.
+
+Convolutional neural networks are not limited to two-dimensional image data.  The convolution operation can be performed on time series data \cite{Goodfellow-et-al-2016}, in which the kernel runs across a one-dimensional array at each timepoint.  It can also be escalated to three or more dimensions.  For color images, the third dimension defines the RGB color scale \cite{rai}.  The appendix for this thesis contains R code for a CNN that classifies small images with the \texttt{keras} package.
+
+
+%----------RNN------------------------------
+
+\hypertarget{recurrent-neural-networks-rnn}{%
+\subsection{Recurrent Neural Networks
+(RNN)}\label{recurrent-neural-networks-rnn}}
+
+Connections between nodes of a RNN can upcycle, allowing for the output of
+one neuron to be input into a neuron before it.
+\cite{medsker2001recurrent}  This is especially useful for sequential data, such as language/text classification and time series forecasting. Mappings of connections between outputs can be \emph{one-to-one},
+\emph{one-to-many}, \emph{many-to-one}, or \emph{many-to-many}.
+
+
+%----------GAN------------------------------
+
+\subsection{Generative Adversarial Networks
+(GAN)}\label{generative-adversarial-networks-gan}
+
+A unique element of these networks is that they are actually comprised of two networks - a \textit{generator} and a \textit{discriminator} - to compete against one another and generate new data.  This is typically applied in image generation applications.  The generator creates random data to send to the discriminator, which is designed to differentiate between real training values (i.e. labeled images) and the fake generated ones.  These two networks interact until the generator starts to produce realistic data that the discriminator cannot easily differentiate from the training data.  This network type deviates from the other common types above in that it has a source of random variation in its training.  An extensive tutorial to all above mentioned network types and more to build in \texttt{R} with \texttt{keras} is available in (Rai, 2019 \cite{rai}).
