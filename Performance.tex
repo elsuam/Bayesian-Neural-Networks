@@ -17,8 +17,8 @@ During the build process, a model is faced with a training set and measured agai
     \label{capacityviz}
 \end{figure}
  
- Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions \cite{Goodfellow-et-al-2016}.  In linear regression, increasing the model's capacity would be to include polynomial terms or splines to shape the model beyond a straight line, as shown in Figure \ref{capacityviz}.  For neural networks, adding additional neurons or hidden layers increases model capacity. 
- A neural network model has many more parameters to be estimated than its ordinary least squares counterpart, making it more susceptible to overfitting.  As capacity increases, so too does the amount of data needed for the network to be able to generalize \cite{baum1988size}.
+ Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions, and machine learning models perform best when their capacity is appropriate for the complexity of the task \cite{Goodfellow-et-al-2016}.  In linear regression, increasing the model's capacity would be to include polynomial terms or splines to shape the model beyond a straight line, as shown in Figure \ref{capacityviz}.  For neural networks, adding additional neurons or hidden layers increases model capacity.
+ Because a neural network model has many more parameters to be estimated than its ordinary least squares counterpart, it is much more susceptible to overfitting.  As capacity increases, so too does the amount of data needed for the network to be able to generalize \cite{baum1988size}.
 
 %- \textbf{Generalization}
 
