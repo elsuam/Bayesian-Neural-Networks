@@ -141,16 +141,14 @@ Figure \ref{tohoku_brnn} visualizes only one iteration of the network.  There is
 \end{figure}
 
 With further use of data visualization tools, the \textit{underlying distribution of predictions} can be observed.  Figure \ref{tohoku_ppd_100} shows the cumulative distribution of all 100 iterations of the predicted frequency of a magnitude 9.1 earthquake, which includes one very incongruous point.  For no more purpose other than to better visualize the area with the most density, this point was temporarily removed.
-
 \begin{figure}[H]
 %    \center
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_ppd_full.png}
+    \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-12-3.pdf}
     \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-14-2.pdf}
    % \vspace{-10pt}
     \caption{\footnotesize{[\textit{left}] Full cumulative distribution of predicted magnitude 9.1 frequency values for all 100 iterations. [\textit{right}] Refined view showing 99\% of the density.}}
     \label{tohoku_ppd_100}
 \end{figure}
-
 Next, 1000 networks of identical architecture are trained and a clearer distribution displayed.  As the number of simulated networks increases, the approximation for the true posterior predictive distribution of the expected frequency of a magnitude 9.1 earthquake
 $Pp(y^*|x=9.1,D,\alpha,\beta,A)$
 more closely represents the target distribution.
