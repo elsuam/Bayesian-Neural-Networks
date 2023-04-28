@@ -1,5 +1,6 @@
-\chapter{Introduction to Deep Learning}
+\chapter{Introduction}
 
+\begin{comment}
 Artificial intelligence is the start to outsourcing brain function to man-made machines.  A machine is said to have ``Artificial Intelligence'' if it can do what people say requires intelligence \cite{jackson2019introduction}, from counting monetary denominations to surveying Mars, playing chess games to converting human speech.  Within the realm of this is the subcategory \textit{machine learning}, in which models are tested based on training data in order to ``teach'' them right from wrong.  Machine learning has an increased emphasis on the use of computers in statistical analyses and a decreased emphasis on proving confidence intervals around them \cite{Goodfellow-et-al-2016}.  With astronomical advances in modern computing technology, creating elaborate learning models with raised functionality has become more and more accessible, creating a new category known as \textit{deep learning}, which is the parent of the subjects within this thesis.  Deep learning models operate beyond those of traditional machine learning as such models contain layers of complexities, each performing a specific task for the overall objective.  Algorithms and procedures unite with complex mathematical formulas to generate extremely precise models without the assumptions of linear models.
 
 %---EXAMPLE FOR PHOTOS--
@@ -37,9 +38,19 @@ In the case of unstructured data, the computer scientist may take role as the pr
     \label{minecraft}
 \end{figure}
 
-\begin{comment}
+
 Any type of data can be modeled with a deep learning neural network, provided there is enough of it to match the complexity if the model.  Image data tends to have a great number of inputs to begin with.  In the world of big data, finding material to work with is no trouble.  
-\end{comment}
+
 
 Structured or not, large data or small, regression or classification, through frequentism or Bayes; there is a neural network for that.
 Neural networks are often described as black boxes; given an input, the blur of functionality within hidden layers returns an output.  This thesis is presented to reveal some of the complexities of these high-level machines.  It begins with a review of the basic structure of the Multi-Layer Perception, and describes variants associated with a change of architecture.  It continues with research on Bayesian methods, based both in theory and inclusive of practical estimation techniques to apply Bayes.  It closes out with a return to deep learning discussion and how Bayes can be applied to these intricate models.
+\end{comment}
+
+
+
+Deep learning is the brand of machine learning concerned with using Artificial Neural Networks (ANN's) to reveal complex abstractions within data.
+The evolution of the process of mimicking cognitive brain functionality within artificial machines dates back to the 1940's under the term \textit{cybernetics}, which was originally intended to provide computational models for biological understanding \cite{Goodfellow-et-al-2016}.  Since then, the history of what we now call ``deep learning'' has undergone waves of renaissance.
+Deep learning models deviate from typical statistical models in that they do not adhere to the standard $input \rightarrow output$ relationship easily expressed by a formula.  Rather, their pattern is $input \rightarrow further \text{ } processing \rightarrow output$, which makes it difficult to describe the relationship that is actually happening between inputs and outputs and additionally troublesome to measure things like variability.
+Indeed, because of the blur of functionality within hidden layers, neural networks are often described as black boxes.  More hidden processing layers makes for a deeper network and a darker box.
+
+This thesis is presented to reveal some of the complexities of these high-level machines.  It begins with a review of the basic structure of the Multi-Layer Perception, and describes variants associated with a change of architecture. After establishing a firm foundation for neural networks, including problems associated, this thesis will deviate topics and discuss Bayesian Statistics, based both in theory and inclusive of practical estimation techniques to apply.  The fundamental idea behind Bayes is the description of the parameters sought in statistical modeling as distributional; rather than fixed, unknown constants that are estimated by the model.  The reason for describing Bayesian techniques is to then return to the deep learning discussion and apply them to these intricate models.  As will be discussed, neural networks have a tendency to overfit the data.  This is because the models have so many estimable parameters, making them extremely flexible learners.  At test time, then, they have a tendency to be brittle.  Bayesian techniques to deep learning offer the necessary flexibility for a model simply by the nature of Bayes, all while being able to measure uncertainty much more explicitly than traditional deep learning models.
