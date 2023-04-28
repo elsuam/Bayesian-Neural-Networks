@@ -211,7 +211,7 @@ Gradient descent is not isolated to deep learning, and in fact drives the learni
 \hypertarget{backpropagation}{%
 \subsection{Backpropagation}\label{backpropagation}}
 
-Backpropagation is the algorithm that drives gradient descent and computes the gradient for neural networks. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, and each bias in each layer of the network.
+Backpropagation is the algorithm that drives gradient descent and computes the gradient for neural networks. For a standard neural network, it is composed of the partial derivatives of the cost function with respect to each weight in each layer of the network, as well as that of each bias in each layer of the network.
 
 \[
 \nabla{C} =
@@ -230,10 +230,13 @@ Backpropagation is the algorithm that drives gradient descent and computes the g
 the subscript \(_i\) denotes a specific parameter within that specific
 layer. In this section, the backpropagation calculus will be explained under the example of a \textit{two-layer} network; although the same notation and derivation can be applied to networks of all sizes.
 %Here, \(^{(2)}\) will be used to indicate the hidden layer and \(^{(1)}\) the input layer.
-
 The backpropagation algorithm is catered to a specific loss function. In
 this example, the loss function is \emph{Mean Squared
-Error}. This function takes the difference between the output from the
+Error}.
+$$
+C = \frac{1}{N} \sum_{i=1}^N (\hat{y_i} - y_i)
+$$
+This function takes the difference between the output from the
 network and the specified desired output for each observation. To
 understand how each parameter that makes up the output must be adjusted,
 the algorithm must differentiate every part of it. This is done by use
@@ -259,11 +262,13 @@ In the two-layer network example, identifying the lineage stops here.  For deepe
 
 %---partial derivatives with respect to WEIGHT---
 
-\hypertarget{partial-derivatives-with-respect-to-weight}{%
-\paragraph{Partial derivatives with respect to
-weight}\label{partial-derivatives-with-respect-to-weight}}
 
-The amount to adjust the weight in the \emph{hidden} layer is
+\subsubsection{Partial derivatives with respect to
+weight}
+
+Starting with item (1), the output $\hat{y_i}$
+
+The amount to adjust each weight in the \emph{hidden} layer is
 represented through use of the chain rule by:
 \begin{align*}
 \frac{\partial{C}}{\partial{w_i^{(2)}}}    &=  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
@@ -275,7 +280,7 @@ where \(a_n^{(1)}\) is the activation for each observation in the first
 (input) layer, \(\sigma'(z_i^{(2)})\) is the derivative of the sigmoid
 activation function with respect to each observation in the second
 (hidden) layer, \(a_i^{(2)}\) is the activation for each observation in
-the hidden layer, and \(y_i\) is the vector of actual training values
+the hidden layer (the predicted output) and \(y_i\) is the vector of actual training values
 this network hopes to achieve.
 
 The amount to adjust the weight in the \emph{input} layer is
