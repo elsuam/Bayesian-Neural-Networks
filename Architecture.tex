@@ -240,7 +240,18 @@ This function takes the difference between the output from the
 network and the specified desired output for each observation. To
 understand how each parameter that makes up the output must be adjusted,
 the algorithm must differentiate every part of it. This is done by use
-of the chain rule in calculus. Ultimately, two parameter
+of the chain rule in calculus.
+
+\begin{figure}[H]
+\centering
+    \vspace{-20pt}
+    \includegraphics[width = .6\textwidth]{Figures/BackpropDAG.pdf}
+    \caption{\footnotesize DAGGITY}
+    \label{backpropDAG}
+    \vspace{-20pt}
+\end{figure}
+
+Ultimately, two parameter
 differentiations must be computed for each observation in each layer - a
 \emph{weight} and a \emph{bias}, as illustrated in the matrix above. By tracing the lineage of influence on the
 network's final output backwards
