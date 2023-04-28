@@ -2,9 +2,10 @@
 On March 11, 2011 a magnitude 9.1 earthquake struck Japan, the epicenter just 76km from the eastern coast of the Tohoku region.  This caused a tsunami that collapsed a nearby nuclear reactor resulting in the Fukushima Daiichi Nuclear Disaster, a meltdown that resulted in 19,500 total deaths.  The reactor was built to withstand earthquakes up to 8.6 in magnitude.
 
 The following example, inspired by (Silver, 2015)\cite{silver2015signal} illustrates a statistical model of annual earthquake frequencies of the greater Tohoku region.
-Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat)
+Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat).  The full analysis was conducted in R and is detailed in the appendix of this thesis.
+%Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat)
 %(\url{https://earthquake.usgs.gov/earthquakes/search/})
-to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.
+%to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.
 
 %\footnote{A more comprehensive analysis to supplement this thesis is available on GitHub at the following link: 
 %\url{https://github.com/elsuam/Tohoku-Earthquakes}}
@@ -24,7 +25,7 @@ After pre-processing, the data was coerced into a table of magnitudes rounded to
 
 
 
-For comparison and visualization, the first model to fit the data is an linear regression model using ordinary least squares.  It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, the model is fit using R.
+For comparison and visualization, the first model to fit the data is an linear regression model using ordinary least squares.  It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, the model is fit.
 
 \begin{figure}[H]
     \center
@@ -90,7 +91,7 @@ Table \ref{captable} summarizes the model's predictions based on increasing leve
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Thu Apr 27 13:55:07 2023
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \begin{tabular}{rrr}
   \hline

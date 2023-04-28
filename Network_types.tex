@@ -1,13 +1,8 @@
 
 \section{Types of Neural Networks} %-------------SECTION
 
-The previous section described a Multi-Layer Perceptron network. This
-section is devoted to other network types and their most practical uses. Listed are a few primary network types and their general purposes.
-
-At the cutting edge, neural networks can be built with the\texttt{keras} package in R. \texttt{keras} is a high-level API centered
-on the construction of deep learning models in a fast, user-friendly environment. \cite{tensorflow2015-whitepaper} It uses the TensorFlow engine built by Google and
-is written in Python by François Chollet, one of the main contributors of TensorFlow. \texttt{keras} is fully integrated with
-R, though an installation of Python is required to run the package. Features of the \texttt{keras} package are detailed in the appendix of this thesis, but more extensive tutorials on how to build neural networks this way can be found in (Rai, 2019 \cite{rai})
+The previous section described a Multi-Layer Perceptron network in which connections exist between all neurons of all layers in a dense fashion. This is pretty typical as an introduction into ANN's.
+This section is devoted to other network types and their most practical uses.  While not exhaustive, they are worth noting.  Any of them can be specialized with different features like layer sizes, optimizers, and more to match a specific task.  Listed are a few primary network types and their general purposes.
 
 %----------CNN------------------------------
 
@@ -47,10 +42,11 @@ Convolutional neural networks are not limited to two-dimensional image data.  Th
 \subsection{Recurrent Neural Networks
 (RNN)}\label{recurrent-neural-networks-rnn}}
 
-Connections between nodes of a RNN can upcycle, allowing for the output of
-one neuron to be input into a neuron before it.
-\cite{medsker2001recurrent}  This is especially useful for sequential data, such as language/text classification and time series forecasting. Mappings of connections between outputs can be \emph{one-to-one},
-\emph{one-to-many}, \emph{many-to-one}, or \emph{many-to-many}.
+Recurrent Neural Networks do not act in the same $forward \leftrightarrow backward$ manner of a typical multi-layer perceptron.  Rather, they are set up to process information in two directions at any time.  Connections between nodes of a RNN can upcycle, allowing for the output of one neuron to be input into a neuron before it
+\cite{medsker2001recurrent}.  These feedback loops make RNN's especially useful for sequential data, such as language/text classification and time series forecasting.  As information is added simply by using the model, the model learns new patterns.
+
+%Mappings of connections between outputs can be \emph{one-to-one},
+%\emph{one-to-many}, \emph{many-to-one}, or \emph{many-to-many}.
 
 
 %----------GAN------------------------------
@@ -58,4 +54,11 @@ one neuron to be input into a neuron before it.
 \subsection{Generative Adversarial Networks
 (GAN)}\label{generative-adversarial-networks-gan}
 
-A unique element of these networks is that they are actually comprised of two networks - a \textit{generator} and a \textit{discriminator} - to compete against one another and generate new data.  This is typically applied in image generation applications.  The generator creates random data to send to the discriminator, which is designed to differentiate between real training values (i.e. labeled images) and the fake generated ones.  These two networks interact until the generator starts to produce realistic data that the discriminator cannot easily differentiate from the training data.  This network type deviates from the other common types above in that it has a source of random variation in its training.  An extensive tutorial to all above mentioned network types and more to build in \texttt{R} with \texttt{keras} is available in (Rai, 2019 \cite{rai}).
+A unique element of these networks is that they are actually comprised of two networks - a \textit{generator} and a \textit{discriminator} - to compete against one another and generate new data.  This is typically applied in image generation applications.  The generator creates random data to send to the discriminator, which is designed to differentiate between real training values (i.e. labeled images) and the fake generated ones.  These two networks interact until the generator starts to produce realistic data that the discriminator cannot easily differentiate from the training data.  This network type deviates from the other common types above in that it has a source of random variation in its training.
+
+
+
+At the cutting edge, neural networks can be built with the \texttt{keras} package in R or Python. \texttt{keras} is a high-level API centered
+on the construction of deep learning models in a fast, user-friendly environment \cite{tensorflow2015-whitepaper}. It uses the TensorFlow engine built by Google and
+is written in Python by François Chollet, one of the main contributors of TensorFlow. \texttt{keras} is fully integrated with
+R, though an installation of Python is required to run the package. Features of the \texttt{keras} package are detailed in the appendix of this thesis, but more extensive tutorials on how to build neural networks this way can be found in (Rai, 2019 \cite{rai})

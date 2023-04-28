@@ -227,7 +227,7 @@ Backpropagation is the algorithm that drives gradient descent and computes the g
 \frac{\partial{C}}{\partial{b_i^{(l)}}} \\
 \end{bmatrix}
 \] Here, the superscript \(^{(l)}\) denotes the layer of the network and
-the subscript \(_i\) denotes a specific parameter within that specific
+the subscript \(_i\) denotes a specific parameter within that
 layer. In this section, the backpropagation calculus will be explained under the example of a \textit{two-layer} network; although the same notation and derivation can be applied to networks of all sizes.
 %Here, \(^{(2)}\) will be used to indicate the hidden layer and \(^{(1)}\) the input layer.
 The backpropagation algorithm is catered to a specific loss function. In
@@ -240,22 +240,19 @@ This function takes the difference between the output from the
 network and the specified desired output for each observation. To
 understand how each parameter that makes up the output must be adjusted,
 the algorithm must differentiate every part of it. This is done by use
-of the chain rule in calculus.
+of the chain rule in calculus. Figure \ref{backpropDAG} traces the relationship of the model from input to output for each $i$ connection in one iteration of forward propagation.  In other words, without the subscripts, Figure \ref{backpropDAG} would represent the forward functionality of a three-layer neural network with one neuron in each layer.
 
 \begin{figure}[H]
 \centering
-    \vspace{-20pt}
-    \includegraphics[width = .6\textwidth]{Figures/BackpropDAG.pdf}
-    \caption{\footnotesize DAGGITY}
+    \vspace{0pt}
+    \includegraphics[width = .75\textwidth]{Figures/BACKpROPdag.png}
+    \caption{\footnotesize The function $z_i^{(l-1)}$ in the input layer, which is composed of the effects of the input, weight and bias, is processed by an activation function $a_i^{(l-1)}$.  The output is sent as the input into the next layer, along with the relevant weight and bias parameters, which compose $z_i^{(l)}$.  This is processed again by an activation function, generating the output $a_i^{(l)} = \hat{y_i}$.  $\hat{y_i}$ is matched with $y_i$ to calculate the error of this iteration.}
     \label{backpropDAG}
-    \vspace{-20pt}
+    \vspace{0pt}
 \end{figure}
 
-Ultimately, two parameter
-differentiations must be computed for each observation in each layer - a
-\emph{weight} and a \emph{bias}, as illustrated in the matrix above. By tracing the lineage of influence on the
-network's final output backwards
-(``back-propagating''), the output is found to be influenced by:
+%Ultimately, two parameter differentiations must be computed for each observation in each layer - a \emph{weight} and a \emph{bias}, as illustrated in the matrix above.
+By tracing the lineage of effects on the network's final output backwards (``back-propagating''), the output is found to be influenced by:
 
 \begin{enumerate}
 \tightlist
@@ -268,7 +265,7 @@ network's final output backwards
   \emph{weight}, \emph{bias}, and input layer.
 \end{enumerate}
 
-In the two-layer network example, identifying the lineage stops here.  For deeper networks, item (2) is repeated with the term ``input layer'' replaced by ``activation of earlier layers.''
+In the two-layer network example, identifying the lineage stops here.  For deeper networks, item (2) is repeated with the term ``input layer'' replaced by ``activation of earlier layers,'' and Figure \ref{backpropDAG} would be longer.
 
 
 %---partial derivatives with respect to WEIGHT---
@@ -277,9 +274,8 @@ In the two-layer network example, identifying the lineage stops here.  For deepe
 \subsubsection{Partial derivatives with respect to
 weight}
 
-Starting with item (1), the output $\hat{y_i}$
-
-The amount to adjust each weight in the \emph{hidden} layer is
+Table \ref{backpropDAG} serves as a visual aid to chain rule calculations.  For example, the vector of weights in the \textit{hidden} layer $w_i^{(l)}$ influences on C through three steps.  This requires computing the effect $w_i^{(l)}$ has on $z_i^{(l)}$, that $z_i^{(l)}$ has on $a_i^{(l)}$, that $a_i^{(l)}$ has on C.  
+Therefore, the amount to adjust each weight in the hidden layer is
 represented through use of the chain rule by:
 \begin{align*}
 \frac{\partial{C}}{\partial{w_i^{(2)}}}    &=  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
@@ -287,14 +283,14 @@ represented through use of the chain rule by:
      \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\ 
  &= a_i^{(1)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \end{align*}
 
-where \(a_n^{(1)}\) is the activation for each observation in the first
+where \(a_i^{(1)}\) is the activation for each observation in the first
 (input) layer, \(\sigma'(z_i^{(2)})\) is the derivative of the sigmoid
 activation function with respect to each observation in the second
 (hidden) layer, \(a_i^{(2)}\) is the activation for each observation in
 the hidden layer (the predicted output) and \(y_i\) is the vector of actual training values
 this network hopes to achieve.
 
-The amount to adjust the weight in the \emph{input} layer is
+Propagating a step further back, the amount to adjust the weight in the \emph{input} layer is
 represented by:
 
     \begin{align*}
@@ -312,11 +308,11 @@ is the same as is in the previous equation.
 
 %---partial derivatives with respect to BIAS---
 
-\hypertarget{partial-derivatives-with-respect-to-bias}{%
-\paragraph{Partial derivatives with respect to
-bias}\label{partial-derivatives-with-respect-to-bias}}
 
-The amount to adjust the bias in the \emph{hidden} layer is
+\subsubsection{Partial derivatives with respect to
+bias}
+
+Using the same logic, the amount to adjust the bias in the \emph{hidden} layer is
 represented by: \[
 \frac{\partial{C}}{\partial{b_i^{(2)}}}  =  \dfrac{\partial{z_i^{(2)}}}{\partial{b_i^{(2)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
@@ -329,7 +325,7 @@ formula simplifies to the following: \[
 \frac{\partial{C}}{\partial{b_i^{(2)}}} = 1 \cdot \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \\
 \]
 
-And for the same reasons, the amount to adjust the bias in the \emph{input} layer is
+Moving further up the chain, the amount to adjust the bias in the \emph{input} layer is
 represented by:
 
     \begin{align*}
@@ -340,8 +336,7 @@ represented by:
 & = 1 \cdot \sigma'(z_i^{(1)}) w_i^{(2)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \nonumber
     \end{align*}
 
-
-The preceding demonstration was for a simple shallow network.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well ($2L$ - one for each weight and bias).  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, the specific derivatives calculated will be different as these are changed as well.
+The calculations above determine the direction of steepest descent toward lowering the cost function.  They describe how every $i$ weight or bias in either layer should be adjusted in order to most effectively lower the cost for the given moment.  A step is taken in that direction, and the network iterates over again.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well.  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, the specific derivatives calculated will be different as these are changed as well.
 
 
 \subsection{More Optimization Algorithms}

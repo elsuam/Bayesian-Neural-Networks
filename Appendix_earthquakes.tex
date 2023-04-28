@@ -18,11 +18,11 @@ parameters:
 The data was stored locally in a .csv file named \texttt{earthquakes}.
 
 The organization also has an package called \texttt{rcomcat} to query
-data directly into \texttt{R}, but its version was not compatible at the
+data directly into R, but its version was not compatible at the
 time of this thesis.
 
 \hypertarget{data-preprocessing}{%
-\subsection{Data Preprocessing}\label{data-preprocessing}}
+\subsubsection{Data Preprocessing}\label{data-preprocessing}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -30,7 +30,7 @@ time of this thesis.
 \NormalTok{earthquakes\_full }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"data/earthquakes.csv"}\NormalTok{)}
 
 \CommentTok{\# fsbset data to include observations from January 1, 1965 to}
-\CommentTok{\#  just before the Greak Quake of March 11, 2011}
+\CommentTok{\#  just before the Great Quake of March 11, 2011}
 \NormalTok{earthquakes\_subset }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_full[}\FunctionTok{which}\NormalTok{(earthquakes\_full}\SpecialCharTok{$}\NormalTok{time }\SpecialCharTok{\textgreater{}=} \StringTok{"1965{-}01{-}26T23:47:37.120Z"} \SpecialCharTok{\&}\NormalTok{                                                                      earthquakes\_full}\SpecialCharTok{$}\NormalTok{time }\SpecialCharTok{\textless{}=} \StringTok{"2011{-}03{-}11T05:44:24.120Z"}\NormalTok{),]}
   
 \CommentTok{\# fine{-}tune the geographic area of the model}
@@ -57,7 +57,7 @@ time of this thesis.
 \end{Shaded}
 
 \hypertarget{frequency-of-earthquakes}{%
-\subsection{Frequency of Earthquakes}\label{frequency-of-earthquakes}}
+\subsubsection{Frequency of Earthquakes}\label{frequency-of-earthquakes}}
 
 Plots of average annual earthquake frequencies over the 46-year span
 
@@ -158,7 +158,7 @@ Plots of average annual earthquake frequencies over the 46-year span
 {earthquakes_files/figure-latex/unnamed-chunk-4-5.pdf}
 
 \hypertarget{linear-models-of-the-data}{%
-\subsection{Linear models of the data}\label{linear-models-of-the-data}}
+\subsubsection{Linear models of the data}\label{linear-models-of-the-data}}
 
 Calculation of a single variable linear model on the logarithmic scale
 with no polynomial terms.
@@ -245,7 +245,7 @@ below.
 
 
 \hypertarget{multi-layer-perceptron}{%
-\subsection{Multi-Layer Perceptron}\label{multi-layer-perceptron}}
+\subsubsection{Multi-Layer Perceptron}\label{multi-layer-perceptron}}
 
 Using the \texttt{neuralnet} package \cite{neuralnet} to create a
 three-layer MLP neural network. Network contains 5 neurons in each
@@ -406,7 +406,7 @@ otherwise.
 
 
 \hypertarget{bayesian-reguarized-neural-network}{%
-\subsection{Bayesian Reguarized Neural
+\subsubsection{Bayesian Reguarized Neural
 Network}\label{bayesian-reguarized-neural-network}}
 
 Using the \texttt{brnn} package \cite{brnn} to create a 3-layer neural
@@ -516,7 +516,7 @@ manner as before with MLP.
 {earthquakes_files/figure-latex/unnamed-chunk-11-2.pdf}
 
 \hypertarget{posterior-predictive-simulations-of-brnn---100-networks}{%
-\subsection{Posterior Predictive Simulations of BRNN - 100
+\subsubsection{Posterior Predictive Simulations of BRNN - 100
 networks}\label{posterior-predictive-simulations-of-brnn---100-networks}}
 
 Simulating 100 networks' predictions for relative magnitudes with
@@ -621,7 +621,7 @@ when the simulation is run) of the posterior predictive distribution.
 {earthquakes_files/figure-latex/unnamed-chunk-14-2.pdf}
 
 \hypertarget{posterior-predictive-simulations-for-brnn---1000-networks}{%
-\subsection{Posterior Predictive Simulations for BRNN - 1000
+\subsubsection{Posterior Predictive Simulations for BRNN - 1000
 networks}\label{posterior-predictive-simulations-for-brnn---1000-networks}}
 
 Simulating 1000 networks predictions for sharper posterior simulation
