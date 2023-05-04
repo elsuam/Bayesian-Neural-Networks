@@ -7,7 +7,7 @@ $$
 which is the product the posterior distribution and the likelihood of the prediction given network weights and architecture, integrated over the weights.  This gives an output predicted distribution of $y^*$, given the same prior assumptions as went into building the model before.
 
 This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).  Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described.
-The model is a 6-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
+The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
 The default optimization is the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).
 
 %------------------comment--------------------------------------------
