@@ -1,4 +1,4 @@
-\subsection{Example: Bayesian Regularized Neural Network}
+\section{Bayesian Regularized Neural Network}
 
 Recall the regularized network weights from chapter 2. Given the posterior distribution of network weights $p(w|D,\alpha,\beta,A)$, the likelihood of new predictions $p(y^*|w,A)$, the posterior predictive distribution would be:
 $$
@@ -6,160 +6,43 @@ p(y^*|x,D,\alpha,\beta,A) = \int p(y^*|w,A) p(w|D,\alpha,\beta,A) \text{ } dw
 $$
 which is the product the posterior distribution and the likelihood of the prediction given network weights and architecture, integrated over the weights.  This gives an output predicted distribution of $y^*$, given the same prior assumptions as went into building the model before.
 
-This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).  Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described.
-The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
-The default optimization is the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).
+This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).
+%Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described. The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
+The models surveyed were two-layer neural networks with the same number of hidden neurons as the multi-layer perceptron.  By default, the \texttt{brnn} package uses hyperbolic tangent activation betwen layers and the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997). For continuity, test accuracy was measured in the same way as was for the multi-layer perceptron - by aggregating 50 models and determining the \textit{median} test error.
 
-%------------------comment--------------------------------------------
-\begin{comment}
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag}
-\NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{freqc}
-
-\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{6}\NormalTok{)   }
-\end{Highlighting}
-\end{Shaded}
-\end{comment}
-%---------------------------------------------------------------------
-
-
-\begin{verbatim}
-## Number of parameters (weights and biases) to estimate: 18 
-## Nguyen-Widrow method
-## Scaling factor= 4.2 
-## gamma= 6.6171     alpha= 0.1129   beta= 869.274
-\end{verbatim}
-
-\begin{verbatim}
-## A Bayesian regularized neural network 
-## 1 - 6 - 1 with 18 weights, biases and connection strengths
-## Inputs and output were  normalized
-## Training finished because  Changes in F= beta*SCE + alpha*Ew in last 3 iterations less than 0.001
-\end{verbatim}
+% latex table generated in R 4.2.2 by xtable 1.8-4 package
+% Thu May  4 11:32:17 2023
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+\multicolumn{2}{c}{Baseline} & \multicolumn{1}{l}{Test Error} \\ 
+  \hline
+  \multicolumn{2}{c}{Poisson Regression Model} & \multicolumn{1}{l}{0.1862851} \\ 
+  \hline
+Hidden Units & Test Error (MLP) & Test Error (BRNN) \\ 
+  \hline
+3 & 0.2441865  & 0.1888387 \\ 
+6 & 0.2818492  & 0.1949408 \\ 
+9 & 0.1785652  & 0.1440102 \\ 
+10 & 0.2633863  & 0.1851772 \\ 
+20 & 0.1706793  & 0.1182969 \\ 
+ 50 & - & 0.4055160 \\ 
+   \hline
+\end{tabular}
+   \caption{Test accuracy for all MLP and BRNN networks of different sizes compared to baseline Poisson model.}
+\end{table}
 
 
-%------------------comment--------------------------------------------
-\begin{comment}
-\begin{Shaded}
-\begin{Highlighting}[]
 
-\FunctionTok{summary}\NormalTok{(brnn)            }\CommentTok{\# summary of model}
-\end{Highlighting}
-\end{Shaded}
-
-
-The above output describes the model in text.  Notationally, the model is given (as imputed into the general formula from the \texttt{brnn} package documentation) by:
-$$
-\hat{y_i} = \sum_{k=1}^6 w_k g_k (b_k + \sum_{j=1}^{31} x_{ij} \beta_j^{[k]} ) + e_i
-$$
-\begin{gather*}
-e_i \sim N(0,\sigma^2) \\
-w_k \text{ is the weight of the } k^{th} \text{ neuron} \\
-b_k \text{ is the bias of the } k^{th} \text{ neuron} \\
-\beta_j^{[k]} \text{ is the weight of the } j^{th} \text{ input to the net} \\
-g_k \text{ is the activation function } g_k(x) = \frac{e^{2x}-1}{e^{2x}+1}
-\end{gather*}
-
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# return interval of years based on 9.1 prediction}
-\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =} \FloatTok{9.1}\NormalTok{)) }
-\DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{b) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 106.9823
-\end{verbatim}
-
-\end{comment}
-%---------------------------------------------------------------------
-
-Using this neural network model, the expected frequency of a magnitude
-9.1 earthquake has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=9.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and generate different predictions from the same prerequisites.  Figure \ref{tohoku_brnn} displays the BNN in the same manner as the MLP was: by plotting the expected frequencies for all recorded magnitudes and out-of-sample inputs up to the 9.1 of interest.
-%would be one every 106.98 years.  This may be an alarming catch to the Fukushima engineering officials!  And indeed they may aim to design a stronger reactor. A plot of the data is shown below:
-
-\begin{comment}
-
-\hypertarget{plots-for-brnn}{%
-\subsubsection{plots for brnn}\label{plots-for-brnn}}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#{-}{-}{-}actual test data{-}{-}{-}}
-\NormalTok{actual\_log\_brnn }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{type =} \StringTok{"actual"}\NormalTok{)}
- \CommentTok{\# add\_row(mag = addt, freqc = NA, type = "actual")}
-
-\CommentTok{\#{-}{-}{-}predicted data{-}{-}{-}}
-\NormalTok{mdp }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{8}\NormalTok{,}\FloatTok{9.1}\NormalTok{, }\AttributeTok{by =}\NormalTok{ .}\DecValTok{1}\NormalTok{) }\CommentTok{\#additional magnitude data points to add to prediction data}
-
-\NormalTok{bnn\_preds }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{append}\NormalTok{(mdp) }\CommentTok{\#append additional magnitudes to make predictions}
-
-\NormalTok{predicted\_log\_brnn }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ bnn\_preds,}
-                             \AttributeTok{freqc =} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ bnn\_preds)),}
-                             \AttributeTok{type =} \StringTok{"predicted"}\NormalTok{)}
-
-
-\CommentTok{\#{-}{-}{-}combine test and predictions for plot{-}{-}{-}}
-\NormalTok{brnn\_plot }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(predicted\_log\_brnn,actual\_log\_brnn[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{)])}
-
-\CommentTok{\#{-}{-}{-}generate plot{-}{-}{-}}
-\FunctionTok{ggplot}\NormalTok{(brnn\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mag, }\AttributeTok{y =}\NormalTok{ freqc, }\AttributeTok{group =}\NormalTok{ type, }\AttributeTok{color =}\NormalTok{ type)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{shape =} \DecValTok{17}\NormalTok{ , }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{+}
-  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Magnitude"}\NormalTok{,}
-       \AttributeTok{y =} \StringTok{"Annual Frequency of At Least this Magnitude"}\NormalTok{,}
-       \AttributeTok{title =} \StringTok{"Annual Earthquake Frequency near Tohoku, Japan {-} Logarithmic Scale"}\NormalTok{,}
-       \AttributeTok{subtitle =} \StringTok{"Three{-}Layer Neural Network with Bayesian Regularization"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\end{comment}
+Out of all network sizes tested, the best has 20 neurons in the hidden layer.  This was surprising at first, so an additional network with 50 hidden neurons was tested.  In regulating with Bayes, a complex network is shown to outperform the baseline Poisson regression model in light of few data points.  Using this neural network model, the expected frequency of any magnitude prediction has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=6.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and different predictions simulated from the same prerequisites.  Figure \ref{posteriorpredictive} shows this distribution based on 1000 network outputs from the two-layer BRNN with 20 hidden neurons.  Note that there are \textit{only} 1000 predictions, so the distribution is a rough approximations.  With more attempts, or by means of other approximation techniques described earlier, a more accurate distributional estimate can be attained.
 
 \begin{figure}[H]
     \center
-    \includegraphics[width=0.8\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-11-1.pdf}
+    \includegraphics[width=0.75\linewidth]{Appendix_eq_files/figure-latex/unnamed-chunk-17-1.pdf}
    % \vspace{-10pt}
-    \caption{\footnotesize{Actual data points plotted with BRNN-predicted values for all recorded data points, with appended predicted magnitudes for sequential series of magnitude 8.0 - 9.1 by 0.1}}
-    \label{tohoku_brnn}
+    \caption{\footnotesize{Simulated predictive outputs for a magnitude 6.1 earthquake from the BRNN model}}
+    \label{posteriorpredictive}
 \end{figure}
 
-%Suppose the Fukushima engineering officials are not as astonished as anticipated; instead they simply ask, ``How certain are we about this prediction?''  This model by itself is not able to answer that question. It lacks the additional scaffolding described in earlier sections.  In the next and final chapter, the remaining techniques for practical neural network modeling will incorporate the Bayesian techniques learned in this chapter with predictive accuracy measures.  The final example will further embellish the prediction at hand and tell the story to the engineers.
-Figure \ref{tohoku_brnn} visualizes only one iteration of the network.  There is no way of knowing, based on a single run of the model, how useful the model is at extrapolating results; how accurate its predictions are on unseen data.  However, in implementing the full stochastic effect of a Bayesian Neural Network, multiple iterations of the same model can be trained and plotted in the same manner as before.  Figure \ref{tohoku_brnn_uncert} displays 100 individually trained networks of the same architecture plotted to show relative uncertainty in its prediction curvature, as well as the scatter of predictions for lapsed time between earthquakes of magnitude 9.1 for the same 100 models.
-
-\begin{figure}[H]
-%    \center
-    \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-12-1.pdf}
-    \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-12-2.pdf}
-   % \vspace{-10pt}
-    \caption{\footnotesize{[\textit{left}] Actual data points plotted with multiple BRNN-predicted values, with uncertainty captured by the positions of individual model curves. [\textit{right}] Scatter of predictions of a magnitude 9.1 earthquake, rescaled to represent predicted frequencies of occurrence.}}
-    \label{tohoku_brnn_uncert}
-\end{figure}
-
-With further use of data visualization tools, the \textit{underlying distribution of predictions} can be observed.  Figure \ref{tohoku_ppd_100} shows the cumulative distribution of all 100 iterations of the predicted frequency of a magnitude 9.1 earthquake, which includes one very incongruous point.  For no more purpose other than to better visualize the area with the most density, this point was temporarily removed.
-\begin{figure}[H]
-%    \center
-    \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-12-3.pdf}
-    \includegraphics[width=0.5\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-14-2.pdf}
-   % \vspace{-10pt}
-    \caption{\footnotesize{[\textit{left}] Full cumulative distribution of predicted magnitude 9.1 frequency values for all 100 iterations. [\textit{right}] Refined view showing 99\% of the density.}}
-    \label{tohoku_ppd_100}
-\end{figure}
-Next, 1000 networks of identical architecture are trained and a clearer distribution displayed.  As the number of simulated networks increases, the approximation for the true posterior predictive distribution of the expected frequency of a magnitude 9.1 earthquake
-$Pp(y^*|x=9.1,D,\alpha,\beta,A)$
-more closely represents the target distribution.
-
-
-\begin{figure}[H]
-    \center
-    \includegraphics[width=0.8\linewidth]{earthquakes_files/figure-latex/unnamed-chunk-16-2.pdf}
-   % \vspace{-10pt}
-   \caption{\footnotesize{Refined view of 1000 model iterations showing 99.5\% of the density for predicted magnitude 9.1 frequency. }}
-    \label{tohoku_ppd_1000}
-\end{figure}
-
-The Bayesian regularized neural network model was built with a specified architecture, a specified regularizer, and was modeled the same data.  With this model, given these specifications, the entire distribution of network predictions is set forth.  It tells a story that the most likely possible outcomes for the frequency of a magnitude 9.1 earthquake is somewhere around every 100-115 years, but not to discard the possibility of one occurring much more or much less frequently.
+The model describes the expected annual frequency of a magnitude 6.1 earthquake in the Tohoku region to be somewhere between 1.4 and 1.8 per year.  Most of the density is around 1.6-1.7 per year.  By use of Bayes, the entire distribution is used to tell the story.
