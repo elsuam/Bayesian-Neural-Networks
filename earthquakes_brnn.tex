@@ -9,20 +9,7 @@ which is the product the posterior distribution and the likelihood of the predic
 This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).  Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described.
 The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
 The default optimization is the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).
-
-%------------------comment--------------------------------------------
-\begin{comment}
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag}
-\NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{freqc}
-
-\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{6}\NormalTok{)   }
-\end{Highlighting}
-\end{Shaded}
-\end{comment}
-%---------------------------------------------------------------------
-
+TANH IS DEFAULT
 
 \begin{verbatim}
 ## Number of parameters (weights and biases) to estimate: 18 
@@ -39,86 +26,9 @@ The default optimization is the Gauss-Newton optimization algorithm (Forsee and 
 \end{verbatim}
 
 
-%------------------comment--------------------------------------------
-\begin{comment}
-\begin{Shaded}
-\begin{Highlighting}[]
-
-\FunctionTok{summary}\NormalTok{(brnn)            }\CommentTok{\# summary of model}
-\end{Highlighting}
-\end{Shaded}
-
-
-The above output describes the model in text.  Notationally, the model is given (as imputed into the general formula from the \texttt{brnn} package documentation) by:
-$$
-\hat{y_i} = \sum_{k=1}^6 w_k g_k (b_k + \sum_{j=1}^{31} x_{ij} \beta_j^{[k]} ) + e_i
-$$
-\begin{gather*}
-e_i \sim N(0,\sigma^2) \\
-w_k \text{ is the weight of the } k^{th} \text{ neuron} \\
-b_k \text{ is the bias of the } k^{th} \text{ neuron} \\
-\beta_j^{[k]} \text{ is the weight of the } j^{th} \text{ input to the net} \\
-g_k \text{ is the activation function } g_k(x) = \frac{e^{2x}-1}{e^{2x}+1}
-\end{gather*}
-
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# return interval of years based on 9.1 prediction}
-\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =} \FloatTok{9.1}\NormalTok{)) }
-\DecValTok{1}\SpecialCharTok{/}\NormalTok{(}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{b) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 106.9823
-\end{verbatim}
-
-\end{comment}
-%---------------------------------------------------------------------
-
 Using this neural network model, the expected frequency of a magnitude
 9.1 earthquake has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=9.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and generate different predictions from the same prerequisites.  Figure \ref{tohoku_brnn} displays the BNN in the same manner as the MLP was: by plotting the expected frequencies for all recorded magnitudes and out-of-sample inputs up to the 9.1 of interest.
 %would be one every 106.98 years.  This may be an alarming catch to the Fukushima engineering officials!  And indeed they may aim to design a stronger reactor. A plot of the data is shown below:
-
-\begin{comment}
-
-\hypertarget{plots-for-brnn}{%
-\subsubsection{plots for brnn}\label{plots-for-brnn}}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#{-}{-}{-}actual test data{-}{-}{-}}
-\NormalTok{actual\_log\_brnn }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{type =} \StringTok{"actual"}\NormalTok{)}
- \CommentTok{\# add\_row(mag = addt, freqc = NA, type = "actual")}
-
-\CommentTok{\#{-}{-}{-}predicted data{-}{-}{-}}
-\NormalTok{mdp }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{8}\NormalTok{,}\FloatTok{9.1}\NormalTok{, }\AttributeTok{by =}\NormalTok{ .}\DecValTok{1}\NormalTok{) }\CommentTok{\#additional magnitude data points to add to prediction data}
-
-\NormalTok{bnn\_preds }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes\_log}\SpecialCharTok{$}\NormalTok{mag }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{append}\NormalTok{(mdp) }\CommentTok{\#append additional magnitudes to make predictions}
-
-\NormalTok{predicted\_log\_brnn }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ bnn\_preds,}
-                             \AttributeTok{freqc =} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ bnn\_preds)),}
-                             \AttributeTok{type =} \StringTok{"predicted"}\NormalTok{)}
-
-
-\CommentTok{\#{-}{-}{-}combine test and predictions for plot{-}{-}{-}}
-\NormalTok{brnn\_plot }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(predicted\_log\_brnn,actual\_log\_brnn[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{)])}
-
-\CommentTok{\#{-}{-}{-}generate plot{-}{-}{-}}
-\FunctionTok{ggplot}\NormalTok{(brnn\_plot, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ mag, }\AttributeTok{y =}\NormalTok{ freqc, }\AttributeTok{group =}\NormalTok{ type, }\AttributeTok{color =}\NormalTok{ type)) }\SpecialCharTok{+}
-  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{shape =} \DecValTok{17}\NormalTok{ , }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{+}
-  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
-  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Magnitude"}\NormalTok{,}
-       \AttributeTok{y =} \StringTok{"Annual Frequency of At Least this Magnitude"}\NormalTok{,}
-       \AttributeTok{title =} \StringTok{"Annual Earthquake Frequency near Tohoku, Japan {-} Logarithmic Scale"}\NormalTok{,}
-       \AttributeTok{subtitle =} \StringTok{"Three{-}Layer Neural Network with Bayesian Regularization"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\end{comment}
 
 \begin{figure}[H]
     \center

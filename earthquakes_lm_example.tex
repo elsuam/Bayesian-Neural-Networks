@@ -3,143 +3,68 @@ On March 11, 2011 a magnitude 9.1 earthquake struck Japan, the epicenter just 76
 
 The following example, inspired by (Silver, 2015)\cite{silver2015signal} illustrates a statistical model of annual earthquake frequencies of the greater Tohoku region.
 Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat).  The full analysis was conducted in R and is detailed in the appendix of this thesis.
-%Data was queried using the United States Geological Survey's ANSS Comprehensive Earthquake Catalog (ComCat)
-%(\url{https://earthquake.usgs.gov/earthquakes/search/})
-%to select all recorded earthquakes of magnitude 4.5 and above near the epicenter of the Great Quake by Tohoku, Japan from January 1st, 1965 to March 11, 2011.
-
-%\footnote{A more comprehensive analysis to supplement this thesis is available on GitHub at the following link: 
-%\url{https://github.com/elsuam/Tohoku-Earthquakes}}
-
-
-\subsubsection{Linear Regression Models}
-After pre-processing, the data was coerced into a table of magnitudes rounded to one decimal place and the following plots generated to display the annual frequency of magnitudes \textit{at or above} each size earthquake.  Figure \ref{tohoku_unfit} displays the data on both the standard and logarithmic scale.
-
-\begin{figure}[H]
- %   \center
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_standardscale.png}
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale.png}
-   % \vspace{-10pt}
-    \caption{\footnotesize{Annual Tohoku earthquake frequencies of magnitude 4.5 and above near displayed on the standard scale (left) and the logarithmic scale(right).}}
-    \label{tohoku_unfit}
-\end{figure}
-
-
-
-For comparison and visualization, the first model to fit the data is an linear regression model using ordinary least squares.  It is apparent based on this visualization that the logarithmic scale is more suited for a linear model.  After transformation the data, the model is fit.
+After pre-processing, the data was coerced into a table of magnitudes rounded to one decimal place and the following plot generated to display the annual frequency of magnitudes \textit{at or above} each size earthquake.
 
 \begin{figure}[H]
     \center
-    \includegraphics[width=0.65\linewidth]{Figures/tohoku_logscale_fit.png}
+    \includegraphics[width=0.75\linewidth]{Figures/tohoku_standardscale.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{The regression model of earthquake frequencies with minimal capacity.}}
-    \label{tohoku_lm}
+    \caption{\footnotesize{Annual Tohoku earthquake frequencies of magnitude 4.5 and above.}}
+    \label{tohoku_unfit}
 \end{figure}
 
-%------------------comment--------------------------------------------
-\begin{comment}
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#transforming to the log scale}
-\NormalTok{earthquakes\_log }\OtherTok{\textless{}{-}}\NormalTok{ earthquakes }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{freqc =} \FunctionTok{log10}\NormalTok{(freqc)) }
-
-\NormalTok{linear }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}\AttributeTok{data =}\NormalTok{ earthquakes\_log, }\AttributeTok{formula =}\NormalTok{ freqc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ mag)}
-
-\FunctionTok{summary}\NormalTok{(linear)}
-\end{Highlighting}
-\end{Shaded}
-\end{comment}
-%---------------------------------------------------------------------
+\subsubsection{Poisson Regression Models}
+To establish a baseline to compare against neural networks, a Poisson regression model is fit. Data was split 80/20 for training and testing respectively.  
 
 \begin{verbatim}
 ## 
 ## Call:
-## lm(formula = freqc ~ mag, data = earthquakes_log)
+## glm(formula = freqc ~ mag, family = "poisson", data = train)
 ## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.19955 -0.06120  0.02396  0.06852  0.16566 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.39403  -0.20754  -0.02925   0.08617   0.22166  
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  6.38365    0.11513   55.45   <2e-16 ***
-## mag         -1.01971    0.01895  -53.80   <2e-16 ***
+##             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  13.0940     0.7242   18.08   <2e-16 ***
+## mag          -2.0467     0.1474  -13.88   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.0956 on 29 degrees of freedom
-## Multiple R-squared:  0.9901, Adjusted R-squared:  0.9897 
-## F-statistic:  2894 on 1 and 29 DF,  p-value: < 2.2e-16
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 373.0667  on 23  degrees of freedom
+## Residual deviance:   0.7758  on 22  degrees of freedom
+## AIC: Inf
+## 
+## Number of Fisher Scoring iterations: 3
 \end{verbatim}
 
+This shows that for every unit increase in magnitude, the expected difference in the logs of annual frequency is -2.0467.  The test error for this model, as will be for future models, was calculated by the mean squared error between predicted test values and actual test values.  This turned out to be 0.03940496.  A plot of the data with the regression line is shown below:
 
-For completeness, this model shows that on average, for every 1.0 increase in magnitude, the lapsed time between earthquakes of \emph{at least} that magnitude is expected to increase by \(1/10^{-1.01971}\) = 10.4643 years.
-
-For a magnitude 9.1 earthquake, the expected frequency would be one
-every \(1/10^{(6.38365 - 1.01971 \cdot 9.1)}\) = 786.47 years.  This might be enough for Fukushima engineering officials to decide to design a nuclear reactor more resistant to higher magnitude earthquakes.  However, the graph contains a slight curvature that perhaps contains a better fit.  Below are two such options that display the capacity raised to second and third order polynomial.
 
 \begin{figure}[H]
- %   \center
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit2.png}
-    \includegraphics[width=0.5\linewidth]{Figures/tohoku_logscale_fit3.png}
+    \center
+    \includegraphics[width=0.75\linewidth]{Appendix_eq_files/figure-latex/unnamed-chunk-3-1.pdf}
    % \vspace{-10pt}
-    \caption{\footnotesize{The regression model fit to the data with the second order polynomial (left) and the third order polynomial (right).}}
-    \label{tohoku_lm23}
+    \caption{\footnotesize{A Poisson regression line fit to the data.}}
+    \label{tohoku_unfit}
 \end{figure}
 
-By accounting for the curvature of the data, the predicted frequency of a data point outside of this interval changes dramatically.  A regression model inclusive of the second order polynomial predicts a magnitude 9.1 earthquake to occur every 5693.64 years. %; that with a third order polynomial to predict one every 24,721.19 years.
-Table \ref{captable} summarizes the model's predictions based on increasing levels of polynomial terms. As discussed in earlier sections, increasing the level at which the model fits the data comes with a very meaningful caveat: it becomes less likely to extrapolate meaningful results.
+\begin{comment}
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
-% Thu Apr 27 13:55:07 2023
-\begin{table}[H]
+% Wed May  3 23:37:00 2023
+\begin{table}[ht]
 \centering
-\begin{tabular}{rrr}
+\begin{tabular}{rlr}
   \hline
- & Capacity & Predicted Interval \\ 
+ & Model & Test Error \\ 
   \hline
-& 1 & 786.4653 \\ 
-& 2 & 5693.6383 \\ 
-& 3 & 24721.1916 \\ 
-& 4 & 48788.9777 \\ 
-& 5 & 0.4514 \\ 
-& 6 & 1.5224e-33 \\ 
-& 7 & 8.6087e-153 \\ 
-& 8 & 6.1027e-40 \\ 
+ & Poisson Regression &  0.03940496\\ 
    \hline
 \end{tabular}
-\caption{\footnotesize Model capacity levels and predictions for a magnitude 9.1 earthquake.  After the fourth order polynomial, predictions become rather nonsenical}
-\label{captable}
 \end{table}
 
-
-%------------------comment--------------------------------------------
-\begin{comment}
-The following code outputs a data frame of polynomial levels and the relative expected interval of time between earthquakes of magnitude 9.1 or above in the Tohoku area.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{capacity }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{:}\DecValTok{8}
-\NormalTok{prediction }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
-
-\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in}\NormalTok{ capacity)\{}
-\NormalTok{  linear }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(}\AttributeTok{data =}\NormalTok{ earthquakes\_log, }\AttributeTok{formula =}\NormalTok{ freqc }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(mag,i))}
-\NormalTok{  p }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(linear, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =} \FloatTok{9.1}\NormalTok{))}
-\NormalTok{  prediction[i] }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{/}\DecValTok{10}\SpecialCharTok{\^{}}\NormalTok{p}
-\NormalTok{\}}
-\FunctionTok{data.frame}\NormalTok{(capacity,prediction)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##   capacity    prediction
-## 1        1  7.864653e+02
-## 2        2  5.693638e+03
-## 3        3  2.472119e+04
-## 4        4  4.878898e+04
-## 5        5  4.513788e-01
-## 6        6  1.522366e-33
-## 7        7 8.608668e-153
-## 8        8  6.102735e-40
-\end{verbatim}
 \end{comment}
-%---------------------------------------------------------------------

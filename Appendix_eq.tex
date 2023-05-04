@@ -1,7 +1,4 @@
 
-\section{Appendix for use in STA 610 (Thesis
-II)}\label{appendix-for-use-in-sta-610-thesis-ii}
-
 Data was queried using USGS Earthquake Catalog:
 \url{https://earthquake.usgs.gov/earthquakes/search/} to select all
 recorded earthquakes of magnitude 4.5 and above with the following query
@@ -175,8 +172,8 @@ data is transformed first.
   \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{k)\{}
 \NormalTok{    df }\OtherTok{\textless{}{-}}\NormalTok{ eq[}\FunctionTok{sample}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(eq)), ]}
 
-    \CommentTok{\# Extract 70\% of data into train set and the remaining 30\% in test set}
-\NormalTok{    train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.7} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
+    \CommentTok{\# Extract 80\% of data into train set and the remaining 20\% in test set}
+\NormalTok{    train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.8} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
 \NormalTok{    train }\OtherTok{\textless{}{-}}\NormalTok{ df[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{train\_test\_split,]}
 \NormalTok{    test }\OtherTok{\textless{}{-}}\NormalTok{ df[(train\_test\_split}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{:} \FunctionTok{nrow}\NormalTok{(df),]}
 
