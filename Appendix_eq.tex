@@ -203,19 +203,19 @@ Model}\label{traditional-poisson-regression-model}}
 ## 
 ## Deviance Residuals: 
 ##      Min        1Q    Median        3Q       Max  
-## -0.39403  -0.20754  -0.02925   0.08617   0.22166  
+## -0.43474  -0.16709  -0.05139   0.10559   0.28568  
 ## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)  13.0940     0.7242   18.08   <2e-16 ***
-## mag          -2.0467     0.1474  -13.88   <2e-16 ***
+## (Intercept)  13.2381     0.7304   18.12   <2e-16 ***
+## mag          -2.0774     0.1497  -13.88   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for poisson family taken to be 1)
 ## 
-##     Null deviance: 373.0667  on 23  degrees of freedom
-## Residual deviance:   0.7758  on 22  degrees of freedom
+##     Null deviance: 408.58359  on 23  degrees of freedom
+## Residual deviance:   0.81389  on 22  degrees of freedom
 ## AIC: Inf
 ## 
 ## Number of Fisher Scoring iterations: 3
@@ -261,23 +261,61 @@ Model}\label{traditional-poisson-regression-model}}
 \end{Shaded}
 
 \begin{verbatim}
-##                Model    TestErr
-## 1 Poisson Regression 0.03940496
+##                Model   TestErr
+## 1 Poisson Regression 0.1167671
+\end{verbatim}
+
+Cross validation scheme to generate Test Error for Poisson regression.
+Due to the size of the data, distributions of TestError were skewed. So,
+median was taken to measure the final CV score for the network.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{500}
+\NormalTok{TestErr }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{H\_med }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+
+
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{k)\{}
+\NormalTok{  df }\OtherTok{\textless{}{-}}\NormalTok{ eq[}\FunctionTok{sample}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(eq)), ]}
+
+  \CommentTok{\# Extract 80\% of data into train set and the remaining 20\% in test set}
+\NormalTok{  train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.8} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
+\NormalTok{  train }\OtherTok{\textless{}{-}}\NormalTok{ df[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{train\_test\_split,]}
+\NormalTok{  test }\OtherTok{\textless{}{-}}\NormalTok{ df[(train\_test\_split}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{:} \FunctionTok{nrow}\NormalTok{(df),]}
+
+\NormalTok{  pois }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(freqc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ mag, }\AttributeTok{data =}\NormalTok{ train, }\AttributeTok{family =} \StringTok{"poisson"}\NormalTok{)}
+
+  \CommentTok{\#{-}{-}{-}make predictions}
+\NormalTok{  testpreds }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(pois, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
+
+  \CommentTok{\#{-}{-}{-}Mean difference between predictions and actual values for test set}
+\NormalTok{  TestErr[i] }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((test}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{{-}}\NormalTok{ testpreds)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }
+\NormalTok{\}}
+
+\NormalTok{H\_med }\OtherTok{\textless{}{-}} \FunctionTok{median}\NormalTok{(TestErr)}
+\NormalTok{poissontable\_cv }\OtherTok{\textless{}{-}} \FunctionTok{na.omit}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Model =} \StringTok{"Poisson Regression"}\NormalTok{, }\AttributeTok{TestErr =}\NormalTok{ H\_med))}
+\NormalTok{poissontable\_cv}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                Model   TestErr
+## 1 Poisson Regression 0.2004655
 \end{verbatim}
 
 \hypertarget{multi-layer-perceptron}{%
 \subsection{\#\# Multi-Layer Perceptron}\label{multi-layer-perceptron}}
 
-Cross validation scheme to measure MLP hidden layer size. Due to the
-size of the data, distributions of TestError were skewed. So, median was
-taken to measure the final CV score for the network.
+Cross validation scheme to measure MLP hidden layer size. Due to
+computational limitations, only 50 of each network could be built.
 
 It is found that the network converges faster on the log scale, so the
 data is transformed first.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{20}
+\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{50}
 \NormalTok{TestErr }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
 \NormalTok{H }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
 \NormalTok{H\_med }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
@@ -287,8 +325,8 @@ data is transformed first.
   \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{k)\{}
 \NormalTok{    df }\OtherTok{\textless{}{-}}\NormalTok{ eq[}\FunctionTok{sample}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(eq)), ]}
 
-    \CommentTok{\# Extract 70\% of data into train set and the remaining 30\% in test set}
-\NormalTok{    train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.7} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
+    \CommentTok{\# Extract 80\% of data into train set and the remaining 20\% in test set}
+\NormalTok{    train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.8} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
 \NormalTok{    train }\OtherTok{\textless{}{-}}\NormalTok{ df[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{train\_test\_split,]}
 \NormalTok{    test }\OtherTok{\textless{}{-}}\NormalTok{ df[(train\_test\_split}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{:} \FunctionTok{nrow}\NormalTok{(df),]}
 
@@ -308,7 +346,8 @@ data is transformed first.
 \NormalTok{    TestErr[i] }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((test}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{{-}}\NormalTok{ testpreds)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }
 \NormalTok{  \}}
 
-\NormalTok{H\_med[j] }\OtherTok{\textless{}{-}} \FunctionTok{median}\NormalTok{(TestErr)}
+\NormalTok{  H\_med[j] }\OtherTok{\textless{}{-}} \FunctionTok{median}\NormalTok{(TestErr)}
+  
 
 \NormalTok{\}}
 
@@ -320,12 +359,14 @@ data is transformed first.
 
 \begin{verbatim}
 ##    Model   TestErr
-## 3    MLP 0.1859479
-## 6    MLP 0.2940994
-## 9    MLP 0.5004098
-## 10   MLP 0.3152632
-## 20   MLP 0.8421863
+## 3    MLP 0.1845437
+## 6    MLP 0.1935333
+## 9    MLP 0.2773531
+## 10   MLP 0.2902641
+## 20   MLP 0.3722027
 \end{verbatim}
+
+Code to generate each size MLP
 
 \hypertarget{note-on-mlp-for-count-data}{%
 \subsubsection{Note on MLP for count
@@ -363,100 +404,90 @@ follows:
 \subsection{Bayesian Reguarized Neural
 Network}\label{bayesian-reguarized-neural-network}}
 
-Using the \texttt{brnn} package \cite{brnn} to create a two-layer neural
-network with 6 hidden neurons. Network uses Bayesian regularization to
-set parameters \(\alpha\) and \(\beta\).
+Using the \texttt{brnn} package \cite{brnn} to create the ideal
+two-layer neural network with several simulated trials. Due to
+computational limitations, only 50 of each network could be built.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{mag}
-\NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{freqc}
+\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{50}
 \NormalTok{TestErr }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
-\NormalTok{TrainErr }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
-\NormalTok{Hidden }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{H\_med }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
 
-\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{20}\NormalTok{))\{}
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{20}\NormalTok{,}\DecValTok{50}\NormalTok{))\{}
 
-\CommentTok{\#{-}{-}{-}build the model with hidden layer size i}
-\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\NormalTok{i)}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{k)\{}
+\NormalTok{    df }\OtherTok{\textless{}{-}}\NormalTok{ eq[}\FunctionTok{sample}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(eq)), ]}
 
-\CommentTok{\#{-}{-}{-}exponentiate predictions to coerce back to standard scale}
-\NormalTok{testpreds }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
+    \CommentTok{\# Extract 80\% of data into train set and the remaining 20\% in test set}
+\NormalTok{    train\_test\_split }\OtherTok{\textless{}{-}} \FloatTok{0.8} \SpecialCharTok{*} \FunctionTok{nrow}\NormalTok{(df)}
+\NormalTok{    train }\OtherTok{\textless{}{-}}\NormalTok{ df[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{train\_test\_split,]}
+\NormalTok{    test }\OtherTok{\textless{}{-}}\NormalTok{ df[(train\_test\_split}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{:} \FunctionTok{nrow}\NormalTok{(df),]}
+    
+\NormalTok{    x }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{mag}
+\NormalTok{    y }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{log10}\NormalTok{()}
 
-\CommentTok{\#{-}{-}{-}Mean difference between prediction and actual values for test set}
-\NormalTok{TestErr[i] }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((test}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{{-}}\NormalTok{ testpreds)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }
+    \CommentTok{\#{-}{-}{-}build the model with hidden layer size i}
+\NormalTok{    brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\NormalTok{j)}
 
-\NormalTok{TrainErr[i] }\OtherTok{\textless{}{-}}\NormalTok{  brnn[[}\StringTok{"Ed"}\NormalTok{]]}
-\NormalTok{Hidden[i] }\OtherTok{\textless{}{-}}\NormalTok{ i}
+    \CommentTok{\#{-}{-}{-}predictions}
+\NormalTok{    testpreds }\OtherTok{\textless{}{-}} \DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
+
+    \CommentTok{\#{-}{-}{-}Mean difference between prediction and actual values for test set}
+\NormalTok{    TestErr[i] }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((test}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{{-}}\NormalTok{ testpreds)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }
+\NormalTok{  \}}
+
+\NormalTok{H\_med[j] }\OtherTok{\textless{}{-}} \FunctionTok{median}\NormalTok{(TestErr)}
+
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## Number of parameters (weights and biases) to estimate: 9 
-## Nguyen-Widrow method
-## Scaling factor= 2.1 
-## gamma= 4.8283     alpha= 0.1143   beta= 813.7576 
-## Number of parameters (weights and biases) to estimate: 18 
-## Nguyen-Widrow method
-## Scaling factor= 4.2 
-## gamma= 4.8464     alpha= 0.117    beta= 810.9841 
-## Number of parameters (weights and biases) to estimate: 27 
-## Nguyen-Widrow method
-## Scaling factor= 6.3 
-## gamma= 4.9035     alpha= 0.1204   beta= 810.2303 
-## Number of parameters (weights and biases) to estimate: 30 
-## Nguyen-Widrow method
-## Scaling factor= 7 
-## gamma= 5.676      alpha= 0.1175   beta= 965.8949 
-## Number of parameters (weights and biases) to estimate: 60 
-## Nguyen-Widrow method
-## Scaling factor= 14 
-## gamma= 10.2189    alpha= 0.0326   beta= 2956.493
-\end{verbatim}
-
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\#Table of hidden layers with test error}
-\NormalTok{brnntable }\OtherTok{\textless{}{-}} \FunctionTok{na.omit}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Model =} \StringTok{"BRNN"}\NormalTok{, TestErr))}
-\NormalTok{brnntable}
+\NormalTok{brnntable\_cv }\OtherTok{\textless{}{-}} \FunctionTok{na.omit}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Model =} \StringTok{"BRNN"}\NormalTok{, }\AttributeTok{TestErr =}\NormalTok{ H\_med))}
+\NormalTok{brnntable\_cv}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##    Model   TestErr
-## 3   BRNN 0.2688122
-## 6   BRNN 0.2775057
-## 9   BRNN 0.2748357
-## 10  BRNN 0.2465626
-## 20  BRNN 0.1992750
+##    Model    TestErr
+## 3   BRNN 0.18900875
+## 6   BRNN 0.13294497
+## 9   BRNN 0.15097140
+## 10  BRNN 0.20731268
+## 20  BRNN 0.04056624
+## 50  BRNN 0.45928658
 \end{verbatim}
+
+Out of all network sizes tested, the best has 20 neurons in the hidden
+layer.
 
 \hypertarget{plot-for-brnn}{%
 \subsubsection{Plot for BRNN}\label{plot-for-brnn}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{6}\NormalTok{)   }\CommentTok{\# build model}
+\NormalTok{brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{20}\NormalTok{)   }\CommentTok{\# build model}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## Number of parameters (weights and biases) to estimate: 18 
+## Number of parameters (weights and biases) to estimate: 60 
 ## Nguyen-Widrow method
-## Scaling factor= 4.2 
-## gamma= 4.8279     alpha= 0.1167   beta= 829.4241
+## Scaling factor= 14 
+## gamma= 9.5446     alpha= 0.0432   beta= 727.4973
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{summary}\NormalTok{(brnn)                 }\CommentTok{\# summary of model}
+\FunctionTok{summary}\NormalTok{(brnn)                  }\CommentTok{\# summary of model}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## A Bayesian regularized neural network 
-## 1 - 6 - 1 with 18 weights, biases and connection strengths
+## 1 - 20 - 1 with 60 weights, biases and connection strengths
 ## Inputs and output were  normalized
 ## Training finished because  SCE <= 0.01
 \end{verbatim}
@@ -467,8 +498,8 @@ set parameters \(\alpha\) and \(\beta\).
 \NormalTok{train}\SpecialCharTok{$}\NormalTok{set }\OtherTok{\textless{}{-}} \StringTok{"train"}
 
 \CommentTok{\#{-}{-}{-}append relevant predictions to the training and test datasets}
-\NormalTok{test}\SpecialCharTok{$}\NormalTok{brnnpreds }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
-\NormalTok{train}\SpecialCharTok{$}\NormalTok{brnnpreds }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{mag))}
+\NormalTok{test}\SpecialCharTok{$}\NormalTok{brnnpreds }\OtherTok{\textless{}{-}} \DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag))}
+\NormalTok{train}\SpecialCharTok{$}\NormalTok{brnnpreds }\OtherTok{\textless{}{-}} \DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{mag))}
 
 \CommentTok{\#{-}{-}combine data sets for plot}
 \NormalTok{plot\_brnn }\OtherTok{\textless{}{-}}\NormalTok{ train[,}\FunctionTok{c}\NormalTok{(}\StringTok{"mag"}\NormalTok{,}\StringTok{"freqc"}\NormalTok{,}\StringTok{"set"}\NormalTok{,}\StringTok{"brnnpreds"}\NormalTok{)] }\SpecialCharTok{\%\textgreater{}\%}
@@ -490,60 +521,76 @@ set parameters \(\alpha\) and \(\beta\).
 ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 \end{verbatim}
 
-\includegraphics{Appendix_eq_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{Appendix_eq_files/figure-latex/unnamed-chunk-14-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{rbind}\NormalTok{(poissontable,mlptable\_cv,brnntable)}
+\FunctionTok{rbind}\NormalTok{(poissontable\_cv,mlptable\_cv,brnntable\_cv)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ##                  Model    TestErr
-## 1   Poisson Regression 0.03940496
-## 3                  MLP 0.18594794
-## 6                  MLP 0.29409940
-## 9                  MLP 0.50040977
-## 10                 MLP 0.31526324
-## 20                 MLP 0.84218635
-## 31                BRNN 0.26881221
-## 61                BRNN 0.27750571
-## 91                BRNN 0.27483569
-## 101               BRNN 0.24656257
-## 201               BRNN 0.19927502
+## 1   Poisson Regression 0.20046549
+## 3                  MLP 0.18454369
+## 6                  MLP 0.19353330
+## 9                  MLP 0.27735309
+## 10                 MLP 0.29026406
+## 20                 MLP 0.37220274
+## 31                BRNN 0.18900875
+## 61                BRNN 0.13294497
+## 91                BRNN 0.15097140
+## 101               BRNN 0.20731268
+## 201               BRNN 0.04056624
+## 50                BRNN 0.45928658
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\#\%\textgreater{}\% view()}
 \CommentTok{\#\%\textgreater{}\% xtable()}
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{plots-for-brnn}{%
-\subsubsection{Plots for BRNN}\label{plots-for-brnn}}
+I guess this is my punch line now\ldots{}
 
-Generating plots for predicted network outputs in exactly the same
-manner as before with MLP.
+Simulating 1000 networks' predictions for relative magnitudes with
+\emph{neurons = 20}.
 
-\hypertarget{posterior-predictive-simulations-of-brnn---100-networks}{%
-\subsection{Posterior Predictive Simulations of BRNN - 100
-networks}\label{posterior-predictive-simulations-of-brnn---100-networks}}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# initialize values}
+\NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{mag}
+\NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ train}\SpecialCharTok{$}\NormalTok{freqc }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{log10}\NormalTok{()}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{1000}
+\NormalTok{prediction\_6}\FloatTok{.1} \OtherTok{\textless{}{-}} \ConstantTok{NULL}
 
-Simulating 100 networks' predictions for relative magnitudes with
-\emph{neurons = 6}.
+\CommentTok{\# run model and generate predcition n times}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n)\{}
 
-\hypertarget{plots-with-outliers-removed-better-visual}{%
-\subsubsection{Plots with outlier(s) removed (better
-visual)}\label{plots-with-outliers-removed-better-visual}}
+\NormalTok{  brnn }\OtherTok{\textless{}{-}} \FunctionTok{brnn}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x,}\AttributeTok{neurons=}\DecValTok{20}\NormalTok{)}
 
-Visualizing 97-99\% density (contingent upon on the number of outliers
-when the simulation is run) of the posterior predictive distribution.
+  \CommentTok{\#{-}{-}{-}exponentiate predictions to coerce back to standard scale}
+\CommentTok{\#  prediction\_9.1[i] \textless{}{-} 10\^{}predict(brnn, newdata = data.frame(x = 9.1))}
+\NormalTok{  prediction\_6}\FloatTok{.1}\NormalTok{[i] }\OtherTok{\textless{}{-}} \DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{predict}\NormalTok{(brnn, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x =} \FloatTok{6.1}\NormalTok{))}
+\NormalTok{\}}
 
-\hypertarget{posterior-predictive-simulations-for-brnn---1000-networks}{%
-\subsection{Posterior Predictive Simulations for BRNN - 1000
-networks}\label{posterior-predictive-simulations-for-brnn---1000-networks}}
+\NormalTok{ddf\_6}\FloatTok{.1} \OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{iteration =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{1000}\NormalTok{, prediction\_6}\FloatTok{.1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
-Simulating 1000 networks predictions for sharper posterior simulation
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#{-}{-}{-}posterior predictive distribution of a magnitude 6.1}
+\FunctionTok{ggplot}\NormalTok{(ddf\_6}\FloatTok{.1}\NormalTok{, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ prediction\_6}\FloatTok{.1}\NormalTok{)) }\SpecialCharTok{+}
+\FunctionTok{geom\_density}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Predicted Annual Frequency"}\NormalTok{,}
+         \AttributeTok{y =} \StringTok{"Density"}\NormalTok{,}
+         \AttributeTok{title =} \StringTok{"Approximate Posterior Predictive Density of a Magnitude 6.1 Earthquake"}\NormalTok{,}
+         \AttributeTok{subtitle =} \StringTok{"Two{-}Layer Neural Network with Bayesian Regularization"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Appendix_eq_files/figure-latex/unnamed-chunk-17-1.pdf}
 
 \end{document}
