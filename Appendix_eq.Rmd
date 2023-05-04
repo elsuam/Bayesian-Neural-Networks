@@ -1,0 +1,1005 @@
+---
+title: "Earthquakes Example"
+author: "Samuel Richards"
+output:
+  pdf_document:
+    keep_tex: TRUE
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_folding: hide
+    number_sections: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+library(tidyverse)
+library(leaflet)
+library(leaflegend)
+library(lubridate)
+library(plotly)
+library(caret)
+library(scales)
+library(brnn)
+library(neuralnet)
+library(RSNNS)
+library(xtable)
+```
+
+# Appendix for use in STA 610 (Thesis II)
+
+Data was queried using USGS Earthquake Catalog: https://earthquake.usgs.gov/earthquakes/search/ to select all recorded earthquakes of magnitude 4.5 and above with the following query parameters:
+
+- latitude 35.4 - 41.2
+- longitude 137.5 - 145.2
+- Timeframe(UTC): 2011-03-11 00:00:00 - 1965-01-01 00:00:00
+
+The data was stored locally in a .csv file named `earthquakes`.
+
+The organization also has an package called `rcomcat` to query data directly into `R`, but its version was not compatible at the time of this thesis.
+
+## Data Preprocessing
+
+```{r}
+# load the data 
+earthquakes_full <- read.csv("data/earthquakes.csv")
+
+# subset data to include observations from January 1, 1965 to
+#  just before the Greak Quake of March 11, 2011
+earthquakes_subset <- earthquakes_full[which(earthquakes_full$time >= "1965-01-26T23:47:37.120Z" &                                                                      earthquakes_full$time <= "2011-03-11T05:44:24.120Z"),]
+  
+# fine-tune the geographic area of the model
+earthquakes_subset <- earthquakes_subset[which(earthquakes_subset$latitude > 35.72 &
+                                               earthquakes_subset$latitude < 40.82 &
+                                               earthquakes_subset$longitude > 139.37 &
+                                               earthquakes_subset$longitude < 143.37),]
+
+# data frame of magnitudes (rounded to .1) and relative frequencies
+eq <- data.frame(table(round(earthquakes_subset$mag, 1)) ) %>% 
+                 rename(mag = Var1,
+                       freq = Freq) %>% 
+                 mutate(mag = as.numeric(as.character(mag))) %>% #change to numeric rather than factors
+                 mutate(freq = freq/(2011-1965))      #AVERAGE annual frequencies over the 46-year span
+
+# create a new variable representing the frequency of earthquakes of AT LEAST that magnitude
+for(i in 1:as.numeric(count(eq))){
+  eq$freqc[i] <- sum( eq$freq[c(i:as.numeric(count(eq)))] )
+}
+```
+
+
+## Train/Test Split
+
+```{r}
+# shuffle the data
+df <- eq[sample(nrow(eq)), ]
+
+# Extract 80% of data into train set and the remaining 30% in test set
+train_test_split <- 0.8 * nrow(df)
+train <- df[1:train_test_split,]
+test <- df[(train_test_split+1): nrow(df),]
+
+test$set <- "test"
+train$set <- "train"
+```
+
+
+## Traditional Poisson Regression Model
+
+```{r}
+pois <- glm(freqc ~ mag, data = train, family = "poisson")
+summary(pois)
+
+#---append relevant predictions to the training and test datasets
+train$fitted <- predict(pois, type = "response")
+test$fitted <- predict(pois, type = "response", newdata = data.frame(mag = test$mag))
+
+#--combine data sets for plot
+plot <- train[,c("mag","freqc","set","fitted")] %>%
+            rbind(test[,c("mag","freqc","set","fitted")])
+
+#---plot the data
+ggplot(plot, aes(x = mag)) +
+  geom_point(size = 4, shape = 17, aes(y = freqc, color = set)) +
+  geom_smooth(aes(y = fitted), size = .2, alpha = .2) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan",
+       subtitle = "Poisson Regression Model")
+
+# TEST ERROR - MSE
+poissontable <- data.frame(Model = "Poisson Regression",
+                          # Hidden = NA,
+                           TestErr = mean((test$freqc - test$fitted)^2))
+                           #TrainErr =  sum((pois[["residuals"]])^2))
+poissontable
+```
+
+
+Cross validation scheme to generate Test Error for Poisson regression.  Due to the size of the data, distributions of TestError were skewed.  So, median was taken to measure the final CV score for the network.
+
+```{r}
+k <- 500
+TestErr <- NULL
+H_med <- NULL
+
+
+for(i in 1:k){
+  df <- eq[sample(nrow(eq)), ]
+
+  # Extract 80% of data into train set and the remaining 20% in test set
+  train_test_split <- 0.8 * nrow(df)
+  train <- df[1:train_test_split,]
+  test <- df[(train_test_split+1): nrow(df),]
+
+  pois <- glm(freqc ~ mag, data = train, family = "poisson")
+
+  #---make predictions
+  testpreds <- predict(pois, type = "response", newdata = data.frame(mag = test$mag))
+
+  #---Mean difference between predictions and actual values for test set
+  TestErr[i] <- mean((test$freqc - testpreds)^2) 
+}
+
+H_med <- median(TestErr)
+poissontable_cv <- na.omit(data.frame(Model = "Poisson Regression", TestErr = H_med))
+poissontable_cv
+
+```
+
+
+
+## ## Multi-Layer Perceptron
+
+Cross validation scheme to measure MLP hidden layer size.  Due to computational limitations, only 50 of each network could be built.
+
+It is found that the network converges faster on the log scale, so the data is transformed first.
+```{r}
+k <- 50
+TestErr <- NULL
+H <- NULL
+H_med <- NULL
+
+for(j in c(3,6,9,10,20)){
+
+  for(i in 1:k){
+    df <- eq[sample(nrow(eq)), ]
+
+    # Extract 80% of data into train set and the remaining 20% in test set
+    train_test_split <- 0.8 * nrow(df)
+    train <- df[1:train_test_split,]
+    test <- df[(train_test_split+1): nrow(df),]
+
+    train$freqc_log <- log10(train$freqc) #log transform for faster convergence
+    # test$set <- "test"
+    # train$set <- "train"
+
+    mlp <- neuralnet(freqc_log ~ mag,
+                     stepmax = 1e+06,
+                     data = train,
+                     hidden = c(j))
+
+    #---exponentiate predictions to coerce back to standard scale
+    testpreds <- 10^predict(mlp,newdata = data.frame(mag = test$mag))
+
+    #---Mean difference between prediction and actual values for test set
+    TestErr[i] <- mean((test$freqc - testpreds)^2) 
+  }
+
+  H_med[j] <- median(TestErr)
+  
+
+}
+
+
+mlptable_cv <- na.omit(data.frame(Model = "MLP", TestErr = H_med))
+mlptable_cv
+```
+Code to generate each size MLP
+```{r eval=FALSE, include=FALSE}
+for(i in c(3,6,9,10,20)){
+  
+#---build the model with hidden layer size i
+  mlp <- neuralnet(freqc_log ~ mag,
+                 stepmax = 1e+06,
+                 data = train,
+                 hidden = c(i))
+
+#---exponentiate predictions to coerce back to standard scale
+testpreds <- 10^predict(mlp,newdata = data.frame(mag = test$mag))
+
+#---Mean difference between prediction and actual values for test set
+TestErr[i] <- mean((test$freqc - testpreds)^2) 
+
+TrainErr[i] <-  mlp[["result.matrix"]][1]
+Hidden[i] <- i
+plot(mlp, rep = "best", show.weights = F)
+}
+```
+
+
+<!--
+
+## Multi-Layer Perceptron
+
+Finding the optimal hidden layer size based on the lowest test error.
+It is found that the network converges faster on the log scale, so the data is transformed first.
+```{r eval=FALSE, include=FALSE}
+train$freqc_log <- log10(train$freqc) #log transform for faster convergence
+
+TestErr <- NULL
+TrainErr <- NULL
+Hidden <- NULL
+
+for(i in c(3,6,9,10,20)){
+  
+#---build the model with hidden layer size i
+  mlp <- neuralnet(freqc_log ~ mag,
+                 stepmax = 1e+06,
+                 data = train,
+                 hidden = c(i))
+
+#---exponentiate predictions to coerce back to standard scale
+testpreds <- 10^predict(mlp,newdata = data.frame(mag = test$mag))
+
+#---Mean difference between prediction and actual values for test set
+TestErr[i] <- mean((test$freqc - testpreds)^2) 
+
+TrainErr[i] <-  mlp[["result.matrix"]][1]
+Hidden[i] <- i
+plot(mlp, rep = "best")
+}
+
+#Table of hidden layers with test error
+mlptable <- na.omit(data.frame(Model = "MLP", Hidden, TestErr,TrainErr))
+mlptable
+```
+-->
+
+<!--
+Based on the above table, a network with NNN hidden neurons is most appropriate for the data.
+-->
+
+```{r eval=FALSE, include=FALSE}
+#---train multi-layer perceptron model
+mlp <- neuralnet(freqc ~ mag,
+                 stepmax = 1e+06,
+                 data = train,
+                 hidden = c(5))
+
+plot(mlp, rep = "best") # Diagram of MLP
+
+#---append relevant predictions to the training and test datasets
+test$mlppreds <- predict(mlp, newdata = data.frame(mag = test$mag))
+train$mlppreds <- mlp$response
+
+#--combine data sets for plot
+plot_mlp <- train[,c("mag","freqc","set","mlppreds")] %>%
+            rbind(test[,c("mag","freqc","set","mlppreds")])
+
+#---plot the data
+ggplot(plot_mlp, aes(x = mag)) +
+  geom_point(size = 4, shape = 17, aes(y = freqc, color = set)) +
+  geom_smooth(aes(y = mlppreds), size = .2, alpha = .2) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan",
+       subtitle = "Two-Layer Multi-Layer Perceptron")
+
+# TEST ERROR - MSE
+mean((test$freqc - test$mlppreds)^2)
+```
+
+
+### Note on MLP for count data
+
+It is worth noting here that a comparable MLP model to Poisson regression may be more appropriate for the task at hand.  Particularly, the networks used in \cite{fallah2009nonlinear} to compare the performance of a neural network Poisson regression model with its traditional counterpart among various data sets were attempted for this example.  According to the paper, a two-layer neural network is used that uses hyperbolic tangent in the hidden layer and the exponential function in the output.  To accommodate count data, the loss function based on negative log likelihood criterion for Poisson regression is:
+$$
+E_D = - \sum_{i=1}^N \left[ -\hat{y_i} + y_i log(\hat{y_i}) \right]
+$$
+
+And so the code for the `neuralnets` package would look as follows:
+```{r eval=FALSE}
+mlp <- neuralnet(freqc ~ mag,
+                 stepmax = 1e+06,
+                 data = train,
+                 hidden = c(5),
+                 act.fct = "tanh",
+                 err.fct = function(x, y) { -(-x+y*log(x))})
+
+predictions <- predict(mlp, newdata = data.frame(mag = test$mag)) %>% exp()
+```
+
+
+<!--
+```{r eval=FALSE, include=FALSE}
+#So then why doesnt this work??
+
+custom <- function(x,y){1/2*(y-x)^2} #same error function as default
+
+mlp <- ?neuralnet(freqc ~ mag,
+                 data = train,
+                 hidden = c(5),
+                 err.fct = custom,
+                 linear.output = F)
+
+plot(mlp, rep = "best") #WOW
+```
+-->
+
+
+<!--
+## Bayesian Reguarized Neural Network
+
+Using the `brnn` package \cite{brnn} to create a two-layer neural network with 6 hidden neurons.  Network uses Bayesian regularization to set parameters $\alpha$ and $\beta$.
+
+```{r eval=FALSE, include=FALSE}
+x <- train$mag
+y <- train$freqc
+TestErr <- NULL
+TrainErr <- NULL
+Hidden <- NULL
+
+for(i in c(3,6,9,10,20)){
+
+#---build the model with hidden layer size i
+brnn <- brnn(y~x,neurons=i)
+
+#---exponentiate predictions to coerce back to standard scale
+testpreds <- predict(brnn, newdata = data.frame(x = test$mag))
+
+#---Mean difference between prediction and actual values for test set
+TestErr[i] <- mean((test$freqc - testpreds)^2) 
+
+TrainErr[i] <-  brnn[["Ed"]]
+Hidden[i] <- i
+}
+
+#Table of hidden layers with test error
+brnntable <- na.omit(data.frame(Model = "BRNN", TestErr))
+brnntable
+```
+
+-->
+
+## Bayesian Reguarized Neural Network
+
+Using the `brnn` package \cite{brnn} to create the ideal two-layer neural network with several simulated trials.
+Due to computational limitations, only 50 of each network could be built.
+```{r echo = T, results = 'hide'}
+k <- 50
+TestErr <- NULL
+H_med <- NULL
+
+for(j in c(3,6,9,10,20,50)){
+
+  for(i in 1:k){
+    df <- eq[sample(nrow(eq)), ]
+
+    # Extract 80% of data into train set and the remaining 20% in test set
+    train_test_split <- 0.8 * nrow(df)
+    train <- df[1:train_test_split,]
+    test <- df[(train_test_split+1): nrow(df),]
+    
+    x <- train$mag
+    y <- train$freqc %>% log10()
+
+    #---build the model with hidden layer size i
+    brnn <- brnn(y~x,neurons=j)
+
+    #---predictions
+    testpreds <- 10^predict(brnn, newdata = data.frame(x = test$mag))
+
+    #---Mean difference between prediction and actual values for test set
+    TestErr[i] <- mean((test$freqc - testpreds)^2) 
+  }
+
+H_med[j] <- median(TestErr)
+
+}
+```
+
+```{r}
+brnntable_cv <- na.omit(data.frame(Model = "BRNN", TestErr = H_med))
+brnntable_cv
+```
+Out of all network sizes tested, the best has 20 neurons in the hidden layer.
+
+
+### Plot for BRNN
+```{r}
+brnn <- brnn(y~x,neurons=20)   # build model
+summary(brnn)                  # summary of model
+
+
+test$set <- "test"
+train$set <- "train"
+
+#---append relevant predictions to the training and test datasets
+test$brnnpreds <- 10^predict(brnn, newdata = data.frame(x = test$mag))
+train$brnnpreds <- 10^predict(brnn, newdata = data.frame(x = train$mag))
+
+#--combine data sets for plot
+plot_brnn <- train[,c("mag","freqc","set","brnnpreds")] %>%
+            rbind(test[,c("mag","freqc","set","brnnpreds")])
+
+#---plot the data
+ggplot(plot_brnn, aes(x = mag)) +
+  geom_point(size = 4, shape = 17, aes(y = freqc, color = set)) +
+  geom_smooth(aes(y = brnnpreds), size = .2, alpha = .2) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan",
+       subtitle = "Two-Layer Multi-Layer Perceptron with Bayesian Regularization")
+```
+
+
+```{r}
+rbind(poissontable_cv,mlptable_cv,brnntable_cv)
+#%>% xtable()
+```
+
+
+
+I guess this is my punch line now...
+
+Simulating 1000 networks' predictions for relative magnitudes with *neurons = 20*.
+```{r echo = T, results = 'hide'}
+# initialize values
+x <- train$mag
+y <- train$freqc %>% log10()
+n <- 1000
+prediction_6.1 <- NULL
+
+# run model and generate predcition n times
+for(i in 1:n){
+
+  brnn <- brnn(y~x,neurons=20)
+
+  #---exponentiate predictions to coerce back to standard scale
+#  prediction_9.1[i] <- 10^predict(brnn, newdata = data.frame(x = 9.1))
+  prediction_6.1[i] <- 10^predict(brnn, newdata = data.frame(x = 6.1))
+}
+
+ddf_6.1 <- data.frame(iteration = 1:1000, prediction_6.1)
+```
+
+```{r}
+#---posterior predictive distribution of a magnitude 6.1
+ggplot(ddf_6.1, aes(x = prediction_6.1)) +
+geom_density() +
+    labs(x = "Predicted Annual Frequency",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 6.1 Earthquake",
+         subtitle = "Two-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
+```{r eval=FALSE, include=FALSE}
+x <- train$mag
+y <- train$freqc %>% log10()
+n <- 1:100
+ddf <- data.frame(mag = NA, freqc = NA, iteration = NA)
+
+for(i in 1:length(n)){
+  c <- brnn(y~x,neurons=6)
+predicted_log_brnn <- data.frame(mag = test$mag,
+                             freqc = 10^predict(c, newdata = data.frame(x = test$mag)),
+                             iteration = i)
+f[[i]] <- predicted_log_brnn
+ddf <- add_row(ddf,f[[i]])
+}
+view(ddf)
+
+```
+
+
+```{r eval=FALSE, include=FALSE}
+#---plot of the data predictions over actual - logistic scale
+ggplot(ddf, aes(x = mag, y = freqc, group = iteration, shape = type, alpha = type, color = type)) +
+  geom_line(show.legend = T) +
+  geom_point(aes(size = type), shape = 17) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan - Logarithmic Scale",
+       subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  scale_alpha_discrete(range = c(1, .25)) +
+  scale_size_discrete(range = c(2,1))
+
+# subset all predictions for a 9.1
+ddf_9.1 <- ddf[which(ddf$mag == 9.1),]
+
+#---scatter plot of 9.1 predictions
+ggplot(ddf_9.1, aes(x = iteration, y = 1/10^(freqc))) +
+geom_point(size = 2, shape = 16, color = "cyan4") + 
+    labs(x = "Iteration",
+         y = "Predicted Lapsed Time (Years) Between Occurrences",
+         title = "Predictions for a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+
+# delete this for Appendix
+# ggplot(ddf_9.1, aes(sample = 1/10^(freqc))) +
+# geom_qq() + 
+#     labs(x = "Iteration",
+#          y = "Predicted Lapsed Time (Years) Between Occurrences",
+#          title = "Predictions for a Magnitude 9.1 Earthquake",
+#          subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+#   theme_minimal()
+
+
+#This, I believe, may just be the approximate posterior predictve distribution for a magnitude 9.1
+
+#---posterior predictive distribution of a magnitude 9.1
+ggplot(ddf_9.1, aes(x = 1/10^(freqc))) +
+geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+```
+
+
+
+
+
+
+
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+n <- 1000
+prediction_6.1 <- NULL
+
+  df <- eq[sample(nrow(eq)), ]
+
+  # Extract 70% of data into train set and the remaining 30% in test set
+  train_test_split <- .3 * nrow(df)
+  train <- df[1:train_test_split,]
+  test <- df[(train_test_split+1): nrow(df),]
+
+  test$set <- "test"
+  train$set <- "train"
+
+  x <- train$mag
+  y <- train$freqc %>% log10()
+
+
+  # run model and generate predcition n times
+  for(i in 1:n){
+
+      brnn <- brnn(y~x,neurons=6)
+
+      #---exponentiate predictions to coerce back to standard scale
+      prediction_6.1[i] <- 1/10^predict(brnn, newdata = data.frame(x = 6.1))
+  }
+
+ddf_6.1_3 <- data.frame(iteration = 1:1000, prediction_6.1)
+
+
+
+prediction_6.1b <- NULL
+
+  df <- eq[sample(nrow(eq)), ]
+
+  # Extract 70% of data into train set and the remaining 30% in test set
+  train_test_split <- .9 * nrow(df)
+  train <- df[1:train_test_split,]
+  test <- df[(train_test_split+1): nrow(df),]
+
+  x <- train$mag
+  y <- train$freqc %>% log10()
+
+
+  # run model and generate predcition n times
+  for(i in 1:n){
+
+      brnn <- brnn(y~x,neurons=6)
+
+      #---exponentiate predictions to coerce back to standard scale
+      prediction_6.1b[i] <- 1/10^predict(brnn, newdata = data.frame(x = 6.1))
+  }
+
+ddf_6.1_9 <- data.frame(iteration = 1:1000, prediction_6.1b)
+
+
+
+
+
+#---posterior predictive distribution of a magnitude 6.1
+ggplot(ddf_6.1_3, aes(x = prediction_6.1)) +
+    geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 6.1 Earthquake",
+         subtitle = "Two-Layer Neural Network with Bayesian Regularization") +
+    theme_minimal()
+
+
+#---posterior predictive distribution of a magnitude 6.1
+ggplot(ddf_6.1_9, aes(x = prediction_6.1b)) +
+    geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences - MORE DATA",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 6.1 Earthquake",
+         subtitle = "Two-Layer Neural Network with Bayesian Regularization") +
+    theme_minimal()
+
+```
+
+
+
+### Plots for BRNN
+
+Generating plots for predicted network outputs in exactly the same manner as before with MLP.
+```{r eval=FALSE, include=FALSE}
+#---actual test data---
+actual_log_brnn <- eq_log %>% 
+  mutate(type = "actual")
+
+#---predicted data---
+mdp <- seq(8,9.1, by = .1) #additional magnitude data points to add to prediction data
+
+bnn_preds <- eq_log$mag %>% append(mdp) #append additional magnitudes to make predictions
+
+predicted_log_brnn <- data.frame(mag = bnn_preds,
+                             freqc = predict(brnn, newdata = data.frame(x = bnn_preds)),
+                             type = "predicted")
+
+
+#---combine test and predictions for plot---
+brnn_plot <- rbind(predicted_log_brnn,actual_log_brnn[,c(1,3,4)])
+
+#---generate plot---
+ggplot(brnn_plot, aes(x = mag, y = freqc, group = type, color = type)) +
+  geom_line() +
+  geom_point(size = 2, shape = 17 , alpha = .5) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan - Logarithmic Scale",
+       subtitle = "Three-Layer Neural Network with Bayesian Regularization")
+
+#---generate plot returned to the standard scale---
+brnn_plot2 <- brnn_plot %>% 
+  mutate(freqc = 10^freqc)
+
+ggplot(brnn_plot2, aes(x = mag, y = freqc, group = type, color = type)) +
+  geom_line() +
+  geom_point(size = 2, shape = 17, alpha = .5) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan - Standard Scale",
+       subtitle = "Three-Layer Neural Network with Bayesian Regularization")
+```
+
+
+
+## Posterior Predictive Simulations of BRNN - 100 networks
+
+Simulating 100 networks' predictions for relative magnitudes with *neurons = 6*.
+```{r eval=FALSE, include=FALSE}
+# initialize values
+n <- 1:100
+w <- NULL
+f <- NULL
+
+# subset to include only magnitude, cumulative frequency,
+#  and the observation type (predicted or actual)
+ddf <- actual_log_brnn[,c(1,3,4)] %>%
+  mutate(iteration = 0)
+
+# run model and generate predcition n times
+for(i in 1:length(n)){
+  c <- brnn(y~x,neurons=6)
+predicted_log_brnn <- data.frame(mag = bnn_preds,
+                             freqc = predict(c, newdata = data.frame(x = bnn_preds)),
+                             type = "predicted",
+                             iteration = i)
+f[[i]] <- predicted_log_brnn
+ddf <- add_row(ddf,f[[i]])
+}
+```
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+#---plot of the data predictions over actual - logistic scale
+ggplot(ddf, aes(x = mag, y = freqc, group = iteration, shape = type, alpha = type, color = type)) +
+  geom_line(show.legend = T) +
+  geom_point(aes(size = type), shape = 17) +
+  theme_minimal() +
+  labs(x = "Magnitude",
+       y = "Annual Frequency of At Least this Magnitude",
+       title = "Annual Earthquake Frequency near Tohoku, Japan - Logarithmic Scale",
+       subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  scale_alpha_discrete(range = c(1, .25)) +
+  scale_size_discrete(range = c(2,1))
+
+# subset all predictions for a 9.1
+ddf_9.1 <- ddf[which(ddf$mag == 9.1),]
+
+#---scatter plot of 9.1 predictions
+ggplot(ddf_9.1, aes(x = iteration, y = 1/10^(freqc))) +
+geom_point(size = 2, shape = 16, color = "cyan4") + 
+    labs(x = "Iteration",
+         y = "Predicted Lapsed Time (Years) Between Occurrences",
+         title = "Predictions for a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+
+# delete this for Appendix
+# ggplot(ddf_9.1, aes(sample = 1/10^(freqc))) +
+# geom_qq() + 
+#     labs(x = "Iteration",
+#          y = "Predicted Lapsed Time (Years) Between Occurrences",
+#          title = "Predictions for a Magnitude 9.1 Earthquake",
+#          subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+#   theme_minimal()
+
+
+#This, I believe, may just be the approximate posterior predictve distribution for a magnitude 9.1
+
+#---posterior predictive distribution of a magnitude 9.1
+ggplot(ddf_9.1, aes(x = 1/10^(freqc))) +
+geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+```
+
+### Plots with outlier(s) removed (better visual)
+
+Visualizing 97-99% density (contingent upon on the number of outliers when the simulation is run) of the posterior predictive distribution.
+```{r eval=FALSE, include=FALSE}
+ddf_9.1_part <- ddf_9.1[which(ddf_9.1$freqc > -2.6),] #to remove the outlier
+
+#---scatter plot of 9.1 predictions - 98-99% density
+ggplot(ddf_9.1_part, aes(x = iteration, y = 1/10^(freqc))) +
+geom_point(size = 2, shape = 16, color = "cyan4") + 
+    labs(x = "Iteration",
+         y = "Predicted Lapsed Time (Years) Between Occurrences",
+         title = "Predictions for a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+
+
+#---posterior predictive distribution of a 9.1 - 97-99% density
+ggplot(ddf_9.1_part, aes(x = 1/10^(freqc))) +
+geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+```
+
+
+
+## Posterior Predictive Simulations for BRNN - 1000 networks
+
+Simulating 1000 networks predictions for sharper posterior simulation
+```{r eval=FALSE, include=FALSE}
+n <- 1:1000
+w <- NULL
+f <- NULL
+ddf <- actual_log_brnn[,c(1,3,4)] %>% mutate(iteration = 0)
+
+for(i in 1:length(n)){
+  c <- brnn(y~x,neurons=6)
+predicted_log_brnn <- data.frame(mag = bnn_preds,
+                             freqc = predict(c, newdata = data.frame(x = bnn_preds)),
+                             type = "predicted",
+                             iteration = i)
+f[[i]] <- predicted_log_brnn
+ddf <- add_row(ddf,f[[i]])
+}
+```
+
+```{r eval=FALSE, include=FALSE}
+# subset all predictions for a 9.1
+ddf_9.1b <- ddf[which(ddf$mag == 9.1),]
+
+#---posterior predictive distribution of a 9.1 - full estimated density
+ggplot(ddf_9.1b, aes(x = 1/10^(freqc))) +
+geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+
+ddf_9.1b_part <- ddf_9.1b[which(ddf_9.1b$freqc > -2.6),] #to remove the outlier
+
+#---posterior predictive distribution of a 9.1 - 97-99% density
+ggplot(ddf_9.1b_part, aes(x = 1/10^(freqc))) +
+geom_density() + 
+    labs(x = "Predicted Lapsed Time (Years) Between Occurrences",
+         y = "Density",
+         title = "Approximate Posterior Predictive Density of a Magnitude 9.1 Earthquake",
+         subtitle = "Three-Layer Neural Network with Bayesian Regularization") +
+  theme_minimal()
+```
+
+
+
+
+
+
+<!--
+Use this for the shiny app
+```{r eval=FALSE, include=FALSE}
+
+#distribution of the data for 9.1 - transformed to represent predicted lapsed time between occurrences
+plot_ly(data = ddf_9.1, x = ~iteration, y = ~1/10^(freqc)) %>% 
+layout(title = 'Predictions for a Magnitude 9.1 Earthquake',
+   #    plot_bgcolor = "#e5ecf6",
+       xaxis = list(title = 'Iteration'),
+       yaxis = list(title = 'Predicted Lapsed Time Between Occurrences'))
+```
+-->
+
+
+
+
+<!-- ARCHIVE CODE
+
+Simulating 100 networks' predictions for magnitude 9.1 with *neurons = 6*
+```{r eval=FALSE, include=FALSE}
+n <- 1:100
+w <- NULL
+for(i in 1:length(n)){
+  c <- brnn(y~x,neurons=6)
+  j <- predict(c, newdata = data.frame(x = 9.1))
+  w[i] <- 1/(10^j)
+}
+
+sim <- data.frame(n,w)
+
+plot_ly(data = sim, x = ~n, y = ~w)
+```
+
+Reviewing Regularization
+```{r eval=FALSE, include=FALSE}
+plot(x,y,
+     main="Bayesian Regularization for ANN 1-6-1")
+lines(x,predict(c),col="blue",lty=2)
+legend("topright",legend="Fitted model",col="blue",lty=2,bty="n")
+
+#using ggplot:
+
+ggplot(gg, aes(x = mag, y = freqc)) +
+  geom_point(size = 4, shape = 17 ) +
+  geom_line(aes(y = 10^predict(c)))
+```
+
+
+```{r eval=FALSE, include=FALSE}
+# https://cran.r-project.org/web/packages/brnn/brnn.pdf
+
+# What I am doing here is testing the model (on the logistic scale) using different variations of neurons to see what the predicted outcome for a 9.1 might be
+
+x <- earthquakes_log$mag
+y <- earthquakes_log$freqc
+t <- seq(from = 9, to = 10, length = 10)
+
+c <- brnn(y~x,neurons=10)
+
+ps <- predict(c, newdata = data.frame(x = t))
+ps <- 1/(10^ps)
+
+# plot(t,ps)
+# lines(t,ps,col="blue",lty=2)
+
+#6 neurons seems to hold well for a 9.1 when simulating 100 networks
+
+n <- 1:100
+w <- NULL
+for(i in 1:length(n)){
+  c <- brnn(y~x,neurons=6)
+  j <- predict(c, newdata = data.frame(x = 9.1))
+  w[i] <- 1/(10^j)
+}
+```
+-->
+
+
+<!--
+
+### caret method with method = brnn
+
+```{r eval=FALSE, include=FALSE}
+fitControl <- trainControl(method = "cv", number = 10)
+
+#use gg for original data, gg2 for log scale
+
+c <- train(freqc ~ mag, data = gg2,
+      method = "brnn",
+      preProc = c("center", "scale"),
+#      neurons = 2,
+      trControl = fitControl)
+
+#summary(c)
+
+p <- predict(c, newdata = data.frame(mag = 9.1))
+
+predicts <- add_row(gg2, mag = 9.1, freq = p, freqc = p)
+```
+
+Plot of the data with new predicted point at magnitude 9.1
+```{r eval=FALSE, include=FALSE}
+ggplot(predicts, aes(x = mag, y = freqc)) +
+  geom_point(size = 4, shape = 17 )
+```
+
+Preidicted frequency (in years) of a magnitude 9.1 earthquake
+```{r eval=FALSE, include=FALSE}
+1/(10^p)
+```
+
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+eq <- eq[c(3:3159),] #I only need the data up to that last point (for now) and only entire years up to then
+
+ggplot(eq, aes(x = mag)) +
+  geom_point(stat = "count", size = 4, shape = 17 ) + 
+  scale_x_binned(nice.breaks = T,
+                 n.breaks = 30)
+
+# dd <- data.frame(cut(eq$mag, breaks = seq(from=1, to=9, by = .1) ) %>% 
+#                    table)
+# dd <- dd[c(35:80),]
+
+ggplot(eq, aes(x = mag)) +
+  geom_point(stat = "count", size = 4, shape = 17 ) + 
+  scale_x_binned(nice.breaks = T,
+                 n.breaks = 30) +
+  scale_y_continuous(trans = 'log10')
+
+```
+-->
+
