@@ -140,11 +140,11 @@ The family of parameters $H$ is optimized to minimize $KL(q||p)$, in a similar m
 
 %\textit{(More practical representations)}
 
-A nice feature of Bayesian Statistics is the ability to make sense out of few data points, without the need for a minimum sample size or rules of thumb.  Another is the ability to extract the desired distribution of interest independent of the particular parameter settings \cite{bishop2006pattern}.  Between the two of these, meaningful predictions can be extrapolated without having to employ cross-validation or bootstrapping techniques.
+A nice feature of Bayesian statistics is the ability to incorporate prior knowledge into the model, systematically updating the relative beliefs in parameters as more data becomes available.  Even with few data points, a model can be built (although exhibit a high level of uncertainty), and from it added upon to build a better model.  Another nice property of Bayes is the ability to extract the desired distribution of interest independent of the particular parameter settings \cite{bishop2006pattern}.  Between the two of these, meaningful predictions can be extrapolated without having to employ cross-validation or bootstrapping techniques.
 
 \subsection{Marginalization}
 
-An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all unnecessary variables, they are integrated out
+An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all parameters of the model, nuisance parameters are integrated out
 \cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, given a data set $D$, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|D,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
 To determine the distribution of new predictions $y^*$ requires integrating the product of the posterior and the likelihood of new predictions with respect to the parameters of the model:
 $$
@@ -153,7 +153,7 @@ $$
 
 Therefore, $p(y^*|,\alpha,\sigma^2)$ is the \textit{posterior predictive distribution} of predicted outputs $y^*$ under the circumstances set forth in the model.  If $\theta$ and $\sigma^2$ were known to be true, then the likelihood would determine the prediction for future data.  Since these are unknown, and because under Bayes parameters are random variables, the predictive distribution is a weighted average over the posterior.  Thus, the  predictive distribution can be interpreted as the expectation of the single network likelihood under the posterior \cite{salad} \cite{Jospin}.  
 Setting aside the complex notation, this is simply a means of generating predictions from the parameter distribution gained by use of Bayes' Rule.  It describes the uncertainty the model has and allows for better flexibility without supplemental engineering.
-In the absence of many data points, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
+With few data points to train from, the predictive distribution will be very sparse. \cite{tipping2004bayesian}
 
 %\textbf{Simulating the Predictive Distribution}
 %$$

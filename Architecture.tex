@@ -20,7 +20,7 @@ Y =
 1 \text{ if } \sum_i^n w_ix_i > M
 \end{cases}
 \] Where \(i\) can be any number of input values composed in the
-network, and \(M\) is the threshold value that the weighted sum is
+network, and \(M\) is the \textit{decision boundary}, the threshold value that the weighted sum is
 matched with to determine the binary output \(Y\).  Because these inputs are calculated by computers, and computers like
 vectors, the above notation is adjusted to allow for proper computation in which $(w_i \cdot x_i)$ is the dot product of the weights and inputs. In
 addition, a bias term $b_i$ is introduced to shift the function for a clean threshold of \(M = 0\). \[
@@ -42,7 +42,8 @@ This is represented by the \emph{step function}.
 \end{figure}
 
 The problem with the perceptron is that a small change in weight can
-cause the outcome to change dramatically, since the output is binary \cite{nielsen}.  A perceptron change from 0 to 1 will impact the following calculation. For deep networks, this butterfly effect can make the anticipated scheme of outputs much worse than before, and the machine will have a hard time converging to the desired results.  To solve this problem, a smoothing component is applied to give the machine the ability to output a continuous range of potential weights and biases.  Typically, this is done with the \textit{sigmoid} activation function:
+cause the outcome to change dramatically, since the output is binary \cite{nielsen}.  As a network adapts to one training input, it may be less accurate for others.  Particularly when the data is non-linear, an inflexible decision boundary $M$ can increase cost for several other outputs in an attempt to decrease the cost for one.  By introducing a smooth activation function, the network can adapt to non-linearity in the data \cite{bishop2006pattern}.
+Typically, this is done with the \textit{sigmoid} activation function:
 \[
 \sigma(z) = \frac{1}{1+e^{-z}} \\
 \]
@@ -56,7 +57,7 @@ Which is represented by the \emph{sigmoid function}.
     \caption{\footnotesize The sigmoid function, which allows for continuous output values from 0 to 1.}
 \end{figure}
 
-
+For extreme inputs, that is for combinations of the weighted inputs that sum to far more or far less than one, not much changes from the step function as the output is either very close to 0 or very close to 1.  It is the smoothness in the middle that caters to modest values which allows the decision boundary to be flexible: small changes in the parameters learned by the cost of one training point will not have as much influence on the cost of other training points.
 The elementary topology of a neural network as featured in Figure \ref{NNet} is called a \textbf{Multi-Layer Perceptron}.  Despite its name, it is typically composed of sigmoid neurons.  As such, the resulting calculation for the weighted sum of inputs from one layer into one sigmoid neuron in the next layer is:
 $$
 \sigma(z) = \sigma((w_i \cdot x_i) + b_i) = \frac{1}{1-e^{-((w_i \cdot x_i) + b_i)}}
@@ -107,6 +108,8 @@ The potential for neural networks expands well beyond linearity or the curvature
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
 
+Sigmoid in particular has nice differentiable properties, 
+
 The sigmoid activation function gives the output of a neuron a continuous range [0,1].  While this is common in practice, other activation functions can be used that coerce the output of the neuron in various ways.
 %No feature of a neural network can be expressed in exhaustive detail in one paper, and activation functions are no exception.
 Many activation functions exist, with several variations of the original, each selected to improve the performance for a specific task.  The sigmoid activation function is the most widely used because it is easily differentiable and overcomes the primary drawback of the step function.  Hyperbolic tangent (Tanh) is another function very similar to sigmoid, yet it is steeper and symmetric about the origin with range (-1,1).  This is preferable in cases where gradients are not restricted to vary in a specific direction.  To mathematically compare it to sigmoid, it can be defined as $f(x) = 2 \cdot  \sigma(2x) - 1$.
@@ -125,17 +128,20 @@ Another common activation function is the \textit{rectified linear unit}, or ReL
  Variations of ReLU include \textit{leaky ReLU} or \textit{exponential ReLU}, which introduce a means of reducing negative inputs to a very small but still trainable size, rather than zeroing them out entirely.  Similarly, variations of sigmoid, Tanh, and many other activation functions exist and are tested in the interest of improving model efficacy \cite{banerjee2019empirical}.
 
 
-%------Cost Functions---------
+
+
+
+%------COST FUNCTIONS---------
 
 \hypertarget{cost-functions}{%
 \subsection{Cost Functions}\label{cost-functions}}
 
-Cost functions, also known as error or loss functions, are defined by taking the negative logarithm of the likelihood function.\cite{bishop2006pattern}  Because of the complexity of neural networks, they have many variations to match specific tasks, and as such many different cost functions can be applied.  To give a comprehensive review of cost functions extends beyond the scope of this thesis.  Instead, some recognizable cost functions that are seen in other models will be described.
+Cost functions, also known as error or loss functions, are identified by taking the negative logarithm of the likelihood function \cite{bishop2006pattern}.  Because of the complexity of neural networks, they have many variations to match specific tasks, and as such many different cost functions can be applied.  To give a comprehensive review of cost functions extends beyond the scope of this thesis.  Instead, some recognizable cost functions that are seen in other models will be described.
 
-For \textbf{regression} tasks, the \textit{Mean Squared Error} loss function is commonly used.
+For \textbf{regression} tasks, the squared error criterion is commonly used to measure cost.
 
 \[
-MSE = \frac{1}{N} \sum_{i=1}^N (\hat{y_i} - y_i)
+E_D(D) = \frac{1}{2} \sum_{i=1}^N (\hat{y_i} - y_i)^2
 \] Where $\hat{y_i}$ is the outcome of a single iteration of network forward
 propagation and \(y_i\) is the true observation to compare it to.
 
@@ -149,10 +155,7 @@ For \textbf{classification} tasks, variations of the \textit{log-loss} function 
 $$
 BCE = - \frac{1}{N} \sum_{i=1}^N y_i log (\hat{y_i}) + (1-y_i) log(1-\hat{y_i})
 $$
-
-The equation above is often called the \textit{binary cross-entropy} or more simply the \textit{cross-entropy} loss function in literature, but the latter can be misleading.  \textit{Any} loss measured with a negative log likelihood is a cross-entropy between the distributions defined by the training set and that of the model. \cite{Goodfellow-et-al-2016}
-
-for \textbf{multi-class classification} models, the generalized general form of sigmoid known as \textit{softmax} is used as the activation function \cite{bishop2006pattern}.  
+This can be extended into multi-class classification models.  For these, the generalized general form of sigmoid known as \textit{softmax} is used as the activation function \cite{bishop2006pattern}.  
 
 $$
 P(X) = \frac{e^{\delta_i}}{\sum_j{e^{\delta_j} }}
@@ -163,7 +166,11 @@ $$
 MCE = -\sum_{i=1}^N \sum_{j=1}^M y_{ij} log (\hat{y}_{ij})
 $$
 
-Despite the exclusive name of the last two, all of these are \textit{cross-entropy} error functions that neural networks use optimize their parameters by comparison of distributions.  This optimization procedure is typically done with \textbf{gradient descent.}
+In which the sum of all probabilities for each category equals 1.  For example, if the network is designed to identify from one of three types of fish, it might output something like:
+0.84 (Blue Gill), 0.07(Bass), 0.09(Barracuda).
+
+The entropy equations above are often called the \textit{binary cross-entropy} and \textit{multi-class cross-entropy} in literature; or more simply the \textit{cross-entropy} loss function, depending on the task. This can be misleading.  \textit{Any} loss measured with a negative log likelihood is a cross-entropy between the distributions defined by the training set and that of the model \cite{Goodfellow-et-al-2016}.
+Therefore despite the exclusive name of the last two, all of these are information theoretic cross-entropy error functions which neural networks use optimize their parameters.  This optimization procedure is typically done with \textbf{gradient descent.}
 
 
 %---------Gradient Descent---------
@@ -171,7 +178,7 @@ Despite the exclusive name of the last two, all of these are \textit{cross-entro
 \hypertarget{gradient-descent}{%
 \subsection{Gradient Descent}\label{gradient-descent}}
 
-The efficiency of a neural network is measured and corrected with each
+Predictions of a neural network are measured and corrected with each
 iteration based on reducing a cost function. This is the same as finding
 a local minimum of a function.  Given the function \(f(x) = \frac{x^3}{2} - x^2 - 12x\), Figure \ref{red} appears to have a local minimum somewhere around approximately $x = 4$, which can be calculated with precision by differentiating the function and finding the correct turning points.
 
@@ -231,10 +238,9 @@ the subscript \(_i\) denotes a specific parameter within that
 layer. In this section, the backpropagation calculus will be explained under the example of a \textit{two-layer} network; although the same notation and derivation can be applied to networks of all sizes.
 %Here, \(^{(2)}\) will be used to indicate the hidden layer and \(^{(1)}\) the input layer.
 The backpropagation algorithm is catered to a specific loss function. In
-this example, the loss function is \emph{Mean Squared
-Error}.
+this example, loss is measured by the squared differences between predicted and actual outputs.
 $$
-C = \frac{1}{N} \sum_{i=1}^N (\hat{y_i} - y_i)
+C = \sum_{i=1}^N (\hat{y_i} - y_i)^2
 $$
 This function takes the difference between the output from the
 network and the specified desired output for each observation. To
@@ -339,6 +345,13 @@ represented by:
 The calculations above determine the direction of steepest descent toward lowering the cost function.  They describe how every $i$ weight or bias in either layer should be adjusted in order to most effectively lower the cost for the given moment.  A step is taken in that direction, and the network iterates over again.  In a network with more layers $L$ , the number of equations needed for the full back-propagation increases as well.  As shown, the chain rule increases more and more as lineage tracing gets closer to the initial input layer, resulting in more and more complexity in the calculations.  And because backpropagation is catered to the cost function and the activation function, the specific derivatives calculated will be different as these are changed as well.
 
 
+
+
+
+
+
+
+
 \subsection{More Optimization Algorithms}
 
-With each iteration, after the gradient is computed, a step is taken in that direction.  Yet, just how far a step is to be determined.  If the step is too large, a local minimum may not be found and the algorithm never converge.  If the step is too sall, it may be extremely computationally intensive to reach convergence.  Sometimes, it can be shown mathematically how to determine an optimal step size for special cases \cite{nar2018step}, or several step sizes can be tested \cite{Goodfellow-et-al-2016} and an appropriate one determined.  Other algorithms exist for training neural networks, either as variants to gradient descent or a completely new means; some of which aim to save computation or adjust the step size according to the model.  For example, \textbf{stochastic gradient descent} saves computation by sampling the parameters with which to calculate the gradient.  Other methods like Adagrad (Adaptive Gradient Algorithm), RMSProp (Root Mean Square Propagation), and RProp (Resilient Backpropagation)\cite{rproprprop} aim to adapt the step size rather than maintaining a fixed value for each iteration.
+With each iteration, after the gradient is computed, a step is taken in that direction.  Yet, just how far a step is to be determined.  If the step is too large, a local minimum may not be found and the algorithm never converge.  If the step is too sall, it may be extremely computationally intensive to reach convergence.  Sometimes, it can be shown mathematically how to determine an optimal step size for special cases \cite{nar2018step}, or several step sizes can be tested \cite{Goodfellow-et-al-2016} and an appropriate one determined.  Other algorithms exist for training neural networks, either as variants to gradient descent or a completely new means; some of which aim to save computation or adjust the step size according to the model.  For example, \textit{stochastic gradient descent} saves computation by randomly sampling observations one at a time to calculate the gradient and estimate network parameters.  With each iteration, another observation is sampled and the parameters updated.  Other methods like Adagrad (Adaptive Gradient Algorithm), RMSProp (Root Mean Square Propagation), and RProp (Resilient Backpropagation)\cite{rproprprop} aim to adapt the \textit{step size} rather than maintaining a fixed value for each iteration.
