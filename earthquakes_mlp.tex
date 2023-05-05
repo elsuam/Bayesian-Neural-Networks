@@ -1,21 +1,21 @@
 
 \section{Multi-Layer Perceptron}
 
-Next, the \texttt{neuralnet} package \cite{neuralnet} is used to fit a multi-layer perceptron network to the training data.  Several networks were tested, containing one hidden layer of differing sizes.  The function uses resilient backpropagation by default and sigmoid activation between layers.  A model of the network is displayed below:
+Next, the \texttt{neuralnet} package \cite{neuralnet} is used to fit a multi-layer perceptron network to the training data.  Several networks were tested, containing one hidden layer of differing sizes.  For computational efficiency and for simplicity, deeper networks were not considered.  The function uses resilient backpropagation by default and sigmoid activation between layers.  A diagram of the network is displayed below:
 
 \begin{figure}[H]
     \center
-    \includegraphics[width=0.75\linewidth]{}
+    \includegraphics[width=0.55\linewidth]{Figures/MLPdiag.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{Insert MLP here}}
+    \caption{\footnotesize{Two-layer MLP network(s) of various sizes, with weight and bias connections displayed.  Magnitude is the explanatory variable and Frequency is the response.  Sigmoid is the hidden layer activation.}}
     \label{tohoku_unfit}
 \end{figure}
 
-To obtain a more accurate test error, cross-validation was applied to aggregate the baseline test error from 200 Poisson regression models. Because the data was so sparse, the distribution of calculated test errors was very wide and contained a few outliers that skewed the resulting average.  Thus, the \textit{median} test error was taken to better measure prediction accuracy.  To determine the optimal number of neurons in the hidden layer, 50 of each network was generated and the median of each taken.  It was hoped to compare as many of each network as the Poisson model, but in order to save computation this number had to reduced for the neural networks.
+To obtain a more accurate test error, cross-validation was applied to aggregate the baseline test error from 200 Poisson regression models. Because the data was so sparse, the distribution of calculated test errors was very wide and contained a few outliers that skewed the resulting average.  Thus, the \textit{median} test error was taken to better measure prediction accuracy.  To determine the optimal number of neurons in the hidden layer, 50 of each network was generated and the median test error calculated.  It was hoped to compare as many of each neural network as the Poisson model, but in order to save computation this number had to reduced.
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Wed May  3 23:45:14 2023
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \begin{tabular}{rlr}
   \hline
@@ -32,7 +32,7 @@ To obtain a more accurate test error, cross-validation was applied to aggregate 
   20 & 0.1706793 \\ 
    \hline
 \end{tabular}
-   \caption{\footnotesize Test accuracy for a Multi-layer Perceptron network of different sizes compared to baseline Poisson model.}
+   \caption{\footnotesize Test accuracy for a two-layer multi-layer perceptron network of different hidden layer sizes compared to the baseline Poisson model.}
 \end{table}
 
 
