@@ -14,16 +14,16 @@ The models surveyed were two-layer neural networks with the same number of hidde
     \center
     \includegraphics[width=0.55\linewidth]{Figures/BRNNdiag.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{Insert BRNN here}}
-    \label{tohoku_unfit}
+    \caption{\footnotesize{Two-layer BRNN network(s) of various sizes, with weight and bias connections displayed.  Magnitude is the explanatory variable and Frequency is the response.  Hyperbolic tangent is the hidden layer activation.}}
+    \label{BRNNdiag}
 \end{figure}
 
 By default, the \texttt{brnn} package uses hyperbolic tangent activation betwen layers and the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).  This means that is suffers the same drawbacks as the MLP model - it treats the task as a linear regression.  Only this time, it employs a regularization technique to ease the brittle nature of a high-parameter model.
-Although the Gauss-Newton algorithm had little trouble converging on the standard scale, for continuity the models were built in the same manner as the multi-layer perceptron: data was transformed onto the log scale and test accuracy was measured by aggregating 50 models and determining the \textit{median} test error.
+Although the Gauss-Newton algorithm had little trouble converging on the standard scale, for continuity the models were built in the same manner as the multi-layer perceptron: data was transformed onto the log scale and test accuracy was measured by aggregating 50 models for the \textit{median} test error.
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Thu May  4 11:32:17 2023
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \begin{tabular}{rrr}
   \hline
