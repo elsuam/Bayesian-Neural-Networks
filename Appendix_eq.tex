@@ -269,8 +269,7 @@ negative log likelihood criterion for Poisson regression is: \[
 E_D = - \sum_{i=1}^N \left[ -\hat{y_i} + y_i log(\hat{y_i}) \right]
 \]
 
-And so the code for the \texttt{neuralnets} package would look as
-follows:
+And so the code for the \texttt{neuralnets} package would look as follows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -284,6 +283,8 @@ follows:
 \NormalTok{predictions }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(mlp, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{mag =}\NormalTok{ test}\SpecialCharTok{$}\NormalTok{mag)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{exp}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
+
+Note that outputs would be exponentiated in order to generate predictions.  This is because hyperbolic tangent is the activation for the hidden layer.  In the paper, the exponential function was used to output predictions in the same way a traditional Poisson regression calculates.
 
 \hypertarget{bayesian-reguarized-neural-network}{%
 \subsubsection{Bayesian Reguarized Neural

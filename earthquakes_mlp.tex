@@ -1,11 +1,17 @@
 
 \section{Multi-Layer Perceptron}
 
-Next, the \texttt{neuralnet} package \cite{neuralnet} is used to fit a multi-layer perceptron network to the earthquake data.  Several networks were tested, containing one hidden layer of differing sizes.  The function uses resilient backpropagation by default and sigmoid activation between layers.
+Next, the \texttt{neuralnet} package \cite{neuralnet} is used to fit a multi-layer perceptron network to the training data.  Several networks were tested, containing one hidden layer of differing sizes.  The function uses resilient backpropagation by default and sigmoid activation between layers.  A model of the network is displayed below:
 
-To obtain a more accurate test error, cross-validation was applied to aggregate the baseline test error from 200 Poisson regression models. Because the data was so sparse, the distribution of test errors was very wide and contained a few outliers that skewed the resulting average.  Thus, the \textit{median} test error was taken to better measure prediction accuracy.
-To determine the optimal number of neurons in the hidden layer, 50 of each network was generated and the median of each taken.  It was hoped to compare as many of each network as the Poisson model, but in order to save computation this number had to reduced for the neural networks.
+\begin{figure}[H]
+    \center
+    \includegraphics[width=0.75\linewidth]{}
+   % \vspace{-10pt}
+    \caption{\footnotesize{Insert MLP here}}
+    \label{tohoku_unfit}
+\end{figure}
 
+To obtain a more accurate test error, cross-validation was applied to aggregate the baseline test error from 200 Poisson regression models. Because the data was so sparse, the distribution of calculated test errors was very wide and contained a few outliers that skewed the resulting average.  Thus, the \textit{median} test error was taken to better measure prediction accuracy.  To determine the optimal number of neurons in the hidden layer, 50 of each network was generated and the median of each taken.  It was hoped to compare as many of each network as the Poisson model, but in order to save computation this number had to reduced for the neural networks.
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Wed May  3 23:45:14 2023
@@ -26,15 +32,16 @@ To determine the optimal number of neurons in the hidden layer, 50 of each netwo
   20 & 0.1706793 \\ 
    \hline
 \end{tabular}
-   \caption{Test accuracy for a Multi-layer Perceptron network of different sizes compared to baseline Poisson model.}
+   \caption{\footnotesize Test accuracy for a Multi-layer Perceptron network of different sizes compared to baseline Poisson model.}
 \end{table}
 
 
-Based on these results, it is recommended to choose a simpler model: the Poisson regression has a comparable Test Error to the MLP for any size surveyed, even outperforming them in most cases.  In choosing a simpler model, the Poisson model will be able to extrapolate results better than the MLP.
+Based on these results, it is recommended to choose a simpler model: the Poisson regression has a comparable Test Error to the MLP for any size surveyed.  It even out performs the MLP in most cases.  By choosing a simpler model, the Poisson model would be able to extrapolate results better than any MLP surveyed here devoid of regularization.
 
-Additionally, the cost function used in the MLP model is not appropriate for the task.  By default, the \texttt{neuralnet} package uses the least squares criterion; essentially treating the model like a linear regression task.  In fact, the data had to be transformed to the logarithmic scale in order for the resilient backpropagation algorithm to converge for most cases.  Several attempts were made to replicate the networks used in (Fallah,et.al, 2009 \cite{fallah2009nonlinear}) to compare the
-performance of a neural network Poisson regression model with its traditional counterpart.  Such a model would have to be amended to compete with a cost function for count data.  Particularly, based on negative log likelihood for Poisson regression, the founction would be:
+Additionally, the cost function used in the MLP model is not appropriate for the task.  By default, the \texttt{neuralnet} package uses the least squares criterion; essentially treating the model like a linear regression task.  In fact, the data had to be transformed to the logarithmic scale in order for the resilient backpropagation algorithm to converge for most cases.  Several attempts were made to replicate the networks used in a simulation study by (Fallah,et.al, 2009 \cite{fallah2009nonlinear}) to compare the performance of a neural network Poisson regression model with its traditional counterpart.  Such a model would have to be amended to compete with a cost function for count data.  Particularly, based on negative log likelihood for Poisson regression, the cost function would be:
 $$
 E_D = - \sum_{i=1}^N \left[ -\hat{y_i} + y_i log(\hat{y_i}) \right]
 $$
-However no successful attempt was made using the \texttt{neuralnet} package, and instead a linear regression MLP was used.
+
+The final result would be exponentiated to generate predictions.
+However no successful attempt was made using the \texttt{neuralnet} package, and instead a linear regression MLP was used. (See Appendix for more details)

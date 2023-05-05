@@ -8,7 +8,18 @@ which is the product the posterior distribution and the likelihood of the predic
 
 This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).
 %Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described. The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
-The models surveyed were two-layer neural networks with the same number of hidden neurons as the multi-layer perceptron.  By default, the \texttt{brnn} package uses hyperbolic tangent activation betwen layers and the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997). For continuity, test accuracy was measured in the same way as was for the multi-layer perceptron - by aggregating 50 models and determining the \textit{median} test error.
+The models surveyed were two-layer neural networks with the same number of hidden neurons as the multi-layer perceptron.
+
+\begin{figure}[H]
+    \center
+    \includegraphics[width=0.75\linewidth]{}
+   % \vspace{-10pt}
+    \caption{\footnotesize{Insert BRNN here}}
+    \label{tohoku_unfit}
+\end{figure}
+
+By default, the \texttt{brnn} package uses hyperbolic tangent activation betwen layers and the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).  This means that is suffers the same drawbacks as the MLP model - it treats the task as a linear regression.  Only this time, it employs a regularization technique to ease the brittle nature of a high-parameter model.
+Although the Gauss-Newton algorithm had little trouble converging on the standard scale, for continuity the models were built in the same manner as the multi-layer perceptron: data was transformed onto the log scale and test accuracy was measured by aggregating 50 models and determining the \textit{median} test error.
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Thu May  4 11:32:17 2023
@@ -35,7 +46,9 @@ Hidden Units & Test Error (MLP) & Test Error (BRNN) \\
 
 
 
-Out of all network sizes tested, the best has 20 neurons in the hidden layer.  This was surprising at first, so an additional network with 50 hidden neurons was tested.  In regulating with Bayes, a complex network is shown to outperform the baseline Poisson regression model in light of few data points.  Using this neural network model, the expected frequency of any magnitude prediction has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=6.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and different predictions simulated from the same prerequisites.  Figure \ref{posteriorpredictive} shows this distribution based on 1000 network outputs from the two-layer BRNN with 20 hidden neurons.  Note that there are \textit{only} 1000 predictions, so the distribution is a rough approximations.  With more attempts, or by means of other approximation techniques described earlier, a more accurate distributional estimate can be attained.
+Out of all network sizes tested, the best has 20 neurons in the hidden layer.  This was surprising at first, so an additional network with 50 hidden neurons was tested.  In regulating with Bayes, a complex network is shown to outperform the baseline Poisson regression model in light of few data points.  Using this neural network model, the expected frequency of any magnitude prediction has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=6.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and different predictions simulated from the same prerequisites.  Figure \ref{posteriorpredictive} shows this distribution based on 1000 network outputs 
+\footnote{Note that there are \textit{only} 1000 predictions, so the distribution is a rough approximations.  With more attempts, or by means of other approximation techniques like those described earlier, a more accurate distributional estimate could be attained.}
+ from the two-layer BRNN with 20 hidden neurons.
 
 \begin{figure}[H]
     \center
