@@ -1,12 +1,12 @@
 \section{Bayesian Regularized Neural Network}
 
-Recall the regularized network weights from chapter 2. Given the posterior distribution of network weights $p(w|D,\alpha,\beta,A)$, the likelihood of new predictions $p(y^*|w,A)$, the posterior predictive distribution would be:
+Recall the regularized network weights from chapter 2. Given the posterior distribution of network parameters $p(\theta|D,\alpha,\beta,\mathcal{A})$, the likelihood of new predictions $p(y^*|\theta,\mathcal{A})$, the posterior predictive distribution would be:
 $$
-p(y^*|x,D,\alpha,\beta,A) = \int p(y^*|w,A) p(w|D,\alpha,\beta,A) \text{ } dw
+p(y^*|x,D,\alpha,\beta,\mathcal{A}) = \int p(y^*|\theta,\mathcal{A}) p(\theta|D,\alpha,\beta,\mathcal{A}) \text{ } d\theta
 $$
 which is the product the posterior distribution and the likelihood of the prediction given network weights and architecture, integrated over the weights.  This gives an output predicted distribution of $y^*$, given the same prior assumptions as went into building the model before.
 
-This example returns to the Tohoku Earthquake problem, offering another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).
+The final set of neural network models to be tested offers another potential solution than the MLP.  It uses the \texttt{brnn} package \cite{brnn} to fit a neural network with Bayesian regularization by means as described at the end of chapter 2 and in further detail by (Mackay, 1992).
 %Data was not divided into a test set to assess predictive accuracy, although it can be in the same manner as was done earlier.  Rather than assessing predictive accuracy here, an alternate approach will be introduced.  This example serves merely as direct exposure to the regularization techniques described. The model is a two-layer Bayesian Regularized Neural Network (BRNN) to make a prediction for a magnitude 9.1 earthquake in the Tohoku area. % Its syntax is relatively simple, with many defaults that can be modified for special cases.
 The models surveyed were two-layer neural networks with the same number of hidden neurons as the multi-layer perceptron.
 
@@ -14,12 +14,12 @@ The models surveyed were two-layer neural networks with the same number of hidde
     \center
     \includegraphics[width=0.55\linewidth]{Figures/BRNNdiag.png}
    % \vspace{-10pt}
-    \caption{\footnotesize{Two-layer BRNN network(s) of various sizes, with weight and bias connections displayed.  Magnitude is the explanatory variable and Frequency is the response.  Hyperbolic tangent is the hidden layer activation.}}
+    \caption{\footnotesize{Two-layer BRNN network(s) of various sizes, with weight and bias connections displayed.  Magnitude is the explanatory variable and Frequency is the response.  Hyperbolic tangent is used as the hidden layer activation.}}
     \label{BRNNdiag}
 \end{figure}
 
 By default, the \texttt{brnn} package uses hyperbolic tangent activation betwen layers and the Gauss-Newton optimization algorithm (Forsee and Hagan, 1997).  This means that is suffers the same drawbacks as the MLP model - it treats the task as a linear regression.  Only this time, it employs a regularization technique to ease the brittle nature of a high-parameter model.
-Although the Gauss-Newton algorithm had little trouble converging on the standard scale, for continuity the models were built in the same manner as the multi-layer perceptron: data was transformed onto the log scale and test accuracy was measured by aggregating 50 models for the \textit{median} test error.
+Although the Gauss-Newton algorithm had little trouble converging on the standard scale, for continuity the models were built in the same manner as the multi-layer perceptron: data was transformed onto the log scale and test accuracy was measured by aggregating 50 models for the median test error.
 
 % latex table generated in R 4.2.2 by xtable 1.8-4 package
 % Thu May  4 11:32:17 2023
@@ -46,7 +46,12 @@ Hidden Units & Test Error (MLP) & Test Error (BRNN) \\
 
 
 
-Out of all network sizes tested, the best has 20 neurons in the hidden layer.  This was surprising at first, so an additional network with 50 hidden neurons was tested.  In regulating with Bayes, a complex network is shown to outperform the baseline Poisson regression model in light of few data points.  Using this neural network model, the expected frequency of any magnitude prediction has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=6.1,D,\alpha,\beta,A)$.  Because this is a stochastic model, it can be generated over and over again and different predictions simulated from the same prerequisites.  Figure \ref{posteriorpredictive} shows this distribution based on 1000 network outputs 
+Out of all network sizes tested, the best has 20 neurons in the hidden layer.  This was surprising at first, so an additional network with 50 hidden neurons was tested.  This network was shown to be less accurate for predictions.
+
+The MLP network seemed to perform as well as the baseline Poisson regression model when there were 9 or 20 hidden units.  Measures of test error are comparably equal and could be a product of random variation.  The MLP with 3, 6, or 10 neurons in the hidden layer is shown to have less predictive accuracy than baseline.  It was expected that test error would initially decrease with the addition of hidden units and eventually increase, indicating to high a complexity for the amount of data and resulting in an overfit model.  This did not follow the expected pattern, perhaps because so few networks were tested or that the model made inappropriate assumptions for count data.
+While the predictive accuracy of the Bayesian model was moderately stable and very close to baseline, a higher complexity model is shown to outperform the baseline Poisson regression model in light of few data points.  The BRNN model with 20 neurons in the hidden layer performed the best overall.  Thus it is shown that a model with more parameters and a regularizing term can outperform a lower capacity model with no added regularizer.  This is paramount for neural networks because of their tendency to overfit the training data.  Ultimately, the MLP and BRNN are both unfit for this particular type of data, but the BRNN with 20 hidden neurons is less inappropriate than the MLP because it has the lowest test error.
+
+Using this neural network model, the expected frequency of any magnitude prediction has no single expected output.  Rather, because the parameters are trained using Bayes, the output estimate $\hat{y}$ comes from the posterior predictive distribution $p(y^*|x=6.1,D,\alpha,\beta,\mathcal{A})$.  Because this is a stochastic model, it can be generated over and over again and different predictions simulated from the same prerequisites.  Figure \ref{posteriorpredictive} shows this distribution based on 1000 network outputs 
 \footnote{Note that there are \textit{only} 1000 predictions, so the distribution is a rough approximations.  With more attempts, or by means of other approximation techniques like those described earlier, a more accurate distributional estimate could be attained.}
  from the two-layer BRNN with 20 hidden neurons.
 

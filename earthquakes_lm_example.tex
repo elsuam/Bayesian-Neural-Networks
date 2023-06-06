@@ -1,6 +1,6 @@
 
 \section{Poisson Regression}
-As a standard model for count data, a Poisson regression model is fit to establish a baseline to compare against neural networks.  The below output is the result from the general linear model function in base R, used on the training data, with the Poisson regression model specified by \texttt{family = "poisson"}.
+As a standard model for count data, a Poisson regression model is fit to establish a baseline to compare against neural networks. The below output is the result from the general linear model function in base R, used on the training data, with the Poisson regression model specified by \texttt{family = "poisson"}.
 
 \begin{verbatim}
 ## 
@@ -27,7 +27,7 @@ As a standard model for count data, a Poisson regression model is fit to establi
 ## Number of Fisher Scoring iterations: 3
 \end{verbatim}
 
-This shows that for every unit increase in magnitude, the expected difference in the logs of annual frequency is -2.0467.  The test error for this model, as will be for future models, was calculated by the mean squared error between predicted test values and actual test values. A plot of the data with the regression line is shown below:
+This shows that for every unit increase in magnitude, the expected difference in the logs of annual frequency is -2.0467.  To obtain a more appropriate test error, cross-validation was applied to aggregate the test errors of 200 Poisson regression models. Because the data was so sparse, the distribution of calculated test errors was very wide and contained a few outliers that skewed the resulting average.  Thus, the \textit{median} test error was taken to better measure prediction accuracy and is shown in Table \ref{Table1}.  A plot of the data with the regression line is shown below:
 
 
 \begin{figure}[H]

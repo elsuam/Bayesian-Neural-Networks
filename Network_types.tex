@@ -21,8 +21,8 @@ C(t) = \sum_{\tau = -\infty}^\infty x(\tau)w(t - \tau)
 is denoted with an asterisk: \[
 (x * w)(t)
 \]
-
-The kernel, which is much smaller than the image, moves across the image and performs its calculation on each pixel value within the proportion of the image it has captured.  It moves throughout the image and calculates on every combination of adjacent pixels until all pixels are accounted for.  This makes for a few notable assumptions CNN's have \cite{Goodfellow-et-al-2016}: for one, the output can be seen as a weighted average at every moment the convolution operation is performed.  Thus, $w$ must be a valid probability distribution or this ceases to be the case.  Additionally, values of the kernel and input tensors are assumed to be zero in infinite space except for the finite set in which the values are stored (i.e. the dimension of the image).  With all of these in play, the convolution produces an infinite summation over the finite array of elements, as represented below.
+In image data, the kernel is a discrete matrix that slides across the image and computes the scalar product for each cell value.  This allows it to flag visual patterns by expressing numerically where they see certain features of an image and about what they are \cite{o2015introduction}.
+This makes for a few notable assumptions CNN's have \cite{Goodfellow-et-al-2016}: for one, the output can be seen as a weighted average at every moment the convolution operation is performed.  Thus, $w$ must be a valid probability distribution or this ceases to be the case.  Additionally, values of the kernel and input tensors are assumed to be zero in infinite space except for the finite set in which the values are stored (i.e. the dimension of the image).  With all of these in play, the convolution produces an infinite summation over the finite array of elements, as represented below.
 
 Two-dimensional image \(X\) with a two-dimensional kernel \(W\) \[
 C(i,j) = (X * W)(i,j) = \sum_m \sum_n X(m,n)W(i-m,j-n)

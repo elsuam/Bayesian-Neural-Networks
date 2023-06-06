@@ -6,7 +6,7 @@ The primary objective in machine learning (and therefore deep learning) is to pe
 
 During the build process, a model is faced with a training set and measured against a test set.  With the training set, the model engages its optimization techniques (i.e. gradient decent) in order to minimize a cost function (i.e. least squares).  The measure of error that is used to optimize parameters based on reducing its theoretic value is known as the \textit{training error}.  When model performance on new predictions is measured against the test set, the expected value of the error between predictions and actual test data is the \textit{test error} (commonly referred to as the \textit{generalization error}). \cite{Goodfellow-et-al-2016}
 
- When the model cannot obtain a sufficiently low test error, it is \textit{underfit}.  This happens when a linear model is applied to a non-linear set of observations, as shown in Figure \ref{capacityviz}.  Additional processing is enrolled to accommodate the model to the data contours, creating a model with a lower test error; but attempting to fit the model too closely to the data creates a model with additional bias.  Often times, when a model is optimized toward a minimum training error, test error passes through a minimum rather than decreasing monotonically \cite{mackay1992bayesian}.  When the gap between the training error and test error is too great, the model is \textit{overfit}.
+ When the model cannot obtain a sufficiently low training error, it is \textit{underfit}.  This happens when a linear model is applied to a non-linear set of observations, as shown in Figure \ref{capacityviz}.  Additional processing is enrolled to accommodate the model to the data contours, creating a model with a lower error; but attempting to fit the model too closely to the data creates a model with additional bias.  Often times, when a model is optimized toward a minimum training error, test error passes through a minimum rather than decreasing monotonically \cite{mackay1992bayesian}.  When the gap between the training error and test error is too great, the model is \textit{overfit}.
  %Figure \ref{capacityviz} displays a linear regression model under circumstances where it is underfit and where it is overfit.
  
  \begin{figure}[H]
@@ -17,7 +17,7 @@ During the build process, a model is faced with a training set and measured agai
     \label{capacityviz}
 \end{figure}
  
- Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions, and machine learning models perform best when their capacity is appropriate for the complexity of the task \cite{Goodfellow-et-al-2016}.  In linear regression, increasing the model's capacity would be to include polynomial terms or splines to shape the model beyond a straight line, as shown in Figure \ref{capacityviz}.  For neural networks, adding additional neurons or hidden layers increases model capacity.
+ Somewhere between these extremes is the model's optimal \textit{capacity}.  Capacity is a model's ability to fit a wide variety of functions, and machine learning models perform best when their capacity is appropriate for the complexity of the task \cite{Goodfellow-et-al-2016}.  In linear regression, increasing the model's capacity would be to include polynomial terms or spline regression to shape the model beyond a straight line, as shown in Figure \ref{capacityviz}.  For neural networks, adding additional neurons or hidden layers increases model capacity.
  Because a neural network model has many more parameters to be estimated than its linear regression counterpart, it is much more susceptible to overfitting.  As capacity increases, so too does the amount of data needed for the network to be able to generalize \cite{baum1988size}.
 
 %- \textbf{Generalization}
@@ -40,19 +40,29 @@ There is no one way to set the dials of a neural network.  Generally, they are e
 \textit{Dropout} refers to the technique of temporarily removing neurons (and all involved connections) at random  at each iteration of training.\cite{srivastava2014dropout}  For example, a dropout with control parameter $p_{drop} = .25$ means that at each cycle of training, a random 75\% of the network is used and a new 75\% is sampled for the next step. This simultaneously speeds up computation as well as prevents overfitting because it reduces the number of calculations at each step of the model building process.
 
 \textit{Weight decay} is the neural network equivalent to shrinkage in machine learning.  For more information on shrinkage and regularization techniques in traditional machine learning, see (Goodfellow, 2016) \cite{Goodfellow-et-al-2016}.
-Weight decay is when a  term is added to the optimizer to penalize weights in hopes to achieve a smoother fit \cite{mackay1992practical}.  The penalty term forces the weight coefficients to be small because the optimizer seeks to reduce the overall function.  To illustrate, suppose a network architecture $A$ is defined for a model.  This architecture contains the specifications of the number of layers, neurons in each layer, activation functions, and available connections between layers.  The function mapping is defined as $\hat{y}(x_i;W,A)$, which outputs an estimated value for each input $x_i$ from the given architecture $A$ and set of weights $W$.  If the gradient descent algorithm is used to find optimal parameter values based on minimizing the following loss function $E_D$:
+Weight decay is when a  term is added to the optimizer to penalize weights in hopes to achieve a smoother fit \cite{mackay1992practical}.  The penalty term forces the weight coefficients to be small because the optimizer seeks to reduce the overall function.  To illustrate, suppose a network architecture $\mathcal{A}$ is defined for a model.  This architecture contains the specifications of the number of layers, neurons in each layer, activation functions, and available connections between layers.  The function mapping is defined as $\hat{y}(x_i;W,\mathcal{A})$, which outputs an estimated value for each input $x_i$ from the given architecture $\mathcal{A}$ and set of weights $W$.  If the gradient descent algorithm is used to find optimal parameter values based on minimizing the following loss function $E_D$:
 $$
-E_D(D|W,A) = \sum_i \frac{1}{2} [\hat{y}(x_i;W,A) - y_i]^2
+E_D(D|W,\mathcal{A}) = \sum_i [\hat{y}(x_i;W,\mathcal{A}) - y_i]^2
 $$
+
+%commented out version includes 1/2 scalar:
+%$$
+%E_D(D|W,\mathcal{A}) = \sum_i \frac{1}{2} %[\hat{y}(x_i;W,\mathcal{A}) - y_i]^2
+%$$
 
 the learning algorithm sets to reduce $E_D$ with the implementation of a \textit{regularizer} term for the weights $E_W$.  This regularizer can be defined as the following:
 $$
-E_W(W|A) = \sum_j \frac{1}{2} w_j^2
+E_W(W|\mathcal{A}) = \sum_j w_j^2
 $$
+
+%commented out version includes 1/2 scalar:
+%$$
+%E_W(W|\mathcal{A}) = \sum_j \frac{1}{2} w_j^2
+%$$
 
 The full optimization algorithm that uses weight decay then seeks to minimize:
 $$
-F = \alpha E_W(W|A) + \beta E_D(D|W,A)
+F = \alpha E_W(W|\mathcal{A}) + \beta E_D(D|W,\mathcal{A})
 $$
 where $\alpha$ and $\beta$ are ``black box'' parameters \cite{mackay1992practical}.  $\alpha$ is a control parameter known as the \textit{regularizing constant} (commonly referred to as the decay rate) and $\beta$ is the learning rate (step size).  It can be seen that as $\alpha \rightarrow \infty$, $W \rightarrow 0$ since the goal is to minimize $F$.  Rules of thumb exist for setting these control parameters, and cross-validation can be applied to determine their optimal values as well.  In a later section, a Bayesian method will be applied to offer another method to determining $\alpha$ and $\beta$.
 
@@ -85,7 +95,7 @@ In neural networks, a common technique is to
 %often uses pairs, although residual bootstrapping is often applied to neural net residuals.  This is usually done in either of two ways:  The first is to generate bootstrapped pairs by sampling with replacement the original training data and generate estimates from the trained neural network on each iteration of bootstrap pairs.  The second is to
 generate  $B$ training data sets by bootstrap resampling and build $B$ neural network models from them.  The mean and variance of all point estimates from each neural network is calculated and used to create the model uncertainty. This can be computationally costly, especially for data-hungry deep networks with many neurons in each layer.  %Neural networks often need a lot of data to produce adequate results.
 
-Each of these methods has specialized variations to generate the most useful measurements of uncertainty; even to begin with it is only a start.  Each has been shown to have its own preference over others and pitfalls.  Indeed, as if building a neural network was not complex enough, the additional computations to deliver insight to the confidence of a network's predictions can be quite cumbersome. At the apotheoses of this thesis, it will be shown that applying Bayesian techniques to building a deep learning model yields uncertainty measures built right into the model itself.  Until then, consider an example of a small neural network used for regression.
+Each of these methods has specialized variations to generate the most useful measurements of uncertainty; even to begin with it is only a start.  Each has been shown to have its own preference over others and pitfalls.  Indeed, as if building a neural network was not complex enough, the additional computations to deliver insight to the confidence of a network's predictions can be quite cumbersome. At the apotheoses of this thesis, it will be shown that applying Bayesian techniques to building a deep learning model yields uncertainty measures built right into the model itself.
 
 \begin{comment}
 The next section will review some introductions to Bayesian Statistics.\end{comment}

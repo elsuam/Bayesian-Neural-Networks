@@ -11,7 +11,7 @@
 
  In the ``traditional'' non-Bayesian neural network framework, to train a neural network to minimize its error based on a single point estimate for each $w_i$, waged against a cost function, is to maximize the likelihood of the training data (i.e. finding weights $w_i$ that maximize $P(D_y|D_x,\theta)$ \cite{bishop1995} \cite{bishop1997bayesian}.  The drawback to an ANN is that the distribution of network parameters $\theta = (W,b)$ across the network is unknown. \cite{mullachery2018bayesian}  Without supplemental engineering, measurements of the model's uncertainty cannot be quantified.
  
- In Bayes, there are no point estimates. Instead, by use of Bayes’ Rule, an interval of potential parameters based on probabilities $p(\theta|D)$ is computed.  As such, the network can express uncertainty in its weights and biases through this posterior distribution. What's more is by the rudimentary feature of marginalization, uncertainty can be quantified for the predicted outputs $p(y|D)$ (for either $y$ as a regression prediction or classification label); even the very architecture of the model $p(A|D)$ can be expressed as a distribution \cite{bishop1995}.
+ In Bayes, an interval of potential parameters based on probabilities $p(\theta|D)$ is computed by use of Bayes’ Rule.  As such, the network can express uncertainty in its weights and biases through this posterior distribution. What's more is by the behooving feature of marginalization, uncertainty can be quantified for the predicted outputs $p(y|D)$ (for either $y$ as a regression prediction or classification label); even the very architecture of the model $p(\mathcal{A}|D)$ can be expressed as a distribution \cite{bishop1995}.
  Bayesian Neural Networks (BNN) are able to learn from few data points and tell more of the story than their ANN counterparts.  Usually, fewer data points results in a network with higher prediction variability.  Even a network with very low variability, say one trained with many data points, comes readymade with a regularizer to ward overfitting. \cite{vladimirova2019understanding}
  
 
@@ -23,7 +23,7 @@ Conceptually, the overall architecture remains when working with probabilistic (
 \subsection{Stochastic Modeling}
 
 
-A researcher unsatisfied with a single point estimate for network output may consider simulating multiple networks, introducing a probabilistic effect to parameter tuning so as to not generate the same results. Stochastic neural networks, which use either stochastic activations \cite{yu2021simple} or stochastic weights, simulate a set of possible network outcomes $y$ with associated probability $p(y)$.  Aggregating independent predictors can lead to better predictions than single point estimates. \cite{Jospin}.  In comparing the predictions of multiple samples of $\hat{y}_i$, stochastic models better measure uncertainty.  A simple example is the regularization technique dropout \cite{goan2020bayesian} described earlier.  A neural network trained with dropout has a component randomness introduced by the selection of neurons removed from training.  If the dropout model was trained over and over again, it would contain slightly different parameter values reflective of this random noise.  There are other ways to introduce stochasticity into the model.  The Generative Adversarial Network \cite{ziyin2022stochastic} introduced in Chapter 1 implements a probabilistic component for its discriminator to identify.  %Variational Autoencoders (VAE) \cite{kingma2013auto} take generative models a step further by introducing Bayes as one part of many in their overall structure, but this is out of the scope of this thesis. 
+A researcher unsatisfied with a single point estimate for network output may consider simulating multiple networks, introducing a probabilistic effect to parameter tuning so as to not generate the same results. Stochastic neural networks, which use either stochastic activations \cite{yu2021simple} or stochastic weights, simulate a set of possible networks $\mathcal{N}$ with associated probability $p(\mathcal{N})$.  Aggregating independent predictors can lead to better predictions than single point estimates \cite{Jospin}.  In comparing the predictions of multiple samples of $\hat{y}_i$, stochastic models better measure uncertainty.  A simple example is the regularization technique dropout \cite{goan2020bayesian} described earlier.  A neural network trained with dropout has a component of randomness introduced by the selection of neurons removed from training.  If the dropout model was trained over and over again, it would contain slightly different parameter values reflective of this random noise.  There are other ways to introduce stochasticity into the model.  The Generative Adversarial Network \cite{ziyin2022stochastic} introduced in Chapter 1 implements a probabilistic component for its discriminator to identify.  %Variational Autoencoders (VAE) \cite{kingma2013auto} take generative models a step further by introducing Bayes as one part of many in their overall structure, but this is out of the scope of this thesis. 
 Simply put, Bayesian neural networks are a special case of stochastic neural networks in which the ensemble of possible models is obtained using Bayesian inference. \cite{mackay1992practical}
 
 
@@ -44,7 +44,7 @@ There is no one-size-fits-all for machine learning models, and deep learning mod
 
 \subsection{Development}
 
-Recall that $\theta$ represents the model weights and biases $(W,b)$.  $D$ is the training data from which the model learns, its inputs and outputs denoted with sibscripts $_x$ and $_y$.  Applying Bayes' Theorem, to determine the posterior distribution of $\theta$ requires selection of a prior and determination of the likelihood of the data:
+Recall that $\theta$ represents the model weights and biases $(W,b)$.  $D$ is the training data from which the model learns, its inputs and outputs denoted with subscripts $_x$ and $_y$.  Applying Bayes' Theorem, to determine the posterior distribution of $\theta$ requires selection of a prior and determination of the likelihood of the data:
 
 $$
 p(\theta|D) = \frac{p(D_{y}|D_{x},\theta)p(\theta)}{\int_\theta p(D_{y}|D_{x},\theta')p(\theta')d\theta'}
@@ -61,13 +61,12 @@ $$
 p(y^*|x,D) = \int_\theta p(y^*|x,\theta)p(\theta|D)d\theta
 $$
 
-Usually in practice, due to the nature of stochastic networks, a collection of samples $\Theta$ is taken from $p(\theta|D)$ and $Y$ from $p(y|x,D)$ \cite{Jospin}. These samples are aggregated to measure uncertainty and generate an estimate $\hat{y}$.
+Usually in practice, due to the nature of stochastic networks, a collection of samples $\Theta$ is taken from $p(\theta|D)$ to generate an approximate distribution of parameter estimates $\Phi_{\theta}(x)$.  From this, multiple $y_i$ are selected, which is the same as gathering the set of samples $Y$ from $p(y^*|x,D)$ \cite{Jospin}. These samples are aggregated to measure uncertainty and generate an estimate $\hat{y}$.
 
 \subsection{Description of Uncertainty}
 
-A quick recap is in order for uncertainty definitions: \textit{Aleatoric} uncertainty is the level of uncertainty due to the noise or random variation of the data (i.e. error).  \textit{Epistemic} uncertainty is the measure of uncertainty a model has (i.e. variance).  BNN's allow for distinguishability between these types of uncertainty \cite{Jospin}.  $p(\theta|D)$ measures the epistemic uncertainty in the model.  With few data points, the model will express a high level variation in its choice of parameters rather than blindly returning a seemingly confident answer.  With more data points, this uncertainty reduces.
+A quick recap is in order for uncertainty definitions: \textit{Aleatoric} uncertainty is the level of uncertainty due to the noise or random variation of the data (i.e. error).  \textit{Epistemic} uncertainty is the measure of uncertainty a model has (i.e. variance).  BNN's allow for distinguishability between these types of uncertainty \cite{Jospin}.  In other words, they can tell the difference between measurable and immeasurable uncertainty.   $p(\theta|D)$ measures the epistemic uncertainty in the model.  With few data points, the model will express a high level variation in its choice of parameters rather than blindly returning a seemingly confident answer.  With more data points, this uncertainty reduces.
 Aleatoric uncertainty is measured by $p(y|x,\theta)$, which is the conditional probability of the predicted output given the input predictors and model parameters.  This conditional probability is not isolated to Bayesian models; however, use of Bayes provides a means of inverting conditional probabilities when necessary \cite{Jospin}.
-
 
 Let $y = \Phi_{\theta} (x) + \epsilon$ represent the value of $y$ from the approximated distribution of parameter estimates (with error $\epsilon$) given input $x$.
 For regression tasks, usually models are averaged to summarize BNN predictions: 
@@ -93,18 +92,19 @@ It will be demonstrated in a later example that, using the full strength of the 
 %s\textit{(Inflate this section and give more evidence as to HOW BNN's prevent overfitting)}
 
 ANN's built from a non-Bayesian approach aim to minimize a loss function.  As mentioned earlier, this is what maximizes the likelihood of the data.  Mathematically:
+
 $$
-min(E_D(D|\theta)) \equiv max(p(D_y|D_x,\theta)
+min[E_D(D|\theta)] \equiv max[p(D_y|D_x,\theta)]
 $$
-(For notational symmetry, $E_D(D|w,A)$ as was described in previous sections is now represented as $E_D(D|\theta)$)
+(For notational symmetry, $E_D(D|W,\mathcal{A})$ as was described in previous sections is now represented as $E_D(D|\theta)$)
 
 Introducing prior assumptions, the Bayesian approach to finding the most likely point estimate from the posterior would look like:
 $$
- max(p(D_y|D_x,\theta)p(\theta)
+ max[p(D_y|D_x,\theta)p(\theta)]
 $$
-Non-Bayesian networks introduce a regularizing term to prevent issues of overfitting.  Assumming loss is calculated as the negative log-likelihood, the non-Bayesian network with a term comprable to a prior would be represented by an additive term \cite{Jospin}.  That is:
+Non-Bayesian networks introduce a regularizing term to prevent issues of overfitting.  Assuming loss is calculated as the negative log-likelihood, the non-Bayesian network with a term comparable to a prior would be represented by an additive term \cite{Jospin}.  That is:
 $$
- max(p(D_y|D_x,\theta)p(\theta) \equiv min(E_D(D|\theta) + E_{\Theta}(\theta)
+ max[p(D_y|D_x,\theta)p(\theta)] \equiv min[E_D(D|\theta) + E_{\Theta}(\theta)]
 $$
-Where $E_{\Theta}(\theta)$ is the new representation of $E_W(w|A)$ from earlier sections.  Therefore, it can be concluded that the prior distribution acts as a regularizing term for a BNN.  What's more is that the distributional assumptions of a prior overtly impact the regularization technique a BNN utilizes in comparison to its ANN counterpart \cite{vladimirova2019understanding}.  The selection of a Gaussian prior %, as was used to describe regularization at the end of Chapter 2, 
-is the BNN parallel to a non-Bayesian ANN with weight decay.
+Where $E_{\Theta}(\theta)$ is the new representation of $E_W(W|\mathcal{A})$ from earlier sections.  Therefore, it can be concluded that the prior distribution acts as a regularizing term for a BNN.  What's more is that the distributional assumptions of a prior overtly impact the regularization technique a BNN utilizes in comparison to its ANN counterpart \cite{vladimirova2019understanding}.  That is how the selection of a Gaussian prior %, as was used to describe regularization at the end of Chapter 2, 
+is the BNN parallel to a non-Bayesian ANN with weight decay.  A perfect starting point for future research, a simulation study may show comparisons between the priors of Bayesian machine learning models and the regularizers of their frequentist counterparts.

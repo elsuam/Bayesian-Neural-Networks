@@ -31,14 +31,14 @@ $$
 p(\theta|D) = \frac{p(D|\theta)p(\theta)}{p(D)} = \frac{p(D|\theta)p(\theta)}{\int_{\theta'} p(D|\theta')p(\theta')d\theta'}
 $$
 
-This says that for each value of the parameter, count all the ways in which the data can be produced, and multiply that sum by the plausibility that the parameter is so.  Do this for every parameter value, and divide by the sum of the product.  This gives the updated distribution of parameter values.
+This says that for each value ofind tf the parameter, count all the ways in which the data can be produced, and multiply that sum by the plausibility that the parameter is that value.  Do this for every parameter value, and divide by the sum of the product.  This gives the updated distribution of parameter values.
 
 
 \subsection{From Prior to Posterior}
 
 To determine the posterior $p(\theta|D)$ requires selection of a prior $p(\theta)$ and determination of the likelihood of the data under supposition of $\theta$, $p(D|\theta)$.  The denominator is often regarded as the \textit{normalizing constant}, which ensures the outcome is a probability between 0 and 1.  Without it, the posterior is represented as being proportional to the prior and the likelihood $p(\theta|D) \propto p(D|\theta)p(\theta)$, but not interpretable as a posterior probability.  The issue tends to be in that the normalizing constant is a hardship to calculate exactly and often impossible at all.  This is where estimation techniques come in, but more on that later.
 %Selection of priors, perhaps advise on broad priors that tell little information.
-Typically, priors within the same family as the likelihood (i.e. a Bernoulli likelohood and a Beta prior) have analytically helpful properties \cite{mullachery2018bayesian}. These \textit{conjugate priors}, while mathematically useful, often place undesirable assumptions on the model.  Therefore it is usually preferred not to rely on conjugate priors in order to sacrifice mathematical precision for model accuracy by approximation.
+Typically, priors within the same family as the likelihood (i.e. a Bernoulli likelihood and a Beta prior) have analytically helpful properties \cite{mullachery2018bayesian}. These \textit{conjugate priors}, while mathematically useful, often place undesirable assumptions on the model.  Therefore it is usually preferred not to rely on conjugate priors in order to sacrifice mathematical precision for model accuracy by approximation.
 %prior to posterior involves using MLE and the prior as we have done before in 506  Use my notes from then to compute a posterior distribution for a Gaussian prior
 
 \textbf{Bayesian Updating} is a concept in which the posterior distribution can be reused as the prior distribution when more data arrives \cite{mcelreath2016statistical}.  In the coin flip example, this would be the addition of more flips, generating a more narrow distribution centered on the most likely value of coin fairness based on the flip results.  Each time the coin is flipped, new prior probabilities for coin fairness would be generated based on the outcome from the previous flips.  This is a useful attribute because the original prior outlines some assumptions of a model, which are then used to compute the posterior, the conditional probability of the parameters in light of those assumptions and the data likelihood.  By holding on to the posterior, the model can predict more realistic expectations based on the previous assumptions and the pattern of data that the model has already seen before.
@@ -50,43 +50,38 @@ Typically, priors within the same family as the likelihood (i.e. a Bernoulli lik
 
 \section{Practical Computing} %-------------SECTION
 
- As mentioned, the premier disadvantage of Bayesian inference is that is requires computationally intractable integrations.  In response, a world of practical approximation techniques exists, some of which will be discussed in this section.  These approximaton techniques can be shown to still have pristine results while dodging tricky or impossible integrals \cite{tipping2004bayesian}.
- The approximated version of Bayesian inference looks something like this:
-
-$$
-p(\theta|D) \approx \frac{p(D|\theta)p(\theta)}{Z}
-$$
-where $Z$ is approximated by some sophisticated means.
-
- %mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages) and lead into \textbf{Markov Chain Monte Carlo Methods}
-
-Simpler models can be estimated by means of grid approximation \cite{mcelreath2016statistical}, in which the domain of the posterior is split up into many finite intervals and values calculated accordingly.  Quadratic Approximation is another method for approximating the posterior.  It assumes the area by the peak of the posterior distribution is approximately normally distributed, which is common \cite{mcelreath2016statistical}, and approximates that distribution because the logarithm of a normal distribution forms a quadratic function.  Both of these techniques pail in comparison to use of \textbf{Markov Chain Monte Carlo} Methods.  In essence, a Markov Chain is one which the $i^{th}$ outcome is dependent upon the $(i-1)^{th}$ outcome.  MCMC is a class of algorithms based on this feature.  Some algorithms below are described for their techniques to estimating very closely a complex posterior distribution.  Unless otherwise cited, most descriptions come from (McElreath, 2016 \cite{mcelreath2016statistical}) and (Gelman et. al, 2021 \cite{gelmanbayesian3}) 
+As mentioned, the premier disadvantage of Bayesian inference is that is requires computationally intractable integrations.  In response, a world of practical approximation techniques exists, some of which will be discussed in this section.  These techniques use a valid distribution to approximate the posterior and can be shown to still have pristine results while dodging tricky or impossible integrals \cite{tipping2004bayesian}.
+%mention other approximation techniques from Rethinking like Laplace and Grid (lecture 8 notes and referenced book pages) and lead into \textbf{Markov Chain Monte Carlo Methods}
+Simpler models can be estimated by means of grid approximation \cite{mcelreath2016statistical}, in which the domain of the posterior is split up into many finite intervals and values calculated accordingly.  Quadratic Approximation is another method for approximating the posterior.  It assumes the area by the peak of the posterior distribution is approximately normally distributed, which is common \cite{mcelreath2016statistical}, and approximates that distribution because the logarithm of a normal distribution forms a quadratic function.  Both of these techniques pail in comparison to use of \textbf{Markov Chain Monte Carlo} Methods.  These methods sample the normalizing constant denominator to adequately represent the original posterior distribution to a certain degree.  In essence, a Monte Carlo method is one which uses the effect of repeated random sampling to generate results, and a Markov Chain is an iteration where the $t^{th}$ outcome is dependent upon the $(t-1)^{th}$ outcome.  MCMC is a class of algorithms based on this feature.  Some algorithms below are described for their techniques to estimating very closely a complex posterior distribution.  Unless otherwise cited, descriptions come from (McElreath, 2016 \cite{mcelreath2016statistical}) and (Gelman et. al, 2021 \cite{gelmanbayesian3}) 
 
 
 %\textit{(Relevant examples in STAN whenever appropriate)}
 
-\subsection{Metropolis (Rosenbluth-Teller) Algorithm}
+\subsection{Metropolis Algorithm}
 
-The Metropolis Algorithm is named after the first author of the published article that introduced the world to their "Fast Computing Machines" \cite{metropolis1953equation}, although it is unclear how the work was divided. Marshall Rosenbluth and Edward Teller are co-authors, along with their wives, who performed much of the calculations.  The algorithm is as follows:
+%-----Watch MCMC tutorials to gain a better idea of what language to use here-----
+
+The Metropolis Algorithm is named after the first author of the published article that introduced the world to the research group's ``Fast Computing Machines'' \cite{metropolis1953equation}.  It is the foundation from which different strategies for sampling from posterior distributions arise.  The algorithm is as follows:
+%although it is unclear how the work was divided. Marshall Rosenbluth and Edward Teller are co-authors, along with their wives, who performed much of the calculations.  The algorithm is as follows:
 
 \begin{enumerate}
 \tightlist
-\item{Set current point $\theta_0$ with probability $p(\theta_0|y) > 0$}
+\item{Set current point $\lambda_0$ with probability $p(\lambda_0|y) > 0$}
 
-\item{Sample a proposal $\theta^*$ from a proposal distribution $J_t(\theta^* | \theta^{t-1})$ at time $t$.}
+\item{Sample a proposal $\lambda^*$ from a proposal distribution $J_t(\lambda^* | \lambda^{t-1})$ at time $t$.}
 
-\item{The acceptence of the proposal is $A = min \left( \frac{p(\theta^*|y)}{p(\theta^{t-1})|y} , 1 \right) $}
+\item{The acceptence of the proposal is $A = min \left( \frac{p(\lambda^*|y)}{p(\lambda^{t-1})|y} , 1 \right) $}
 \end{enumerate}
 
-This means that the proposed move will always be accepted if it is toward a higher probability position that current.  Otherwise, it will be accepted with probability $\frac{p(\theta*|y)}{p(\theta^{t-1})|y}$
+This means that the proposed move will always be accepted if it is toward a higher probability position that current.  Otherwise, it will be accepted with probability $\frac{p(\lambda*|y)}{p(\lambda^{t-1})|y}$
 
-Works when the proposal distribution is symmetric, that is, when $J_t(\theta^* | \theta^{t-1}) = J_t(\theta^{t-1} | \theta^*)$
+Works when the proposal distribution is symmetric, that is, when $J_t(\lambda^* | \lambda^{t-1}) = J_t(\lambda^{t-1} | \lambda^*)$
 
 \subsection{Metropolis-Hastings Algorithm}
 
 To allow for non-symmetric distributions, the Metropolis-Hastings algorithm generalizes the Metropolis algorithm.  The ratio of densities becomes:
 $$
-\frac{ p(\theta^*|y) / J_t(\theta^* | \theta^{t-1}) }{ p(\theta^{t-1}|y) / J_t(\theta^{t-1} | \theta^*) }
+\frac{ p(\lambda^*|y) / J_t(\lambda^* | \lambda^{t-1}) }{ p(\lambda^{t-1}|y) / J_t(\lambda^{t-1} | \lambda^*) }
 $$
 
 and a minimum between that ratio and 1 is selected.
@@ -94,7 +89,7 @@ and a minimum between that ratio and 1 is selected.
 \subsection{Hamiltonian Monte Carlo}
 
 Rather than a random walk through the posterior, HMC moves the exploration problem into a space containing a position parameter $\lambda$ and a momentum parameter $r$.  HMC has the ability to make confident, far stride and as a result converge faster than other algorithms \cite{mullachery2018bayesian}.
-The parameters of HMS are step size $s$ and number of steps $L$. Sampling from a standard multivariate normal distribution, Leapfrog updates are made to determine the proposed position $\tilde{lambda}$ and momentum $\tilde{r}$.  The proposed values are determined, through use of Laplace transform $\mathcal{L}$, by
+The parameters of HMS are step size $s$ and number of steps $L$. Sampling from a standard multivariate normal distribution, Leapfrog updates are made to determine the proposed position $\tilde{\lambda}$ and momentum $\tilde{r}$.  The proposed values are determined, through use of Laplace transform $\mathcal{L}$, by
 $$
 min\left( 1, \frac{exp[\mathcal{L}(\tilde{\lambda} - \frac{1}{2} \tilde{r} \cdot \tilde{r}]}
 {exp[\mathcal{L}(\lambda^{m-1}) - \frac{1}{2} r^0 \cdot r^0] }
@@ -120,16 +115,16 @@ In higher dimensions:
 
 \begin{itemize}
 \tightlist
-\item{$\theta_j$ represents the subvector that makes up the components of $\theta$.  For example, a parameter representing categories "blue", "red", "green", and "yellow" has four components.}
-\item{At each iteration $t$, each level of $\theta^t_j$ is sampled ($\theta^t_{blue}$, $\theta^t_{red}$, $\theta^t_{green}$, $\theta^t_{yellow}$)}
-\item{ $p(\theta_j|\theta^{t-1}_{-j},y)$, where $\theta^{t-1}_{-j}$ represents all components of $\theta$ except for $\theta_j$.}
+\item{$\lambda_j$ represents the subvector that makes up the components of $\lambda$.  For example, a parameter representing categories "blue", "red", "green", and "yellow" has four components.}
+\item{At each iteration $t$, each level of $\lambda^t_j$ is sampled ($\lambda^t_{blue}$, $\lambda^t_{red}$, $\lambda^t_{green}$, $\lambda^t_{yellow}$)}
+\item{ $p(\lambda_j|\lambda^{t-1}_{-j},y)$, where $\lambda^{t-1}_{-j}$ represents all components of $\lambda$ except for $\lambda_j$.}
 \end{itemize}
 
 
 
 \subsection{Variational Inference}
 
-MCMC methods are the bets methods for approximating the posterior with samples from the exact posterior, but their Achilles' heel lies in their lack of scalability \cite{Jospin}.  Variational inference methods convert an integration problem into an optimization problem \cite{mullachery2018bayesian}.  They introduce a distribution $q(\theta;H)$ called the variational distribution parameterized by $H$.  $q(\theta;H)$ must be flexible enough to provide a wide variety of posterior distributions in order to capture the posterior $p(\theta|D)$.  Closeness between the variational distribution and the true posterior is measured by Kullback-Leibler divergence \cite{blei2017variational}:
+MCMC methods are the bets methods for approximating the posterior with samples from the exact posterior, but their Achilles' heel lies in their lack of scalability \cite{Jospin}.  Variational inference methods convert an integration problem into an optimization problem \cite{mullachery2018bayesian}.  They introduce a distribution $q(\theta;H)$ called the \textit{variational distribution} which is parameterized by $H$.  $q(\theta;H)$ must be flexible enough to provide a wide variety of posterior distributions in order to capture the posterior $p(\theta|D)$.  Closeness between the variational distribution and the true posterior is measured by Kullback-Leibler divergence \cite{blei2017variational}:
 $$
 KL(q||p) = E_q\left[ log\frac{q(\theta;H)}{p(\theta|D)} \right]
 $$
@@ -144,8 +139,15 @@ A nice feature of Bayesian statistics is the ability to incorporate prior knowle
 
 \subsection{Marginalization}
 
-An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all parameters of the model, nuisance parameters are integrated out
-\cite{tipping2004bayesian}.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, given a data set $D$, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|D,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
+Bayesian inference makes use of \textit{marginalization}, a method by which nuisance parameters are integrated out rather than estimating all model parameters.
+%\cite{tipping2004bayesian}.
+Marginalization reduces the dimensionality by considering the sum of the estimated probabilities under each condition of the nuisance parameter.
+%An essential element to Bayesian inference is \textit{marginalization}.  Rather than estimating all parameters of the model, nuisance parameters are integrated out \cite{tipping2004bayesian}.
+That is, for two random variables $Y_1$ and $Y_2$ within the probability functiuon $p(y_1,y_2)$, the marginal probability of $Y_1$ would be 
+$ p(y_1) = \sum_{y_2} p(y_1,y_2)$ for discrete variables and $p(y_1) = \int_{y_2} p(y_1,y_2)$ for continuous.
+\cite{wackerly2014mathematical}
+
+The same principle is applied here.  Suppose a model is determined by use of Bayes.  Its frequentist counterpart may use Ordinary Least Squares to find a set of parameters $\theta$ which minimizes its error. In Bayes, given a data set $D$, the parameters $\theta$ can be expressed by the posterior distribution $p(\theta|D,\alpha,\sigma^2)$.  Here, $\alpha$ is the decay rate seen above derived from the choice of prior, which assumes residual normailty with variation $\sigma^2$ (see Tipping, 2004 \cite{tipping2004bayesian} for derivation).
 To determine the distribution of new predictions $y^*$ requires integrating the product of the posterior and the likelihood of new predictions with respect to the parameters of the model:
 $$
 p(y^*|D,\alpha,\sigma^2) = \int p(y^*|\theta,\sigma^2) p(\theta|D,\alpha,\sigma^2) d\theta
@@ -198,7 +200,7 @@ $$
 The first chapter of this thesis described weight decay as a regularization technique.  Recall it left with the following full-optimization formula:
 
 $$
-F = \alpha E_W(w|A) + \beta E_D(D|w,A)
+F = \alpha E_W(W|\mathcal{A}) + \beta E_D(D|W,\mathcal{A})
 $$
 
 
@@ -206,24 +208,24 @@ $$
 This section will apply a Bayesian Approach to setting $\alpha$ and $\beta$ parameters, as told by (Mackay, 1992) \cite{mackay1992practical} and (Forsee and Hagan, 1997) \cite{foresee1997gauss}.  To begin, a probabilistic interpretation of network learning \cite{mackay1992practical} is introduced.  Under this framework, the weights of the network are represented as random variables, rather than fixed, unknown, and estimable.  By Bayes' rule:
  
 $$
-P(w|D,\alpha,\beta,A) = \frac{P(D|w,\beta,A) P(w|\alpha,A)}{P(D|\alpha,\beta,A)}
+P(W|D,\alpha,\beta,\mathcal{A}) = \frac{P(D|W,\beta,\mathcal{A}) P(W|\alpha,\mathcal{A})}{P(D|\alpha,\beta,\mathcal{A})}
 $$
 
-where $D$ is the observed data and $A$ is the network architecture.\footnote{
+where $D$ is the observed data and $\mathcal{A}$ is the network architecture.\footnote{
 \textcolor{darkgray}{
-Note that (Mackay, 1992) defines a term $R$ as the chosen or "prior" regularizer, which represents the potential for selecting alternative control parameters for for $E_W$.  If included, Bayes' rule would then be represented  as:
+Note that (Mackay, 1992) defines a term $\mathcal{R}$ as the chosen or "prior" regularizer, which represents the potential for selecting alternative control parameters for for $E_W$.  If included, Bayes' rule would then be represented  as:
 $$
-P(w|D,\alpha,\beta,A,R) = \frac{P(D|w,\beta,A,R) P(w|\alpha,A,R)}{P(D|\alpha,\beta,A,R)}
+P(w|D,\alpha,\beta,\mathcal{A},\mathcal{R}) = \frac{P(D|w,\beta,\mathcal{A},\mathcal{R}) P(w|\alpha,\mathcal{A},\mathcal{R})}{P(D|\alpha,\beta,\mathcal{A},\mathcal{R})}
 $$
- and subsequent formulation would be modified to represent $R$. However, this example only considers the sums of squares regularizer $E_W$ from chapter 1 and so the extended notation has been be omitted for this thesis.
+ and subsequent formulation would be modified to represent $\mathcal{R}$. However, this example only considers the sums of squares regularizer $E_W$ from chapter 1 and so the extended notation has been be omitted for this thesis.
  }}
-Taking into assumption that the model residuals follow a normal distribution, the likelihood function \cite{foresee1997gauss}, representing the probability of the data given weights $w$, is
+Taking into assumption that the model residuals follow a normal distribution, the likelihood function \cite{foresee1997gauss}, representing the probability of the data given weights $W$, is
 $$
-P(D|w,\beta,A) = \frac{1}{Z_D(\beta)} e^{-\beta E_D}
+P(D|W,\beta,\mathcal{A}) = \frac{1}{Z_D(\beta)} e^{-\beta E_D}
 $$
 and by establishing the prior distribution as normal, its density is represented as:
 $$
-P(w|\alpha,A) = \frac{1}{Z_W(\alpha)} e^{-\alpha E_W}
+P(W|\alpha,\mathcal{A}) = \frac{1}{Z_W(\alpha)} e^{-\alpha E_W}
 $$
 for which
 $$
@@ -233,11 +235,12 @@ $$
 
 Putting this all together, the posterior distribution can be represented as:
 $$
-P(w|D,\alpha,\beta,A) = \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{P(D|\alpha,\beta,A)} \\
+P(W|D,\alpha,\beta,\mathcal{A}) = \frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{P(D|\alpha,\beta,\mathcal{A})} \\
 = \frac{e^{-(\beta E_D + \alpha E_W)}}{Z_F(\alpha,\beta)}
 $$
 
-The exponent in the numerator is the negative.  Thus it can be noted by the formula above that under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization formula $F = \alpha E_w(w|A) + \beta E_D(D|w,A)$ as seen in chapter 1.  For later use, the normalizing constant in the denominator is $Z_F(\alpha,\beta) = \int d^k w e^{-(\alpha E_W + \beta E_D)}$.
+The exponent in the numerator is the negative of $F$.  Thus it can be noted by the formula above that under Bayes, the optimal weights should maximize the posterior probability, which is equivalent to minimizing the full optimization formula $F = \alpha E_w(W|\mathcal{A}) + \beta E_D(D|W,\mathcal{A})$ as seen in chapter 1.
+%For later use, the normalizing constant in the denominator is $Z_F(\alpha,\beta) = \int d_k w e^{-(\alpha E_W + \beta E_D)}$ where $d_k$ is the data point pertaining to the $k^{th}$ parameter value.
 
 
 \textbf{Optimizing the Regularization Parameters}
@@ -245,18 +248,18 @@ The exponent in the numerator is the negative.  Thus it can be noted by the form
 By use of Bayes' rule, the posterior probability for the parameters $\alpha$ and $\beta$ is:
 
 $$
-P(\alpha, \beta | D,A) = \frac{P(D|\alpha,\beta,A) P(\alpha,\beta)}{P(D|A)}
+P(\alpha, \beta | D,\mathcal{A}) = \frac{P(D|\alpha,\beta,\mathcal{A}) P(\alpha,\beta)}{P(D|\mathcal{A})}
 $$
 
 
 
 Suppose a uniform prior is chosen for ($\alpha,\beta$).  By this, the posterior distribution would be maximized by maximizing the \textit{likelihood} function.  What's more is that the likelihood function is the normalizing constant above.  With algebra, and by maintaining the previous assumptions, the likelihood function would take the form:
 $$
-P(D|\alpha,\beta,A) = \frac{P(D|w,\beta,A) P(w|\alpha,A)}{P(w|D,\alpha,\beta,A)}
+P(D|\alpha,\beta,\mathcal{A}) = \frac{P(D|W,\beta,\mathcal{A}) P(W|\alpha,\mathcal{A})}{P(W|D,\alpha,\beta,\mathcal{A})}
 $$
 and since the heavy integration of the normalizing constant is already simplified, this equation can be computed.
 $$
-\frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{\frac{1}{Z_F(\alpha,\beta)} e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)} \cdot \frac{e^{-(\beta E_D + \alpha E_W)}}{e^{-F(w)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)}
+\frac{\frac{1}{Z_W(\alpha)} \frac{1}{Z_D(\beta)} e^{-(\beta E_D + \alpha E_W)}}{\frac{1}{Z_F(\alpha,\beta)} e^{-F(W)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)} \cdot \frac{e^{-(\beta E_D + \alpha E_W)}}{e^{-F(W)}} = \frac{Z_F(\alpha,\beta)}{Z_D(\beta) Z_W(\alpha)}
 $$
 
 The denominator is comprised of known constants $Z_D(\beta)$ and $Z_W(\alpha)$.  What is left is to determine $Z_F(\alpha,\beta)$.  Having outlined the Bayesian techniques, this thesis will not cover this decomposition.  In practice, it requires estimation by Taylor series expansion and computation of the Hessian matrix of the full optimization formula $H = \beta \nabla^ E_D + \alpha \nabla^2 E_W$ to determine the number of effective parameters in the neural network that are reducing the error function.  This decomposition can be found in (Mackay, 1992) and (Forsee and Hagan, 1997).  This technique to setting parameters $\alpha$ and $\beta$ sets the stage for the final chapter of this thesis. As will be shown, combining the complexity of neural networks with the probabilistic framework of network learning provides transparent interpretations to complex abstractions within data.
