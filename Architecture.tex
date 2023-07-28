@@ -11,7 +11,7 @@ However, linearity can be achieved through the usage of a linear activation func
 \hypertarget{foundations}{%
 \subsection{Neurons}\label{foundations}}
 
-The idea of an \textit{artificial neuron}, represented by a circle in Figure \ref{NNet}, began with Frank Rosenblatt in the 1950 \cite{nielsen}.  Rosenblatt coined the idea of a \textbf{perceptron}, which takes the value of 0 or 1.  The weights, represented as connecting lines in the figure, influence the binary output of the perceptron by whether or not the weighted sum of all input input values $x_i$ multiplied by the respective weights $w_i$ reaches a prespecified threshold:
+ThThe idea of an \textit{artificial neuron}, represented by a circle in Figure \ref{NNet}, began with Frank Rosenblatt in the 1950's \cite{nielsen}.  Rosenblatt coined the idea of a \textbf{perceptron}, which takes the value of 0 or 1.  The weights, represented as connecting lines in the figure, influence the binary output of the perceptron by whether or not the weighted sum of all input input values $x_i$ multiplied by the respective weights $w_i$ reaches a prespecified threshold:
 
 \[
 Y = 
@@ -79,7 +79,8 @@ A single-layer neural network would have but one step of calculations ($input \r
 $$
 y_i = (w_i \cdot x_i) + b_i
 $$
-This means that a neural network devoid of any hidden layers or activation function simplifies to a \textbf{linear regression} model. \cite{sharma2017activation}
+
+This is exactly what is happening with each forward pass by every connection into the next layer.  Recall that the activation function of a neural network is to enhance its ability to adapt to non-linear patterns.  While this is a preferable trait, linear activations exist to adapt to linear patterns \cite{sharma2017activation}.  If a neural network's architecture consisted of a single hidden layer with a linear activation, it would be a \textbf{linear regression} model.  In much the same menner, the network would only be able to linear changes in the input.
 
 
 %In the case of a two-layer neural %network with no activation functions in %between:
@@ -88,7 +89,7 @@ This means that a neural network devoid of any hidden layers or activation funct
 %$$
 
 
-Similarly, it can also be noted that a neural network which uses the sigmoid activation function is a generalization of \textbf{logistic regression}. \cite{dreiseitl2002logistic} \cite{schumacher1996neural}  If $\delta$ denotes the logit function expressed as the log-odds of the outcome of $X$ (0 or 1):
+Similarly, it can also be noted that a neural network of similar architecture but which employs the sigmoid activation function is a generalization of \textbf{logistic regression}. \cite{dreiseitl2002logistic} \cite{schumacher1996neural}  If $\delta$ denotes the logit function expressed as the log-odds of the outcome of $X$ (0 or 1):
 $$
 \delta = ln \left( \frac{P(X)}{1-P(X)} \right) = (w_i \cdot x_i) + b_i 
 $$
@@ -96,7 +97,7 @@ Reversing $\delta$ results in the relevant probability that $X = 1$ for the give
 $$
 P(X) = \frac{e^\delta}{1+e^\delta} = \frac{1}{1+e^{-\delta}} = \sigma(\delta)
 $$
-In which $P(X) \in [0,1]$.  For logistic regression, or for a single-layer neural network using the sigmoid activation function, the calculation would end here and the resulting interpretation from the binary classification model a probability that the input is from category 1.  In deeper neural networks, the value of $P(X)$, which is one of many, gets passed on to the next layer to join its cohorts for the next calculation.
+In which $P(X) \in [0,1]$.  For logistic regression, or for a two-layer neural network using the sigmoid activation function, the calculation would end here and the resulting interpretation from the binary classification model a probability that the input is from category 1.  In deeper neural networks, the value of $P(X)$, which is one of many, gets passed on to the next layer to join its cohorts for the next calculation.
 
 The potential for neural networks expands well beyond linearity or the curvature matched by polynomial terms or splines.  Neural nets are universal function approximators, which means that they have the capacity to learn and compute any function. \cite{sharma2017activation} This is due to non-linear activation functions, for without them, transformations between successive layers would be linear, and the entire composition itself then linear, too. \cite{bishop1995}  While there is no one-size-fits all, certain activation functions have desirable properties that help give insight into the questions that neural networks answer.
 
@@ -108,9 +109,7 @@ The potential for neural networks expands well beyond linearity or the curvature
 \hypertarget{activation-functions}{%
 \subsection{Activation Functions}\label{activation-functions}}
 
-Sigmoid in particular has nice differentiable properties, 
-
-The sigmoid activation function gives the output of a neuron a continuous range [0,1].  While this is common in practice, other activation functions can be used that coerce the output of the neuron in various ways.
+The sigmoid activation function gives the output of a neuron a continuous range (0,1).  While use of this activation is common in practice due to its appealing differentiable properties, other activation functions can be used that coerce the output of the neuron in various ways.
 %No feature of a neural network can be expressed in exhaustive detail in one paper, and activation functions are no exception.
 Many activation functions exist, with several variations of the original, each selected to improve the performance for a specific task.  The sigmoid activation function is the most widely used because it is easily differentiable and overcomes the primary drawback of the step function.  Hyperbolic tangent (Tanh) is another function very similar to sigmoid, yet it is steeper and symmetric about the origin with range (-1,1).  This is preferable in cases where gradients are not restricted to vary in a specific direction.  To mathematically compare it to sigmoid, it can be defined as $f(x) = 2 \cdot  \sigma(2x) - 1$.
 
@@ -158,7 +157,7 @@ $$
 This can be extended into multi-class classification models.  For these, the generalized general form of sigmoid known as \textit{softmax} is used as the activation function \cite{bishop2006pattern}.  
 
 $$
-P(X) = \frac{e^{\delta_i}}{\sum_j{e^{\delta_j} }}
+P(z) = \frac{e^{z_i}}{\sum_j{e^{z_j} }}
 $$
 
 By the same techniques, the log-loss function generalizes to the following form:
@@ -287,7 +286,8 @@ represented through use of the chain rule by:
 \frac{\partial{C}}{\partial{w_i^{(2)}}}    &=  \dfrac{\partial{z_i^{(2)}}}{\partial{w_i^{(2)}}}
      \dfrac{\partial{a_i^{(2)}}}{\partial{z_i^{(2)}}}
      \dfrac{\partial{C}}{\partial{a_i^{(2)}}} \\ 
- &= a_i^{(1)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i) \end{align*}
+ &= a_i^{(1)} \sigma'(z_i^{(2)}) 2(a_i^{(2)}-y_i)
+ \end{align*}
 
 where \(a_i^{(1)}\) is the activation for each observation in the first
 (input) layer, \(\sigma'(z_i^{(2)})\) is the derivative of the sigmoid
